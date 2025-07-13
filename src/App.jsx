@@ -3,31 +3,29 @@ import background from "./assets/bg.png";
 import "./App.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Agreement from "./Agreement";
 
 const backendURL = import.meta.env.VITE_BACKEND_URL;
 
 function App() {
   const navigate = useNavigate();
-
-  // Time and UI state
   const [currentTime, setCurrentTime] = useState("");
   const [showAgreement, setShowAgreement] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [agreeChecked, setAgreeChecked] = useState(false);
 
-  // Fake stats
   const [activeUsers, setActiveUsers] = useState(Math.floor(Math.random() * 1000) + 200);
   const [wageredAmount, setWageredAmount] = useState(0);
 
-  // Form state
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupUsername, setSignupUsername] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
 
-  // Time update
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -38,16 +36,13 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // Stats updater
   useEffect(() => {
     const interval = setInterval(() => {
       const change = Math.floor(Math.random() * 11) + 5;
       const increase = Math.random() > 0.5;
       setActiveUsers((prev) => {
         let updated = increase ? prev + change : prev - change;
-        if (updated < 50) updated = 50;
-        if (updated > 5000) updated = 5000;
-        return updated;
+        return Math.max(50, Math.min(5000, updated));
       });
 
       const newAmount = Math.floor(Math.random() * (350000 - 23000 + 1)) + 23000;
@@ -58,10 +53,12 @@ function App() {
 
   const toggleAgreement = () => setShowAgreement(!showAgreement);
 
-  // ✅ Signup
   const handleSignup = async () => {
-    if (!agreeChecked) return alert("Please accept the user agreement.");
-    if (!signupEmail || !signupUsername || !signupPassword) return alert("All fields required.");
+    if (!agreeChecked) return toast.warn("Please accept the user agreement.");
+    if (!signupEmail || !signupUsername || !signupPassword)
+      return toast.warn("All fields required.");
+
+    const toastId = toast.loading("⏳ Signing up...");
 
     try {
       const res = await axios.post(`${backendURL}/api/auth/signup`, {
@@ -69,31 +66,52 @@ function App() {
         username: signupUsername,
         password: signupPassword,
       });
-      alert(res.data.message || "Signup successful!");
+      toast.update(toastId, {
+        render: res.data.message || "Signup successful!",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
       setShowSignup(false);
     } catch (err) {
-      alert(err.response?.data?.message || "Signup failed.");
+      toast.update(toastId, {
+        render: err.response?.data?.message || "Signup failed.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     }
   };
 
-  // ✅ Login
   const handleLogin = async () => {
-    if (!loginEmail || !loginPassword) return alert("Enter both fields.");
+    if (!loginEmail || !loginPassword) return toast.warn("Enter both fields.");
+    const toastId = toast.loading("⏳ Logging in...");
     try {
       const res = await axios.post(`${backendURL}/api/auth/login`, {
         email: loginEmail,
         password: loginPassword,
       });
-      alert(res.data.message || "Login successful!");
+      toast.update(toastId, {
+        render: res.data.message || "Login successful!",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
       setShowLogin(false);
       navigate("/dashboard");
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed.");
+      toast.update(toastId, {
+        render: err.response?.data?.message || "Login failed.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     }
   };
 
   return (
     <div className="app" style={{ backgroundImage: `url(${background})` }}>
+      <ToastContainer position="top-center" />
       <div className="center-box">
         <p className="time-indicator">🌐 World → 🇮🇳 India → 🕓 {currentTime}</p>
         <h1 className="welcome">
@@ -111,10 +129,9 @@ function App() {
           <p>💸 ₹{wageredAmount.toLocaleString()} wagered this second</p>
         </div>
 
-        <div style={{ fontSize: "12px", color: "#aaa", marginTop: "10px", fontStyle: "italic" }}>
-          Powered by CashPlayzz — where gaming meets strategy.
-          <br />
-          Play smart. Stay in control.
+        <div className="footer-note">
+          Powered by CashPlayzz — where gaming meets strategy.<br />
+          <span>Play smart. Stay in control.</span>
         </div>
 
         <p className="footer-msg">
@@ -122,83 +139,38 @@ function App() {
         </p>
       </div>
 
-      {/* User Agreement */}
-      {showAgreement && (
-        <div className="agreement-popup">
-          <h2>User Agreement</h2>
-          <p>⚠️ This is a real gambling platform. You are playing at your own risk.</p>
-          <p>Games are set at 50–50 win/loss odds.</p>
-          <p>Only 18+ users allowed. Don’t bet more than you can afford to lose.</p>
-          <p>We are not responsible for losses. CashPlayzz is secure & transparent.</p>
-          <button onClick={toggleAgreement}>I Agree & Close</button>
-        </div>
-      )}
-
-      {/* Login Modal */}
+      {/* MODALS */}
       {showLogin && (
         <div className="modal-overlay" onClick={() => setShowLogin(false)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
             <h2>Login to CashPlayzz</h2>
-            <input
-              type="email"
-              placeholder="Email"
-              value={loginEmail}
-              onChange={(e) => setLoginEmail(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={loginPassword}
-              onChange={(e) => setLoginPassword(e.target.value)}
-            />
+            <input type="email" placeholder="Email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} />
+            <input type="password" placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
             <button className="modal-btn" onClick={handleLogin}>Login</button>
             <button className="modal-close" onClick={() => setShowLogin(false)}>Close</button>
           </div>
         </div>
       )}
 
-      {/* Signup Modal */}
       {showSignup && (
         <div className="modal-overlay" onClick={() => setShowSignup(false)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
             <h2>Create an Account</h2>
-            <input
-              type="email"
-              placeholder="Email"
-              value={signupEmail}
-              onChange={(e) => setSignupEmail(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Username"
-              value={signupUsername}
-              onChange={(e) => setSignupUsername(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={signupPassword}
-              onChange={(e) => setSignupPassword(e.target.value)}
-            />
-            <label style={{ display: "block", marginTop: "10px", color: "#ccc" }}>
-              <input
-                type="checkbox"
-                checked={agreeChecked}
-                onChange={() => setAgreeChecked(!agreeChecked)}
-              />{" "}
-              I accept the{" "}
-              <span
-                onClick={toggleAgreement}
-                style={{ color: "#00ffee", cursor: "pointer", textDecoration: "underline" }}
-              >
-                User Agreement
-              </span>
+            <input type="email" placeholder="Email" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} />
+            <input type="text" placeholder="Username" value={signupUsername} onChange={(e) => setSignupUsername(e.target.value)} />
+            <input type="password" placeholder="Password" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} />
+            <label className="agreement-checkbox">
+              <input type="checkbox" checked={agreeChecked} onChange={() => setAgreeChecked(!agreeChecked)} />
+              I accept the <span onClick={toggleAgreement}>User Agreement</span>
             </label>
             <button className="modal-btn" onClick={handleSignup} disabled={!agreeChecked}>Signup</button>
             <button className="modal-close" onClick={() => setShowSignup(false)}>Close</button>
           </div>
         </div>
       )}
+
+      {/* AGREEMENT MODAL */}
+      {showAgreement && <Agreement onClose={toggleAgreement} />}
     </div>
   );
 }

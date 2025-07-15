@@ -5,9 +5,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Eye, EyeOff } from "lucide-react";
 import Agreement from "./Agreement";
 
-const backendURL = import.meta.env.VITE_BACKEND_URL;
+// 👉 Use this to quickly switch between real or proxy backend during debugging
+const backendURL = "https://cashplayzz-backend.onrender.com";
+// const backendURL = "https://corsproxy.io/?https://cashplayzz-backend.onrender.com";
 
 function App() {
   const navigate = useNavigate();
@@ -16,23 +19,26 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [agreeChecked, setAgreeChecked] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const [activeUsers, setActiveUsers] = useState(Math.floor(Math.random() * 1000) + 200);
   const [wageredAmount, setWageredAmount] = useState(0);
 
-  const [loginEmail, setLoginEmail] = useState("");
+  const [loginCredential, setLoginCredential] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupUsername, setSignupUsername] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
 
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+
   useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setCurrentTime(now.toLocaleTimeString());
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
+    const now = new Date();
+    setCurrentTime(now.toLocaleTimeString());
+    const interval = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString());
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -40,11 +46,7 @@ function App() {
     const interval = setInterval(() => {
       const change = Math.floor(Math.random() * 11) + 5;
       const increase = Math.random() > 0.5;
-      setActiveUsers((prev) => {
-        let updated = increase ? prev + change : prev - change;
-        return Math.max(50, Math.min(5000, updated));
-      });
-
+      setActiveUsers((prev) => Math.max(50, Math.min(5000, increase ? prev + change : prev - change)));
       const newAmount = Math.floor(Math.random() * (350000 - 23000 + 1)) + 23000;
       setWageredAmount(newAmount);
     }, 1000);
@@ -55,17 +57,16 @@ function App() {
 
   const handleSignup = async () => {
     if (!agreeChecked) return toast.warn("Please accept the user agreement.");
-    if (!signupEmail || !signupUsername || !signupPassword)
-      return toast.warn("All fields required.");
+    if (!signupEmail || !signupUsername || !signupPassword) return toast.warn("All fields required.");
 
     const toastId = toast.loading("⏳ Signing up...");
-
     try {
       const res = await axios.post(`${backendURL}/api/auth/signup`, {
-        email: signupEmail,
-        username: signupUsername,
-        password: signupPassword,
+        email: signupEmail.trim(),
+        username: signupUsername.trim(),
+        password: signupPassword.trim(),
       });
+
       toast.update(toastId, {
         render: res.data.message || "Signup successful!",
         type: "success",
@@ -84,34 +85,62 @@ function App() {
   };
 
   const handleLogin = async () => {
-    if (!loginEmail || !loginPassword) return toast.warn("Enter both fields.");
+    if (!loginCredential || !loginPassword) {
+      toast.error("⚠️ Email/Username and password are required.");
+      return;
+    }
+
+    setIsLoggingIn(true);
     const toastId = toast.loading("⏳ Logging in...");
+
     try {
-      const res = await axios.post(`${backendURL}/api/auth/login`, {
-        email: loginEmail,
-        password: loginPassword,
-      });
+      console.log("🚀 Attempting login with:", loginCredential, loginPassword);
+      const res = await axios.post(
+        `${backendURL}/api/auth/login`,
+        {
+          identifier: loginCredential.trim(),
+          password: loginPassword.trim(),
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       toast.update(toastId, {
         render: res.data.message || "Login successful!",
         type: "success",
         isLoading: false,
         autoClose: 2000,
       });
+
       setShowLogin(false);
       navigate("/dashboard");
     } catch (err) {
+      console.error("Login error:", err?.response?.data || err.message);
       toast.update(toastId, {
-        render: err.response?.data?.message || "Login failed.",
+        render: err?.response?.data?.message || "Login failed.",
         type: "error",
         isLoading: false,
         autoClose: 3000,
       });
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
   return (
     <div className="app" style={{ backgroundImage: `url(${background})` }}>
       <ToastContainer position="top-center" />
+
+      {isLoggingIn && (
+        <div className="loading-overlay">
+          <div className="spinner" />
+          <p className="loading-text">Logging in...</p>
+        </div>
+      )}
+
       <div className="center-box">
         <p className="time-indicator">🌐 World → 🇮🇳 India → 🕓 {currentTime}</p>
         <h1 className="welcome">
@@ -130,7 +159,8 @@ function App() {
         </div>
 
         <div className="footer-note">
-          Powered by CashPlayzz — where gaming meets strategy.<br />
+          Powered by CashPlayzz — where gaming meets strategy.
+          <br />
           <span>Play smart. Stay in control.</span>
         </div>
 
@@ -139,13 +169,27 @@ function App() {
         </p>
       </div>
 
-      {/* MODALS */}
       {showLogin && (
         <div className="modal-overlay" onClick={() => setShowLogin(false)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
             <h2>Login to CashPlayzz</h2>
-            <input type="email" placeholder="Email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} />
-            <input type="password" placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
+            <input
+              type="text"
+              placeholder="Email or Username"
+              value={loginCredential}
+              onChange={(e) => setLoginCredential(e.target.value)}
+            />
+            <div className="password-field">
+              <input
+                type={showLoginPassword ? "text" : "password"}
+                placeholder="Password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+              />
+              <span className="eye-icon" onClick={() => setShowLoginPassword(!showLoginPassword)}>
+                {showLoginPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </span>
+            </div>
             <button className="modal-btn" onClick={handleLogin}>Login</button>
             <button className="modal-close" onClick={() => setShowLogin(false)}>Close</button>
           </div>
@@ -156,11 +200,35 @@ function App() {
         <div className="modal-overlay" onClick={() => setShowSignup(false)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
             <h2>Create an Account</h2>
-            <input type="email" placeholder="Email" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} />
-            <input type="text" placeholder="Username" value={signupUsername} onChange={(e) => setSignupUsername(e.target.value)} />
-            <input type="password" placeholder="Password" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} />
+            <input
+              type="email"
+              placeholder="Email"
+              value={signupEmail}
+              onChange={(e) => setSignupEmail(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Username"
+              value={signupUsername}
+              onChange={(e) => setSignupUsername(e.target.value)}
+            />
+            <div className="password-field">
+              <input
+                type={showSignupPassword ? "text" : "password"}
+                placeholder="Password"
+                value={signupPassword}
+                onChange={(e) => setSignupPassword(e.target.value)}
+              />
+              <span className="eye-icon" onClick={() => setShowSignupPassword(!showSignupPassword)}>
+                {showSignupPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </span>
+            </div>
             <label className="agreement-checkbox">
-              <input type="checkbox" checked={agreeChecked} onChange={() => setAgreeChecked(!agreeChecked)} />
+              <input
+                type="checkbox"
+                checked={agreeChecked}
+                onChange={() => setAgreeChecked(!agreeChecked)}
+              />
               I accept the <span onClick={toggleAgreement}>User Agreement</span>
             </label>
             <button className="modal-btn" onClick={handleSignup} disabled={!agreeChecked}>Signup</button>
@@ -169,7 +237,6 @@ function App() {
         </div>
       )}
 
-      {/* AGREEMENT MODAL */}
       {showAgreement && <Agreement onClose={toggleAgreement} />}
     </div>
   );

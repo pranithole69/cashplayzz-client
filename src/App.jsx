@@ -8,13 +8,15 @@ import "react-toastify/dist/ReactToastify.css";
 import { Eye, EyeOff } from "lucide-react";
 import Agreement from "./Agreement";
 
-// 👉 Use this to quickly switch between real or proxy backend during debugging
-const backendURL = "https://cashplayzz-backend.onrender.com";
-// const backendURL = "https://corsproxy.io/?https://cashplayzz-backend.onrender.com";
+// ✅ UPDATED BACKEND URL
+const backendURL = "https://cashplayzz-backend-1.onrender.com";
 
 function App() {
   const navigate = useNavigate();
+
   const [currentTime, setCurrentTime] = useState("");
+  const [serverReady, setServerReady] = useState(false);
+
   const [showAgreement, setShowAgreement] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
@@ -32,6 +34,19 @@ function App() {
 
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
+
+  // 🌐 Server warm-up check
+  useEffect(() => {
+    const checkServer = async () => {
+      try {
+        await axios.get(`${backendURL}/api/ping`);
+        setServerReady(true);
+      } catch (err) {
+        setTimeout(checkServer, 4000); // retry after 4s
+      }
+    };
+    checkServer();
+  }, []);
 
   useEffect(() => {
     const now = new Date();
@@ -91,10 +106,22 @@ function App() {
     }
 
     setIsLoggingIn(true);
+    toast.dismiss(); // Clear old toasts
+
+    // ⏳ Show warming up toast after 5 seconds
+    const warmUpTimeout = setTimeout(() => {
+      if (isLoggingIn) {
+        toast.info("🚀 Server is warming up... please wait a moment 😊", {
+          position: "top-center",
+          autoClose: 4000,
+          theme: "dark",
+        });
+      }
+    }, 5000);
+
     const toastId = toast.loading("⏳ Logging in...");
 
     try {
-      console.log("🚀 Attempting login with:", loginCredential, loginPassword);
       const res = await axios.post(
         `${backendURL}/api/auth/login`,
         {
@@ -102,11 +129,12 @@ function App() {
           password: loginPassword.trim(),
         },
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
+
+      clearTimeout(warmUpTimeout);
+      localStorage.setItem("token", res.data.token);
 
       toast.update(toastId, {
         render: res.data.message || "Login successful!",
@@ -118,9 +146,10 @@ function App() {
       setShowLogin(false);
       navigate("/dashboard");
     } catch (err) {
-      console.error("Login error:", err?.response?.data || err.message);
+      clearTimeout(warmUpTimeout);
+
       toast.update(toastId, {
-        render: err?.response?.data?.message || "Login failed.",
+        render: err?.response?.data?.message || "❌ Invalid credentials or server error.",
         type: "error",
         isLoading: false,
         autoClose: 3000,
@@ -129,6 +158,19 @@ function App() {
       setIsLoggingIn(false);
     }
   };
+
+  // 🌀 Show loading screen until backend is ready
+  if (!serverReady) {
+    return (
+      <div className="app" style={{ backgroundImage: `url(${background})` }}>
+        <ToastContainer position="top-center" />
+        <div className="loading-overlay">
+          <div className="spinner" />
+          <p className="loading-text">🌀 Server is warming up... Please wait a moment 😊</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="app" style={{ backgroundImage: `url(${background})` }}>

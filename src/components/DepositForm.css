@@ -1,0 +1,76 @@
+.deposit-box {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 0 18px rgba(0, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 15px;
+  color: #fff;
+}
+
+.deposit-box h3 {
+  text-align: center;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, #00ffe0, #ff00c3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.deposit-box label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.deposit-box input {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  outline: none;
+}
+
+.deposit-box input::placeholder {
+  color: #aaa;
+}
+
+.upi-id-box {
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid #00ffee;
+  color: #00ffee;
+  text-align: center;
+  font-weight: bold;
+}
+
+.qr-img {
+  margin-top: 10px;
+  width: 100%;
+  max-width: 250px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 10px;
+  border: 1px solid #00ffee66;
+}
+
+.deposit-box button {
+  background: #00ffe0;
+  color: #000;
+  font-weight: bold;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 10px;
+}
+
+.deposit-box button:hover {
+  background: #0ff;
+  transform: scale(1.02);
+}

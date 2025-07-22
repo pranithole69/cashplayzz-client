@@ -1,17 +1,26 @@
-import React, { useState } from "react";
-import "./dashboard.css";
+import React, { useState, useEffect } from "react";
+import "./Dashboard.css";
 import { FaWallet, FaBars, FaTimes } from "react-icons/fa";
-import { GiTwoCoins } from "react-icons/gi";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+import DepositForm from "./components/DepositForm";
 
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [showDepositForm, setShowDepositForm] = useState(false);
+  const [username, setUsername] = useState("");
+  const [balance, setBalance] = useState(0);
+
+  const userToken = localStorage.getItem("token");
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
-  const toggleWallet = () => setWalletOpen(!walletOpen);
+  const toggleWallet = () => {
+    setWalletOpen(!walletOpen);
+    setShowDepositForm(false);
+  };
 
   const handleLogout = () => {
     setLoggingOut(true);
@@ -24,57 +33,87 @@ function Dashboard() {
 
   const goToSettings = () => {
     toast.info("Settings feature coming soon!");
-    // Or navigate("/settings") if routing
   };
 
   const handleDeposit = () => {
-    toast.success("Deposit feature coming soon!");
+    setShowDepositForm(!showDepositForm);
   };
 
   const handleWithdraw = () => {
     toast.success("Withdraw feature coming soon!");
   };
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(
+          "https://cashplayzz-backend-1.onrender.com/api/user/profile",
+          {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          }
+        );
+        console.log("👤 User data:", res.data);
+        const { username, balance } = res.data;  // <-- fixed here
+        setUsername(username);
+        setBalance(balance);
+      } catch (err) {
+        toast.error("Failed to load user info");
+        console.error("❌ Fetch user error:", err.response?.data || err.message);
+      }
+    };
+    if (userToken) fetchUser();
+  }, [userToken]);
+
   return (
     <div className="dashboard-container">
-      {/* Hamburger + Sidebar */}
-      <div className="hamburger" onClick={toggleMenu}>
-        {menuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
-      </div>
-      {menuOpen && (
-        <div className="sidebar">
-          <ul>
-            <li onClick={handleLogout}>Logout</li>
-            <li onClick={goToSettings}>Settings</li>
-          </ul>
+      <ToastContainer />
+      <div className="dashboard-scroll">
+        <div className="hamburger" onClick={toggleMenu}>
+          {menuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
         </div>
-      )}
 
-      {/* Top Balance Box */}
-      <div className="balance-box">
-        <GiTwoCoins className="coin-icon" />
-        <span className="balance-text">₹12,500.00</span>
-        <FaWallet className="wallet-icon" onClick={toggleWallet} />
-      </div>
+        {menuOpen && (
+          <div className="sidebar">
+            <ul>
+              <li onClick={handleLogout}>Logout</li>
+              <li onClick={goToSettings}>Settings</li>
+            </ul>
+          </div>
+        )}
 
-      {/* Wallet Dropdown */}
-      {walletOpen && (
-        <div className="wallet-box">
-          <button className="wallet-btn" onClick={handleDeposit}>Deposit</button>
-          <button className="wallet-btn" onClick={handleWithdraw}>Withdraw</button>
+        <div className="balance-box">
+          <div className="balance-info">
+            <small className="balance-label">Your Balance</small>
+            <span className="balance-text">₹{balance.toLocaleString()}</span>
+            <small className="username-text">
+              Logged in as: <strong>{username}</strong>
+            </small>
+          </div>
+          <FaWallet className="wallet-icon" onClick={toggleWallet} />
         </div>
-      )}
 
-      {/* Game Zone */}
-      <div className="game-zone">
-        <h2>🎮 Game Zone</h2>
-        <p>Here you can play cool games!</p>
+        {walletOpen && (
+          <div className="wallet-box">
+            <div className="wallet-actions">
+              <button className="wallet-btn" onClick={handleDeposit}>
+                {showDepositForm ? "Hide Deposit" : "Deposit"}
+              </button>
+              <button className="wallet-btn" onClick={handleWithdraw}>
+                Withdraw
+              </button>
+            </div>
+            {showDepositForm && <DepositForm token={userToken} />}
+          </div>
+        )}
+
+        <div className="game-zone">
+          <h2>🎮 Game Zone</h2>
+          <p>Here you can play cool games!</p>
+        </div>
       </div>
 
-      {/* User Info */}
-      <div className="user-info">👤 Logged in as: <span>Player123</span></div>
-
-      {/* Logout Spinner Overlay */}
       {loggingOut && (
         <div className="logout-overlay">
           <div className="spinner"></div>

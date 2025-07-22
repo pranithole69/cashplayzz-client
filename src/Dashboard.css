@@ -1,13 +1,25 @@
+/* === Scrollable Container === */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
 .dashboard-container {
   background: url("./assets/bg.png") no-repeat center center fixed;
   background-size: cover;
   height: 100vh;
-  padding: 20px;
+  overflow-y: auto; /* Enables scroll */
   font-family: "Segoe UI", sans-serif;
   color: #fff;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
 }
 
+/* === Top Navigation === */
 .hamburger {
   position: absolute;
   top: 20px;
@@ -40,40 +52,77 @@
   color: #fff;
 }
 
+/* === Balance Box === */
 .balance-box {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  padding: 12px 18px;
-  border-radius: 15px;
+  padding: 14px 20px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 320px;
-  margin: 0 auto;
-  margin-top: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 85%;
+  max-width: 300px;
+  margin: 30px auto 10px; /* Less top gap */
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.balance-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.balance-label {
+  font-size: 13px;
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .balance-text {
   font-weight: bold;
-  font-size: 20px;
+  font-size: 22px;
+  color: #fff;
 }
 
-.coin-icon,
-.wallet-icon {
+.coin-icon {
   font-size: 22px;
-  margin-right: 10px;
   color: #ffd700;
+  margin-right: 10px;
+}
+
+.wallet-icon {
+  font-size: 24px;
+  color: #00ffee;
   cursor: pointer;
 }
 
+/* === Wallet Section === */
 .wallet-box {
   display: flex;
-  justify-content: center;
-  margin-top: 15px;
-  gap: 15px;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 0 18px rgba(0, 255, 255, 0.1);
 }
 
+.wallet-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+
+/* === Neon Buttons === */
 .wallet-btn {
   background: rgba(0, 255, 255, 0.08);
   color: #00ffee;
@@ -81,33 +130,28 @@
   padding: 10px 20px;
   border-radius: 12px;
   cursor: pointer;
-  transition: 0.3s;
+  font-size: 14px;
+  transition: all 0.3s ease;
 }
 
 .wallet-btn:hover {
-  background: rgba(0, 255, 255, 0.15);
+  background: rgba(0, 255, 255, 0.2);
+  transform: scale(1.03);
 }
 
+/* === Game Zone === */
 .game-zone {
   background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(10px);
   padding: 25px;
   border-radius: 15px;
-  margin: 60px auto 0;
+  margin: 40px auto;
   max-width: 600px;
   text-align: center;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
 
-.user-info {
-  position: absolute;
-  bottom: 15px;
-  left: 20px;
-  font-size: 12px;
-  color: #ffdd57;
-}
-
-/* Logout Spinner Overlay */
+/* === Logout Spinner Overlay === */
 .logout-overlay {
   position: fixed;
   top: 0;

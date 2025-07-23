@@ -1,0 +1,32 @@
+.all-users {
+  padding: 30px;
+  background-color: #111;
+  color: white;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.all-users h2 {
+  color: #00f7ff;
+  margin-bottom: 20px;
+  text-shadow: 0 0 5px #00f7ff;
+}
+
+.all-users table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.all-users th,
+.all-users td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.all-users tr:hover {
+  background-color: rgba(0, 255, 255, 0.1);
+}

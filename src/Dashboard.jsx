@@ -5,21 +5,25 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import DepositForm from "./components/DepositForm";
+import WithdrawForm from "./components/WithdrawForm";
 
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const [showDepositForm, setShowDepositForm] = useState(false);
+  const [showWithdrawForm, setShowWithdrawForm] = useState(false);
   const [username, setUsername] = useState("");
   const [balance, setBalance] = useState(0);
 
   const userToken = localStorage.getItem("token");
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
+
   const toggleWallet = () => {
     setWalletOpen(!walletOpen);
     setShowDepositForm(false);
+    setShowWithdrawForm(false);
   };
 
   const handleLogout = () => {
@@ -37,32 +41,34 @@ function Dashboard() {
 
   const handleDeposit = () => {
     setShowDepositForm(!showDepositForm);
+    setShowWithdrawForm(false);
   };
 
   const handleWithdraw = () => {
-    toast.success("Withdraw feature coming soon!");
+    setShowWithdrawForm(!showWithdrawForm);
+    setShowDepositForm(false);
+  };
+
+  const fetchUser = async () => {
+    try {
+      const res = await axios.get(
+        "https://cashplayzz-backend-1.onrender.com/api/user/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
+      const { username, balance } = res.data;
+      setUsername(username);
+      setBalance(balance);
+    } catch (err) {
+      toast.error("Failed to load user info");
+      console.error("❌ Fetch user error:", err.response?.data || err.message);
+    }
   };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get(
-          "https://cashplayzz-backend-1.onrender.com/api/user/profile",
-          {
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-            },
-          }
-        );
-        console.log("👤 User data:", res.data);
-        const { username, balance } = res.data;  // <-- fixed here
-        setUsername(username);
-        setBalance(balance);
-      } catch (err) {
-        toast.error("Failed to load user info");
-        console.error("❌ Fetch user error:", err.response?.data || err.message);
-      }
-    };
     if (userToken) fetchUser();
   }, [userToken]);
 
@@ -101,10 +107,15 @@ function Dashboard() {
                 {showDepositForm ? "Hide Deposit" : "Deposit"}
               </button>
               <button className="wallet-btn" onClick={handleWithdraw}>
-                Withdraw
+                {showWithdrawForm ? "Hide Withdraw" : "Withdraw"}
               </button>
             </div>
-            {showDepositForm && <DepositForm token={userToken} />}
+            {showDepositForm && (
+              <DepositForm token={userToken} refreshBalance={fetchUser} />
+            )}
+            {showWithdrawForm && (
+              <WithdrawForm token={userToken} refreshBalance={fetchUser} />
+            )}
           </div>
         )}
 

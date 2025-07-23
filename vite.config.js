@@ -1,15 +1,13 @@
-// vite.config.js
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { copyFileSync } from 'fs';
 
-// 🔁 Plugin to copy redirects file after build
 const copyRedirectsPlugin = () => {
   return {
     name: 'copy-redirects',
     buildEnd() {
-      const src = resolve(__dirname, 'public/redirects');
+      const src = resolve(__dirname, 'public/_redirects');
       const dest = resolve(__dirname, 'dist/_redirects');
       try {
         copyFileSync(src, dest);
@@ -22,9 +20,13 @@ const copyRedirectsPlugin = () => {
 };
 
 export default defineConfig({
-  base: '/',
-  plugins: [react(), copyRedirectsPlugin()],
-  define: {
-    'process.env': {}
-  }
+  plugins: [
+    react(),
+    copyRedirectsPlugin()
+  ],
+  build: {
+    rollupOptions: {
+      input: 'index.html',
+    },
+  },
 });

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { FaTimesCircle } from 'react-icons/fa';
 
 const AdminLogin = () => {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const AdminLogin = () => {
 
     try {
       const res = await axios.post('https://cashplayzz-backend-1.onrender.com/api/auth/login', {
-        email,
+        identifier,
         password,
       });
 
@@ -33,7 +33,7 @@ const AdminLogin = () => {
       toast.success('Admin Login Successful');
       navigate('/admin');
     } catch (err) {
-      setError('Invalid email or password ❌');
+      setError('Invalid email/username or password ❌');
     }
   };
 
@@ -43,10 +43,10 @@ const AdminLogin = () => {
         <h2>Admin Login</h2>
 
         <input
-          type="email"
-          placeholder="Admin Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Admin Email or Username"
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
           required
         />
 

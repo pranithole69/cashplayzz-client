@@ -48,7 +48,7 @@ const WithdrawalsList = () => {
           {withdrawals.map((w) => (
             <tr key={w._id}>
               <td>{w._id}</td>
-              <td>{w.username || w.userId}</td>
+              <td>{w.user?.username || w.user?._id}</td>
               <td>₹{w.amount}</td>
               <td>{w.status}</td>
               <td>{new Date(w.createdAt).toLocaleString()}</td>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./AdminDashboard.css"; // Import CSS file
 
 function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -46,7 +47,6 @@ function AdminDashboard() {
         console.error(err);
         setError("Failed to load stats");
         if (err.response && err.response.status === 401) {
-          // Unauthorized, clear token and redirect
           localStorage.removeItem("token");
           navigate("/admin/login");
         }
@@ -56,18 +56,18 @@ function AdminDashboard() {
     fetchStats();
   }, [navigate]);
 
-  if (!stats && !error) return <p className="text-white text-center mt-10">Loading...</p>;
-  if (error) return <p className="text-red-500 text-center mt-10">{error}</p>;
+  if (!stats && !error) return <p className="loading-text">Loading...</p>;
+  if (error) return <p className="error-text">{error}</p>;
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      <h1 className="text-3xl font-bold text-center text-neon mb-8">Admin Dashboard</h1>
+    <div className="admin-dashboard">
+      <h1 className="dashboard-title">Admin Dashboard</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        <Card title="Total Profit" value={`₹${stats.profit}`} />
-        <Card title="Total Deposits" value={`₹${stats.totalDeposits}`} />
-        <Card title="Total Withdrawals" value={`₹${stats.totalWithdrawals}`} />
-        <Card title="Total Users" value={stats.totalUsers} />
+      <div className="admin-stats">
+        <Card title="Total Profit" value={`₹${stats.profit ?? "0"}`} />
+        <Card title="Total Deposits" value={`₹${stats.totalDeposits ?? "0"}`} />
+        <Card title="Total Withdrawals" value={`₹${stats.totalWithdrawals ?? "0"}`} />
+        <Card title="Total Users" value={stats.totalUsers ?? "0"} />
         {stats.topWinner && (
           <Card title="Top Winner" value={`${stats.topWinner.username} — ₹${stats.topWinner.amount}`} />
         )}
@@ -81,9 +81,9 @@ function AdminDashboard() {
 
 function Card({ title, value }) {
   return (
-    <div className="bg-gray-900 rounded-xl p-4 shadow-lg border border-gray-700">
-      <h3 className="text-lg text-gray-400">{title}</h3>
-      <p className="text-2xl font-semibold text-neon mt-2">{value}</p>
+    <div className="stat-card">
+      <h3 className="stat-title">{title}</h3>
+      <p className="stat-value">{value}</p>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import AdminLogin from './AdminLogin';
 const AdminRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<AdminDashboard />} />
+      <Route index element={<AdminDashboard />} /> {/* ✅ FIXED */}
       <Route path="users" element={<AllUsers />} />
       <Route path="login" element={<AdminLogin />} />
     </Routes>

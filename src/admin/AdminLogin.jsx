@@ -1,77 +1,74 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import './AdminLogin.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { FaTimesCircle } from 'react-icons/fa';
 
-function AdminLogin() {
-  const [input, setInput] = useState({ identifier: "", password: "" });
-  const [error, setError] = useState("");
+const AdminLogin = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
-  };
-
-  const handleLogin = async (e) => {
+  const handleAdminLogin = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     try {
-      const res = await axios.post("https://cashplayzz-backend-1.onrender.com/api/auth/login", input);
-      const { token, role } = res.data;
+      const res = await axios.post('https://cashplayzz-backend-1.onrender.com/api/auth/login', {
+        email,
+        password,
+      });
 
-      if (role !== "admin") {
-        setError("❌ Not authorized. You are not an admin.");
+      const token = res.data.token;
+      const user = res.data.user;
+
+      if (user.role !== 'admin') {
+        setError('Access Denied: Not an admin ❌');
         return;
       }
 
-      localStorage.setItem("adminToken", token);
-      navigate("/admin/dashboard");
+      localStorage.setItem('token', token);
+      toast.success('Admin Login Successful');
+      navigate('/admin');
     } catch (err) {
-      setError(err.response?.data?.error || "Login failed. Please try again.");
+      setError('Invalid email or password ❌');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
-      <form
-        onSubmit={handleLogin}
-        className="bg-gray-900 p-8 rounded-xl shadow-2xl w-full max-w-md border border-neon"
-      >
-        <h2 className="text-3xl font-bold mb-6 text-center text-neon">
-          Admin Login
-        </h2>
+    <div className="admin-login-container">
+      <form className="admin-login-form" onSubmit={handleAdminLogin}>
+        <h2>Admin Login</h2>
 
         <input
-          type="text"
-          name="identifier"
-          placeholder="Email or Username"
-          value={input.identifier}
-          onChange={handleChange}
-          className="w-full mb-4 p-3 rounded bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-neon"
+          type="email"
+          placeholder="Admin Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
         />
 
         <input
           type="password"
-          name="password"
-          placeholder="Password"
-          value={input.password}
-          onChange={handleChange}
-          className="w-full mb-4 p-3 rounded bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-neon"
+          placeholder="Admin Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
         />
 
         {error && (
-          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
+          <div className="error-message">
+            <FaTimesCircle className="error-icon" />
+            {error}
+          </div>
         )}
 
-        <button
-          type="submit"
-          className="w-full bg-neon hover:bg-pink-600 text-white font-bold py-2 rounded transition"
-        >
-          Login
-        </button>
+        <button type="submit">Login</button>
       </form>
     </div>
   );
-}
+};
 
 export default AdminLogin;

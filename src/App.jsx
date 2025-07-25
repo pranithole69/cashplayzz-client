@@ -6,7 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Eye, EyeOff } from "lucide-react";
 import Agreement from "./Agreement";
-import { useNavigate } from "react-router-dom"; // ✅ Make sure this is here!
+import { useNavigate } from "react-router-dom";
 
 const backendURL = "https://cashplayzz-backend-1.onrender.com";
 
@@ -96,8 +96,10 @@ const App = () => {
         autoClose: 2000,
       });
       setShowLogin(false);
+
+      // Decode token safely:
       const decodedToken = JSON.parse(atob(res.data.token.split(".")[1]));
-      if (decodedToken.isAdmin) {
+      if (decodedToken.role === "admin") {
         navigate("/admin");
       } else {
         navigate("/dashboard");
@@ -147,13 +149,29 @@ const App = () => {
         <div className="modal-overlay" onClick={() => setShowLogin(false)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
             <h2>Login to CashPlayzz</h2>
-            <input type="text" placeholder="Email or Username" value={loginCredential} onChange={(e) => setLoginCredential(e.target.value)} />
+            <input
+              type="text"
+              placeholder="Email or Username"
+              value={loginCredential}
+              onChange={(e) => setLoginCredential(e.target.value)}
+            />
             <div className="password-field">
-              <input type={showLoginPassword ? "text" : "password"} placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
-              <span onClick={() => setShowLoginPassword(!showLoginPassword)}>{showLoginPassword ? <EyeOff size={20} /> : <Eye size={20} />}</span>
+              <input
+                type={showLoginPassword ? "text" : "password"}
+                placeholder="Password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+              />
+              <span onClick={() => setShowLoginPassword(!showLoginPassword)}>
+                {showLoginPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </span>
             </div>
-            <button className="modal-btn" onClick={handleLogin}>Login</button>
-            <button className="modal-close" onClick={() => setShowLogin(false)}>Close</button>
+            <button className="modal-btn" onClick={handleLogin}>
+              Login
+            </button>
+            <button className="modal-close" onClick={() => setShowLogin(false)}>
+              Close
+            </button>
           </div>
         </div>
       )}
@@ -163,18 +181,43 @@ const App = () => {
         <div className="modal-overlay" onClick={() => setShowSignup(false)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
             <h2>Create an Account</h2>
-            <input type="email" placeholder="Email" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} />
-            <input type="text" placeholder="Username" value={signupUsername} onChange={(e) => setSignupUsername(e.target.value)} />
+            <input
+              type="email"
+              placeholder="Email"
+              value={signupEmail}
+              onChange={(e) => setSignupEmail(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Username"
+              value={signupUsername}
+              onChange={(e) => setSignupUsername(e.target.value)}
+            />
             <div className="password-field">
-              <input type={showSignupPassword ? "text" : "password"} placeholder="Password" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} />
-              <span onClick={() => setShowSignupPassword(!showSignupPassword)}>{showSignupPassword ? <EyeOff size={20} /> : <Eye size={20} />}</span>
+              <input
+                type={showSignupPassword ? "text" : "password"}
+                placeholder="Password"
+                value={signupPassword}
+                onChange={(e) => setSignupPassword(e.target.value)}
+              />
+              <span onClick={() => setShowSignupPassword(!showSignupPassword)}>
+                {showSignupPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </span>
             </div>
             <label className="agreement-checkbox">
-              <input type="checkbox" checked={agreeChecked} onChange={() => setAgreeChecked(!agreeChecked)} />
+              <input
+                type="checkbox"
+                checked={agreeChecked}
+                onChange={() => setAgreeChecked(!agreeChecked)}
+              />
               I accept the <span onClick={toggleAgreement}>User Agreement</span>
             </label>
-            <button className="modal-btn" onClick={handleSignup} disabled={!agreeChecked}>Signup</button>
-            <button className="modal-close" onClick={() => setShowSignup(false)}>Close</button>
+            <button className="modal-btn" onClick={handleSignup} disabled={!agreeChecked}>
+              Signup
+            </button>
+            <button className="modal-close" onClick={() => setShowSignup(false)}>
+              Close
+            </button>
           </div>
         </div>
       )}

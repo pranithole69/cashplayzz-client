@@ -25,7 +25,7 @@ const AdminLogin = () => {
       const user = res.data.user;
 
       if (user.role !== 'admin') {
-        setError('Access Denied: Not an admin ❌');
+        setError('Access Denied: Chal bsdk❌');
         return;
       }
 

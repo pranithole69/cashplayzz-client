@@ -1,4 +1,3 @@
-// client/src/admin/AdminDashboard.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -10,23 +9,47 @@ function AdminDashboard() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const token = localStorage.getItem("adminToken");
+      const token = localStorage.getItem("token");
       if (!token) {
         navigate("/admin/login");
         return;
       }
 
+      // Decode token and check role before fetching
+      let decoded;
       try {
-        const res = await axios.get("https://cashplayzz-backend-1.onrender.com/api/admin/stats", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        decoded = JSON.parse(atob(token.split(".")[1]));
+      } catch {
+        localStorage.removeItem("token");
+        navigate("/admin/login");
+        return;
+      }
+
+      if (decoded.role !== "admin") {
+        localStorage.removeItem("token");
+        navigate("/admin/login");
+        return;
+      }
+
+      try {
+        const res = await axios.get(
+          "https://cashplayzz-backend-1.onrender.com/api/admin/stats",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         setStats(res.data);
       } catch (err) {
         console.error(err);
         setError("Failed to load stats");
+        if (err.response && err.response.status === 401) {
+          // Unauthorized, clear token and redirect
+          localStorage.removeItem("token");
+          navigate("/admin/login");
+        }
       }
     };
 

@@ -60,7 +60,7 @@ const DepositsList = () => {
             >
               <p>
                 <span className="text-gray-400">Username:</span>{" "}
-                {dep.user?.username || "Unknown"}
+                {dep.userId?.username || "Unknown"}
               </p>
               <p>
                 <span className="text-gray-400">Sender Name:</span>{" "}

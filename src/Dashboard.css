@@ -254,3 +254,13 @@ body, html {
     transform: rotate(360deg);
   }
 }
+/* === Fix GameZone container width on desktop === */
+.game-zone {
+  max-width: 600px;           /* Limit width on desktop */
+  margin: 30px auto 0 auto;   /* Center it horizontally */
+}
+
+/* === Align game card inside GameZone === */
+.game-zone .game-card-glass {
+  margin: 0 auto;
+}

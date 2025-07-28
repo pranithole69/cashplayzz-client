@@ -1,10 +1,9 @@
+/* === Scrollable Container === */
 body, html {
   margin: 0;
   padding: 0;
   height: 100%;
   overflow: hidden;
-  scroll-behavior: smooth;
-  background: #000;
 }
 
 .dashboard-container {
@@ -14,32 +13,31 @@ body, html {
   overflow-y: auto;
   font-family: "Segoe UI", sans-serif;
   color: #fff;
-  padding: 20px;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
 }
 
-/* === Hamburger === */
+/* === Top Navigation === */
 .hamburger {
   position: absolute;
   top: 20px;
   left: 20px;
-  color: #00ffee;
-  z-index: 1000;
   cursor: pointer;
+  color: #fff;
+  z-index: 999;
 }
 
-/* === Sidebar (glassy) === */
 .sidebar {
   position: absolute;
   top: 60px;
   left: 20px;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
   padding: 15px;
-  border-radius: 12px;
+  border-radius: 10px;
   z-index: 999;
-  box-shadow: 0 0 12px rgba(0, 255, 255, 0.2);
 }
 
 .sidebar ul {
@@ -49,165 +47,193 @@ body, html {
 }
 
 .sidebar li {
-  padding: 10px 0;
+  padding: 8px 0;
   cursor: pointer;
-  color: #00ffee;
-  font-weight: 500;
-  transition: color 0.3s;
-}
-
-.sidebar li:hover {
   color: #fff;
 }
 
 /* === Balance Box === */
 .balance-box {
-  background: rgba(0, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 255, 255, 0.15);
-  box-shadow: 0 0 14px rgba(0, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 14px 20px;
   border-radius: 16px;
-  padding: 18px;
-  width: 85%;
-  max-width: 320px;
-  margin: 80px auto 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  width: 85%;
+  max-width: 300px;
+  margin: 30px auto 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
 
 .balance-info {
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 
 .balance-label {
   font-size: 13px;
   color: #ccc;
-  letter-spacing: 1px;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .balance-text {
-  font-size: 24px;
   font-weight: bold;
-  color: #00ffee;
+  font-size: 22px;
+  color: #fff;
 }
 
-.username-text {
-  font-size: 12px;
-  color: #aaa;
-  margin-top: 4px;
+.coin-icon {
+  font-size: 22px;
+  color: #ffd700;
+  margin-right: 10px;
 }
 
 .wallet-icon {
-  font-size: 26px;
+  font-size: 24px;
   color: #00ffee;
   cursor: pointer;
 }
 
-/* === Wallet Box === */
+/* === Wallet Section === */
 .wallet-box {
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(0, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
   border-radius: 15px;
-  padding: 25px;
-  margin: 0 auto;
   max-width: 500px;
-  box-shadow: 0 0 25px rgba(0, 255, 255, 0.08);
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 0 18px rgba(0, 255, 255, 0.1);
 }
 
 .wallet-actions {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
   gap: 14px;
-  margin-bottom: 20px;
+  justify-content: center;
 }
 
 /* === Neon Buttons === */
-.wallet-btn,
-.enter-button {
+.wallet-btn {
   background: rgba(0, 255, 255, 0.08);
   color: #00ffee;
   border: 1px solid #00ffee;
   padding: 10px 20px;
   border-radius: 12px;
-  font-size: 14px;
-  font-weight: bold;
   cursor: pointer;
+  font-size: 14px;
   transition: all 0.3s ease;
-  box-shadow: 0 0 10px #00ffee77;
 }
 
-.wallet-btn:hover,
-.enter-button:hover {
-  background: rgba(0, 255, 255, 0.15);
-  transform: scale(1.04);
-  box-shadow: 0 0 14px #00ffeeaa;
+.wallet-btn:hover {
+  background: rgba(0, 255, 255, 0.2);
+  transform: scale(1.03);
 }
 
 /* === Game Zone === */
+/* ==== Game Zone ==== */
 .game-zone {
-  background: rgba(255, 255, 255, 0.03);
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
-  padding: 30px 20px;
-  border-radius: 16px;
-  margin: 50px auto 40px;
-  max-width: 600px;
-  box-shadow: 0 0 18px rgba(0, 255, 255, 0.06);
-  text-align: center;
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .game-zone h2 {
-  color: #00ffee;
+  font-size: 1.8rem;
   margin-bottom: 20px;
+  text-align: center;
+  color: #00ffe0;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
 }
 
-/* === Game Card === */
-.game-card-glass {
-  background: rgba(0, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+/* Game Card */
+.balance-box.game-card-glass {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 0 24px rgba(0, 255, 255, 0.07);
-  transition: transform 0.3s ease;
+  border: 1px solid rgba(0, 255, 255, 0.1);
+  padding: 20px;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
 }
 
-.game-card-glass:hover {
-  transform: scale(1.05);
-  background: rgba(0, 255, 255, 0.1);
+.balance-box.game-card-glass:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
 }
 
+/* Game Image */
 .game-image {
-  height: 120px;
-  object-fit: contain;
-  border-radius: 10px;
-  margin-bottom: 12px;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
+/* Game Name */
 .game-name {
-  color: #fff;
+  font-size: 1.4rem;
+  color: #ffffff;
   margin-bottom: 12px;
+  font-weight: 600;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
 }
 
-/* === Logout Overlay === */
+/* Enter Button */
+.enter-button {
+  background: linear-gradient(135deg, #00ffe0, #0055ff);
+  color: #000;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 15px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+.enter-button:hover {
+  background: linear-gradient(135deg, #00e0ff, #0033ff);
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+}
+
+/* === Logout Spinner Overlay === */
 .logout-overlay {
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
   width: 100vw;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(6px);
+  z-index: 9999;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-  z-index: 9999;
-  color: #00ffee;
   font-size: 16px;
+  color: #00ffee;
 }
 
 .spinner {
@@ -221,6 +247,10 @@ body, html {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

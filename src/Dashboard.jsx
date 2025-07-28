@@ -5,9 +5,9 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import DepositForm from "./components/DepositForm";
-import WithdrawForm from "./components/WithdrawForm";
-import freefireLogo from "../assets/freefire.png"; // make sure this path is correct
+import DepositForm from "./components/DepositForm.jsx";
+import WithdrawForm from "./components/WithdrawForm.jsx";
+import freefireLogo from "./assets/freefire.png"; // ✅ fixed path
 
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);

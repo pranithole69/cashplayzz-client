@@ -172,8 +172,11 @@ body, html {
 }
 
 .game-card-glass {
-  background: rgba(0, 51, 102, 0.25);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.04); /* ✅ Matches rest of theme */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 255, 255, 0.05);
 }
 
 .game-card:hover,

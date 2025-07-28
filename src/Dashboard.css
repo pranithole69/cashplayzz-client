@@ -4,13 +4,14 @@ body, html {
   padding: 0;
   height: 100%;
   overflow: hidden;
+  scroll-behavior: smooth;
 }
 
 .dashboard-container {
   background: url("./assets/bg.png") no-repeat center center fixed;
   background-size: cover;
   height: 100vh;
-  overflow-y: auto; /* Enables scroll */
+  overflow-y: auto;
   font-family: "Segoe UI", sans-serif;
   color: #fff;
   position: relative;
@@ -63,7 +64,7 @@ body, html {
   justify-content: space-between;
   width: 85%;
   max-width: 300px;
-  margin: 30px auto 10px; /* Less top gap */
+  margin: 30px auto 10px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
   position: relative;
 }
@@ -123,7 +124,8 @@ body, html {
 }
 
 /* === Neon Buttons === */
-.wallet-btn {
+.wallet-btn,
+.enter-button {
   background: rgba(0, 255, 255, 0.08);
   color: #00ffee;
   border: 1px solid #00ffee;
@@ -132,11 +134,14 @@ body, html {
   cursor: pointer;
   font-size: 14px;
   transition: all 0.3s ease;
+  box-shadow: 0 0 8px #00ffeeaa;
 }
 
-.wallet-btn:hover {
+.wallet-btn:hover,
+.enter-button:hover {
   background: rgba(0, 255, 255, 0.2);
   transform: scale(1.03);
+  opacity: 0.95;
 }
 
 /* === Game Zone === */
@@ -149,6 +154,45 @@ body, html {
   max-width: 600px;
   text-align: center;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+/* === Game Cards === */
+.game-card,
+.game-card-glass {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(0, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 18px rgba(0, 255, 255, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.game-card-glass {
+  background: rgba(0, 51, 102, 0.25);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.game-card:hover,
+.game-card-glass:hover {
+  transform: scale(1.03);
+  background: rgba(0, 255, 255, 0.1);
+}
+
+.game-image {
+  height: 120px;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.game-name {
+  color: #fff;
+  margin-bottom: 10px;
 }
 
 /* === Logout Spinner Overlay === */
@@ -186,58 +230,4 @@ body, html {
   100% {
     transform: rotate(360deg);
   }
-}
-.game-zone {
-  background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(10px);
-  padding: 25px;
-  border-radius: 15px;
-  margin: 40px auto;
-  max-width: 600px;
-  text-align: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
-}
-
-.game-card {
-  background: rgba(0, 255, 255, 0.06);
-  backdrop-filter: blur(8px);
-  border-radius: 16px;
-  padding: 20px;
-  margin-top: 20px;
-  transition: 0.3s;
-  box-shadow: 0 0 18px rgba(0, 255, 255, 0.1);
-  cursor: pointer;
-}
-
-.game-card:hover {
-  transform: scale(1.03);
-  background: rgba(0, 255, 255, 0.1);
-}
-
-.game-image {
-  height: 120px;       /* slightly bigger */
-  max-width: 100%;     /* doesn't overflow */
-  object-fit: contain;
-  border-radius: 10px;
-  margin-bottom: 12px;
-}
-
-.game-name {
-  color: #fff;
-  margin-bottom: 10px;
-}
-
-.enter-button {
-  background: #00ffee;
-  color: #000;
-  border: none;
-  padding: 8px 20px;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.enter-button:hover {
-  opacity: 0.9;
 }

@@ -7,7 +7,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DepositForm from "./components/DepositForm.jsx";
 import WithdrawForm from "./components/WithdrawForm.jsx";
-import freefireLogo from "./assets/freefire.png"; // ✅ fixed path
+import freefireLogo from "./assets/freefire.png";
 
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -128,7 +128,7 @@ function Dashboard() {
 
         <div className="game-zone">
           <h2>🎮 Game Zone</h2>
-          <div className="game-card" onClick={handleEnterFreeFire}>
+          <div className="game-card-glass" onClick={handleEnterFreeFire}>
             <img src={freefireLogo} alt="Free Fire" className="game-image" />
             <h3 className="game-name">Free Fire</h3>
             <button className="enter-button">Enter</button>

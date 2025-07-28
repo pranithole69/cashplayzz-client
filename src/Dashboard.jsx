@@ -22,7 +22,6 @@ function Dashboard() {
   const navigate = useNavigate();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
-
   const toggleWallet = () => {
     setWalletOpen(!walletOpen);
     setShowDepositForm(false);
@@ -96,6 +95,7 @@ function Dashboard() {
           </div>
         )}
 
+        {/* ==== Balance Box ==== */}
         <div className="balance-box">
           <div className="balance-info">
             <small className="balance-label">Your Balance</small>
@@ -107,6 +107,7 @@ function Dashboard() {
           <FaWallet className="wallet-icon" onClick={toggleWallet} />
         </div>
 
+        {/* ==== Wallet Box ==== */}
         {walletOpen && (
           <div className="wallet-box">
             <div className="wallet-actions">
@@ -126,16 +127,20 @@ function Dashboard() {
           </div>
         )}
 
+        {/* ==== Game Zone ==== */}
         <div className="game-zone">
           <h2>🎮 Game Zone</h2>
-          <div className="game-card-glass" onClick={handleEnterFreeFire}>
-            <img src={freefireLogo} alt="Free Fire" className="game-image" />
-            <h3 className="game-name">Free Fire</h3>
-            <button className="enter-button">Enter</button>
+          <div className="balance-box game-card-glass" onClick={handleEnterFreeFire}>
+            <div style={{ textAlign: "center", width: "100%" }}>
+              <img src={freefireLogo} alt="Free Fire" className="game-image" />
+              <h3 className="game-name">Free Fire</h3>
+              <button className="enter-button">Enter</button>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* ==== Logout Overlay ==== */}
       {loggingOut && (
         <div className="logout-overlay">
           <div className="spinner"></div>

@@ -187,3 +187,57 @@ body, html {
     transform: rotate(360deg);
   }
 }
+.game-zone {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px);
+  padding: 25px;
+  border-radius: 15px;
+  margin: 40px auto;
+  max-width: 600px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.game-card {
+  background: rgba(0, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 20px;
+  transition: 0.3s;
+  box-shadow: 0 0 18px rgba(0, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+.game-card:hover {
+  transform: scale(1.03);
+  background: rgba(0, 255, 255, 0.1);
+}
+
+.game-image {
+  height: 120px;       /* slightly bigger */
+  max-width: 100%;     /* doesn't overflow */
+  object-fit: contain;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.game-name {
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.enter-button {
+  background: #00ffee;
+  color: #000;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.enter-button:hover {
+  opacity: 0.9;
+}

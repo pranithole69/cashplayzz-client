@@ -1,0 +1,64 @@
+.ff-tournament-container {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2rem;
+  border-radius: 15px;
+  backdrop-filter: blur(12px);
+  text-align: center;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
+  margin-top: 2rem;
+  color: white;
+}
+
+.ff-logo {
+  width: 130px;
+  margin-bottom: 1rem;
+}
+
+.mode-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+  gap: 10px;
+}
+
+.mode-btn {
+  padding: 10px 20px;
+  background: rgba(0, 255, 255, 0.08);
+  border: 1px solid #00ffee;
+  border-radius: 8px;
+  color: #00ffee;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.mode-btn.active,
+.mode-btn:hover {
+  background: #00ffee;
+  color: #000;
+}
+
+.tournament-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.tournament-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.join-btn {
+  margin-top: 10px;
+  padding: 8px 20px;
+  background: #00ffee;
+  border: none;
+  border-radius: 8px;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}

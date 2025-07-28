@@ -5,7 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import DepositForm from "../components/DepositForm";
+import DepositForm from "./components/DepositForm";
 import WithdrawForm from "../components/WithdrawForm";
 import freefireLogo from "../assets/freefire.png"; // make sure this path is correct
 

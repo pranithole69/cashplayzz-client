@@ -134,21 +134,25 @@ function Dashboard() {
         )}
 
         <div className="game-zone">
-          <h2>🎮 Matches Available Now</h2>
+          <h2 className="game-zone-heading">
+            <span role="img" aria-label="controller">
+              🎮
+            </span>{" "}
+            Matches Available Now
+          </h2>
           <div className="modes-list">
             {modes.map((mode) => (
               <div
                 key={mode.name}
-                className="balance-box game-card-glass mode-card"
+                className="mode-card clean-glass"
                 onClick={() => handleEnterMode(mode.name)}
               >
-                <div style={{ textAlign: "center", width: "100%" }}>
-                  <h3 className="game-name">
-                    <span className="mode-icon">{mode.icon}</span> {mode.name}
-                  </h3>
-                  <p>{mode.description}</p>
-                  <button className="enter-button">Enter</button>
+                <div className="mode-header">
+                  <span className="mode-icon">{mode.icon}</span>
+                  <span className="mode-title">{mode.name}</span>
                 </div>
+                <p className="mode-desc">{mode.description}</p>
+                <button className="enter-btn">Enter</button>
               </div>
             ))}
           </div>

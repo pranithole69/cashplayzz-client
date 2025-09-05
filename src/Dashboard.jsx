@@ -73,14 +73,12 @@ function Dashboard() {
     if (userToken) fetchUser();
   }, [userToken]);
 
-  // Define modes array to display
   const modes = [
     { name: "Battle Royale", description: "Classic survival mode" },
     { name: "Clash Squad", description: "Fast-paced 4v4 matches" },
     { name: "Lone Wolf", description: "1v1 intense duels" },
   ];
 
-  // Navigation handler for modes (customize URLs if needed)
   const handleEnterMode = (modeName) => {
     if (modeName === "Battle Royale") navigate("/battle-royale");
     else if (modeName === "Clash Squad") navigate("/clash-squad");
@@ -105,7 +103,6 @@ function Dashboard() {
           </div>
         )}
 
-        {/* ==== Balance Box ==== */}
         <div className="balance-box">
           <div className="balance-info">
             <small className="balance-label">Your Balance</small>
@@ -117,7 +114,6 @@ function Dashboard() {
           <FaWallet className="wallet-icon" onClick={toggleWallet} />
         </div>
 
-        {/* ==== Wallet Box ==== */}
         {walletOpen && (
           <div className="wallet-box">
             <div className="wallet-actions">
@@ -137,7 +133,6 @@ function Dashboard() {
           </div>
         )}
 
-        {/* ==== Game Zone ==== */}
         <div className="game-zone">
           <h2>🎮 Matches Available Now</h2>
           <div className="modes-list">
@@ -146,7 +141,7 @@ function Dashboard() {
                 key={mode.name}
                 className="balance-box game-card-glass mode-card"
                 onClick={() => handleEnterMode(mode.name)}
-                style={{ cursor: "pointer", marginBottom: "20px" }}
+                style={{ cursor: "pointer" }}
               >
                 <div style={{ textAlign: "center", width: "100%" }}>
                   <h3 className="game-name">{mode.name}</h3>
@@ -161,7 +156,6 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* ==== Logout Overlay ==== */}
       {loggingOut && (
         <div className="logout-overlay">
           <div className="spinner"></div>

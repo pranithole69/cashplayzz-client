@@ -1,121 +1,140 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Dashboard.css";
-import { FaWallet, FaBars, FaTimes, FaChevronDown, FaChevronUp, FaBell, FaCog, FaStar } from "react-icons/fa";
-import { toast, ToastContainer } from "react-toastify";
+import { FaWallet, FaBars, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import DepositForm from "./components/DepositForm.jsx";
-import WithdrawForm from "./components/WithdrawForm.jsx";
 
 const playerPool = [
-  "PriyaGaming12","YT_Gamerz","ShadowKnight","AlphaStriker","CrimsonFury",
-  "BladeRunner","NeonNinja","GhostReaper","PhantomFox","StormRider"
+  "PriyaGaming12", "YT_Gamerz", "ShadowKnight", "AlphaStriker",
+  "CrimsonFury", "BladeRunner", "NeonNinja", "GhostReaper",
+  "PhantomFox", "StormRider"
 ];
 
-function generateHourlyLeaderboard(hour) {
-  const basePrizes = [10000, 8000, 6000]; // realistic starting amounts
-  return playerPool.slice(0, 3).map((name, i) => ({
-    name,
-    prize: basePrizes[i] + hour * (1000 + Math.floor(Math.random() * 2000)),
-  }));
+function getIndianFormattedNumber(number) {
+  return number.toLocaleString('en-IN');
+}
+
+// Generate leaderboard data consistent within the same hour
+function generateLeaderboard(hour) {
+  let basePrizes = [10000, 9000, 8000]; // Base prize per rank
+  let leaderboard = [];
+  let usedIndices = new Set();
+
+  for (let i = 0; i < 3; i++) {
+    // pick unique player
+    let idx;
+    do {
+      idx = Math.floor(((hour / 3) * 7 * (i + 1) + i * 13) % playerPool.length);
+    } while (usedIndices.has(idx));
+    usedIndices.add(idx);
+
+    // cumulative prize with hourly increment
+    let prize = basePrizes[i] + hour * (500 + i * 200); // steady growth
+
+    leaderboard.push({
+      name: playerPool[idx],
+      prize,
+    });
+  }
+  // Sort descending
+  leaderboard.sort((a, b) => b.prize - a.prize);
+  return leaderboard;
 }
 
 export default function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
-  const [showDepositForm, setShowDepositForm] = useState(false);
-  const [showWithdrawForm, setShowWithdrawForm] = useState(false);
+  const [showDeposit, setShowDeposit] = useState(false);
+  const [showWithdraw, setShowWithdraw] = useState(false);
   const [username, setUsername] = useState("");
   const [balance, setBalance] = useState(0);
   const [leaderboardVisible, setLeaderboardVisible] = useState(false);
   const [leaderboard, setLeaderboard] = useState([]);
-
-  const userToken = localStorage.getItem("token");
   const navigate = useNavigate();
 
+  // Initial leaderboard load and update every hour on the hour
   useEffect(() => {
     const now = new Date();
-    const hour = now.getHours();
-    setLeaderboard(generateHourlyLeaderboard(hour));
+    const currentHour = now.getHours();
+    setLeaderboard(generateLeaderboard(currentHour));
+
+    // calculate millis to next hour
+    const msToNextHour = (60 - now.getMinutes()) * 60000 - now.getSeconds() * 1000 - now.getMilliseconds();
+    // Update once on the hour, then every hour
+    const timeout = setTimeout(() => {
+      setLeaderboard(generateLeaderboard((new Date()).getHours()));
+      const interval = setInterval(() => setLeaderboard(generateLeaderboard((new Date()).getHours())), 3600000);
+      window._leaderboardInterval = interval;
+    }, msToNextHour);
+
+    return () => {
+      clearTimeout(timeout);
+      if (window._leaderboardInterval) clearInterval(window._leaderboardInterval);
+    };
+  }, []);
+
+  // User info load
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    axios.get("https://cashplayzz-backend-1.herokuapp.com/api/user/profile", {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then((res) => {
+      setUsername(res.data.username || "");
+      setBalance(res.data.balance || 0);
+    }).catch(() => toast.error("Unable to fetch user data."));
   }, []);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const toggleWallet = () => {
     setWalletOpen(!walletOpen);
-    setShowDepositForm(false);
-    setShowWithdrawForm(false);
+    setShowDeposit(false);
+    setShowWithdraw(false);
   };
-
   const handleLogout = () => {
     setLoggingOut(true);
-    toast.info("Logging out...");
     setTimeout(() => {
       localStorage.removeItem("token");
       window.location.href = "/";
     }, 1500);
   };
-
-  const goToSettings = () => toast.info("Settings feature coming soon!");
-
-  const handleDeposit = () => {
-    setShowDepositForm((v) => !v);
-    setShowWithdrawForm(false);
+  const toggleDeposit = () => {
+    setShowDeposit(!showDeposit);
+    setShowWithdraw(false);
   };
-
-  const handleWithdraw = () => {
-    setShowWithdrawForm((v) => !v);
-    setShowDepositForm(false);
+  const toggleWithdraw = () => {
+    setShowWithdraw(!showWithdraw);
+    setShowDeposit(false);
   };
-
-  const fetchUser = async () => {
-    try {
-      const res = await axios.get("https://cashplayzz-backend-1.onrender.com/api/user/profile", {
-        headers: { Authorization: `Bearer ${userToken}` },
-      });
-      setUsername(res.data.username);
-      setBalance(res.data.balance);
-    } catch {
-      toast.error("Failed to load user info");
-    }
-  };
-
-  useEffect(() => { if(userToken) fetchUser(); }, [userToken]);
+  const goToSettings = () => toast.info("Settings coming soon!");
 
   const modes = [
-    { name: "Battle Royale", icon: "🔥", caption: "Intense battles, big prizes 🔥", description: "Classic survival mode" },
-    { name: "Clash Squad", icon: "⚡", caption: "Fast-paced, big wins ⚡", description: "Quick 4v4 matches" },
-    { name: "Lone Wolf", icon: "🐺", caption: "Quick way to make profit 🐺", description: "Intense 1v1 duels" },
+    {name: "Battle Royale", icon:"🔥", caption:"Intense battles, big prizes", desc:"Classic survival mode"},
+    {name: "Clash Squad", icon:"⚡", caption:"Fast-paced, big wins", desc:"Quick 4v4 battles"},
+    {name: "Lone Wolf", icon:"🐺", caption:"Fast way to profit", desc:"Intense 1v1 duels"},
   ];
 
-  const handleEnterMode = (mode) => {
-    console.log(`Enter pressed for mode: ${mode}`); // Implement navigation here if wanted
-    toast.info(`You tapped Enter for ${mode}`);
+  const handleEnter = (mode) => {
+    console.log(`ENTER ${mode}`);
+    toast.info(`Entering ${mode}`);
+    // Replace with navigation or modal open etc.
   };
 
   return (
     <div className="dashboard-container">
       <ToastContainer />
       <div className="dashboard-scroll">
-        <div className="hamburger" onClick={toggleMenu}>
-          {menuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
-        </div>
+        <div className="hamburger" onClick={toggleMenu}>{menuOpen ? <FaTimes size={22}/> : <FaBars size={22}/>}</div>
 
         {menuOpen && (
           <div className="sidebar glass">
             <ul>
-              <li onClick={() => toast.info("Notifications coming soon!")}>
-                <FaBell style={{ marginRight: 8 }} /> Notifications
-              </li>
-              <li onClick={goToSettings}>
-                <FaCog style={{ marginRight: 8 }} /> Settings
-              </li>
-              <li>
-                <button className="extra-btn" onClick={() => toast.info("Extra action pressed!")}>
-                  <FaStar /> Extra Action
-                </button>
-              </li>
+              <li onClick={() => toast.info("Notifications coming soon")}><FaBell /> Notifications</li>
+              <li onClick={goToSettings}><FaCog /> Settings</li>
+              <li><button className="extra-btn" onClick={() => toast.info("Extra action")}> <FaStar /> Extra Action</button></li>
             </ul>
           </div>
         )}
@@ -123,73 +142,62 @@ export default function Dashboard() {
         <div className="balance-box glass">
           <div className="balance-info">
             <small className="balance-label">Your Balance</small>
-            <span className="balance-text">₹{balance.toLocaleString("en-IN")}</span>
-            <small className="username-text">
-              Logged in as: <strong>{username || "guest"}</strong>
-            </small>
+            <span className="balance-amount">₹{balance.toLocaleString("en-IN")}</span>
+            <small className="balance-user">Logged in as: <b>{username || 'Guest'}</b></small>
           </div>
           <FaWallet className="wallet-icon" onClick={toggleWallet} />
         </div>
 
         {walletOpen && (
-          <div className="wallet-box glass">
+          <div className="wallet-section glass">
             <div className="wallet-actions">
-              <button className="wallet-btn" onClick={handleDeposit}>
-                {showDepositForm ? "Hide Deposit" : "Deposit"}
-              </button>
-              <button className="wallet-btn" onClick={handleWithdraw}>
-                {showWithdrawForm ? "Hide Withdraw" : "Withdraw"}
-              </button>
+              <button className="wallet-btn" onClick={toggleDeposit}>{showDeposit ? "Hide Deposit" : "Deposit"}</button>
+              <button className="wallet-btn" onClick={toggleWithdraw}>{showWithdraw ? "Hide Withdraw" : "Withdraw"}</button>
             </div>
-            {showDepositForm && <DepositForm token={userToken} refreshBalance={fetchUser} />}
-            {showWithdrawForm && <WithdrawForm token={userToken} refreshBalance={fetchUser} />}
+            {showDeposit && <div className="wallet-form">Deposit form goes here</div>}
+            {showWithdraw && <div className="wallet-form">Withdraw form goes here</div>}
           </div>
         )}
 
-        <button className="leaderboard-toggle-btn glass" onClick={() => setLeaderboardVisible(v => !v)}>
+        <button className="leaderboard-toggle glass" onClick={() => setLeaderboardVisible(!leaderboardVisible)}>
           {leaderboardVisible ? <>Hide Leaderboard <FaChevronUp /></> : <>Show Leaderboard <FaChevronDown /></>}
         </button>
 
         {leaderboardVisible && (
-          <div className="leaderboard-glass glass">
-            <div className="leaderboard-title">Top Players Today</div>
-            {leaderboard.map(({ name, prize }, i) => (
+          <div className="leaderboard glass">
+            <div className="leaderboard-header">Top Players Today</div>
+            {leaderboard.sort((a,b) => b.prize - a.prize).map(({name, prize}, idx) => (
               <div className="leaderboard-row" key={name}>
-                <div>
-                  <span className="lb-pos">{i + 1}</span>
-                  <span className="lb-name">🎮 {name}</span>
-                </div>
-                <span className="lb-prize">₹{prize.toLocaleString("en-IN")}</span>
+                <div><span className="pos">{idx+1}</span> <span className="player">{name}</span></div>
+                <div className="prize">₹{prize.toLocaleString("en-IN")}</div>
               </div>
             ))}
-            <div className="lb-note">* This leaderboard refreshes every hour</div>
+            <div className="leaderboard-note">* Leaderboard refreshes every hour</div>
           </div>
         )}
 
         <div className="game-zone glass">
-          <h2 className="game-zone-heading">
-            <span role="img" aria-label="controller">🎮</span> Matches Available Now
-          </h2>
-          <div className="modes-list">
-            {modes.map(({ name, icon, caption, description }) => (
-              <div className="mode-card glass" key={name} onClick={() => handleEnterMode(name)}>
-                <div className="mode-header">
-                  <span className="mode-icon">{icon}</span>
-                  <span className="mode-title">{name}</span>
-                </div>
+          <div className="game-header">
+            <span>🎮</span> Matches Available Now
+          </div>
+          <div className="modes">
+            {modes.map(({name,icon,caption,desc}) => (
+              <div key={name} className="mode-card glass" onClick={() => handleEnter(name)}>
+                <div className="mode-title"><span className="icon">{icon}</span> {name}</div>
                 <div className="mode-caption">{caption}</div>
-                <div className="mode-desc">{description}</div>
+                <div className="mode-desc">{desc}</div>
                 <button className="enter-btn">Enter Battle</button>
               </div>
             ))}
           </div>
         </div>
+
       </div>
 
       {loggingOut && (
-        <div className="logout-overlay glass">
+        <div className="overlay">
           <div className="spinner"></div>
-          <p>Logging you out... 🧳</p>
+          <div>Logging out...</div>
         </div>
       )}
     </div>

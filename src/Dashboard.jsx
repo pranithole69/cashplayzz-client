@@ -8,6 +8,24 @@ import { useNavigate } from "react-router-dom";
 import DepositForm from "./components/DepositForm.jsx";
 import WithdrawForm from "./components/WithdrawForm.jsx";
 
+// Helper function to generate random player names
+const randomPlayerNames = [
+  "priyagaming12",
+  "yt_gamerz",
+  "shadow_knight",
+  "alpha_striker",
+  "crimson_fury",
+  "blade_runner",
+  "neon_ninja",
+  "ghost_reaper",
+  "phantom_fox",
+  "storm_rider",
+];
+
+// Helper function to get random integer in range
+const getRandomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
@@ -73,6 +91,25 @@ function Dashboard() {
     if (userToken) fetchUser();
   }, [userToken]);
 
+  // Generate randomized leaderboard data on component mount
+  const [leaderboard, setLeaderboard] = React.useState([]);
+
+  useEffect(() => {
+    // Generate 3 random leaderboard entries
+    const newLeaderboard = Array.from({ length: 3 }, () => {
+      const name =
+        randomPlayerNames[
+          Math.floor(Math.random() * randomPlayerNames.length)
+        ];
+      const matchesPlayed = getRandomInt(10, 50);
+      return {
+        name,
+        stat: `${matchesPlayed} matches played today`,
+      };
+    });
+    setLeaderboard(newLeaderboard);
+  }, []);
+
   const modes = [
     { name: "Battle Royale", description: "Classic survival mode", icon: "🔥" },
     { name: "Clash Squad", description: "Fast-paced 4v4 matches", icon: "⚔️" },
@@ -102,22 +139,6 @@ function Dashboard() {
             </ul>
           </div>
         )}
-
-        {/* PROFILE CARD */}
-        <div className="profile-glass">
-          <div className="profile-avatar"></div>
-          <div>
-            <div className="profile-name">{username || "Loading..."}</div>
-            <div className="profile-rank">🏆 Platinum III</div>
-          </div>
-          <button
-            className="profile-settings-btn"
-            title="Account Settings"
-            onClick={goToSettings}
-          >
-            ⚙️
-          </button>
-        </div>
 
         {/* BALANCE BOX */}
         <div className="balance-box">
@@ -150,21 +171,15 @@ function Dashboard() {
           </div>
         )}
 
-        {/* LEADERBOARD */}
+        {/* LEADERBOARD with randomized player names */}
         <div className="leaderboard-glass">
-          <div className="leaderboard-title">Top Players</div>
-          <div className="leaderboard-row">
-            <span>🔥 MaxPro</span>
-            <span>₹1,500</span>
-          </div>
-          <div className="leaderboard-row">
-            <span>🦸‍♂️ GamerX</span>
-            <span>₹1,240</span>
-          </div>
-          <div className="leaderboard-row">
-            <span>👑 Mystic</span>
-            <span>₹980</span>
-          </div>
+          <div className="leaderboard-title">Top Players Today</div>
+          {leaderboard.map(({ name, stat }, index) => (
+            <div className="leaderboard-row" key={index}>
+              <span>🎮 {name}</span>
+              <span>{stat}</span>
+            </div>
+          ))}
         </div>
 
         {/* NEXT MATCH WIDGET */}

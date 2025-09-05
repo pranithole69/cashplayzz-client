@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Dashboard.css";
-import { FaWallet, FaBars, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaWallet, FaBars, FaTimes, FaChevronDown, FaChevronUp, FaBell, FaStar, FaCog } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -8,19 +8,30 @@ import { useNavigate } from "react-router-dom";
 import DepositForm from "./components/DepositForm.jsx";
 import WithdrawForm from "./components/WithdrawForm.jsx";
 
-// Fixed user names for leaderboard
-const playerNames = [
-  "Shadow_Knight",
-  "Alpha_Striker",
-  "PriyaGaming12",
-  "YT_Gamerz",
-  "Crimson_Fury",
-  "BladeRunner",
-  "NeonNinja",
-  "Ghost_Reaper",
-  "PhantomFox",
-  "StormRider",
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const randomPlayerPool = [
+  "PriyaGaming12", "YT_Gamerz", "ShadowKnight", "AlphaStriker",
+  "CrimsonFury", "BladeRunner", "NeonNinja", "GhostReaper",
+  "PhantomFox", "StormRider", "GameMaster", "PixelWarrior",
+  "DarkKnight", "EpicSlayer", "NovaStorm", "FireWizard",
+  "IceQueen", "DragonFly", "CyberTiger", "LightningBolt"
 ];
+
+function generateLeaderboard(hourOfDay) {
+  // Select 3 unique random players each time leaderboard refreshes
+  const shuffled = randomPlayerPool.sort(() => 0.5 - Math.random());
+  const selected = shuffled.slice(0, 3);
+  // Assign increasing prize values driven by hourOfDay for day progression, 5k-17k increments per hour
+  return selected.map((name, idx) => {
+    const base = getRandomInt(6000, 10000);
+    // Increase prize by 5k to 17k multiplied by current hour (hourOfDay)
+    const prize = base + hourOfDay * getRandomInt(5000, 17000);
+    return { name, prize };
+  });
+}
 
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -36,37 +47,15 @@ function Dashboard() {
   const userToken = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  // Helper to generate rising leaderboard prizes hour by hour
-  const generateLeaderboard = () => {
-    // Current hour index since unix epoch, to keep hourly increasing value
+  const updateLeaderboard = () => {
     const now = new Date();
-    const hourIndex = Math.floor(now.getTime() / 1000 / 3600);
-
-    // Base starting amount for each player (random to vary starting points)
-    const baseAmounts = [2500, 2200, 2700, 2100, 1900, 1550, 2000, 1340, 1800, 1700];
-
-    // Calculate prize for each player: base + (hourIndex * random between 1k-17k)
-    const newLeaderboard = playerNames.slice(0, 3).map((name, idx) => {
-      const increase = Array.from({ length: hourIndex }).reduce((acc) => {
-        // Random increment each hour 1k-17k
-        return acc + (Math.floor(Math.random() * 16000) + 1000);
-      }, 0);
-      return {
-        name,
-        prize: baseAmounts[idx] + increase,
-      };
-    });
-
-    return newLeaderboard;
+    const hourOfDay = now.getHours();
+    setLeaderboard(generateLeaderboard(hourOfDay));
   };
 
-  // Refresh leaderboard every hour
   useEffect(() => {
-    setLeaderboard(generateLeaderboard());
-    const interval = setInterval(() => {
-      setLeaderboard(generateLeaderboard());
-    }, 3600000); // 1 hour refresh
-
+    updateLeaderboard();
+    const interval = setInterval(updateLeaderboard, 3600000); // refresh hourly
     return () => clearInterval(interval);
   }, []);
 
@@ -105,9 +94,7 @@ function Dashboard() {
       const res = await axios.get(
         "https://cashplayzz-backend-1.onrender.com/api/user/profile",
         {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
+          headers: { Authorization: `Bearer ${userToken}` },
         }
       );
       const { username, balance } = res.data;
@@ -123,15 +110,39 @@ function Dashboard() {
     if (userToken) fetchUser();
   }, [userToken]);
 
+  // Next match timer (example static timer)
+  const [timer, setTimer] = useState(760);
+  useEffect(() => {
+    const tick = setInterval(() => setTimer(t => (t > 0 ? t - 1 : 1800)), 1000);
+    return () => clearInterval(tick);
+  }, []);
+  const mm = String(Math.floor(timer / 60)).padStart(2, "0");
+  const ss = String(timer % 60).padStart(2, "0");
+
   const modes = [
-    { name: "Battle Royale", description: "Classic survival mode", caption: "Intense battles, big prizes 🔥", icon: "🔥" },
-    { name: "Clash Squad", description: "Fast-paced 4v4 matches", caption: "Fast-paced, big wins ⚡", icon: "⚡" },
-    { name: "Lone Wolf", description: "1v1 intense duels", caption: "Quick way to make profit 🐺", icon: "🐺" },
+    {
+      name: "Battle Royale",
+      icon: "🔥",
+      caption: "Intense battles, big prizes 🔥",
+      description: "Classic survival mode",
+    },
+    {
+      name: "Clash Squad",
+      icon: "⚡",
+      caption: "Fast-paced, big wins ⚡",
+      description: "Quick 4v4 shows",
+    },
+    {
+      name: "Lone Wolf",
+      icon: "🐺",
+      caption: "Quick way to make profit 🐺",
+      description: "Intense 1v1 duels",
+    },
   ];
 
   const handleEnterMode = (name) => {
     toast.info(`Entering ${name}`);
-    // Implement navigation or functionality here
+    // Add navigation/features as needed
   };
 
   return (
@@ -143,20 +154,34 @@ function Dashboard() {
         </div>
 
         {menuOpen && (
-          <div className="sidebar">
+          <div className="sidebar glass">
             <ul>
-              <li onClick={handleLogout}>Logout</li>
-              <li onClick={goToSettings}>Settings</li>
+              <li onClick={handleLogout}>
+                <FaBell style={{ marginRight: 8 }} /> Logout
+              </li>
+              <li onClick={goToSettings}>
+                <FaCog style={{ marginRight: 8 }} /> Settings
+              </li>
+              <li>
+                <button
+                  className="extra-btn"
+                  onClick={() => toast.info("Extra Action!")}
+                >
+                  <FaStar /> Extra Action
+                </button>
+              </li>
             </ul>
           </div>
         )}
 
-        {/* Balance Section */}
+        {/* Balance */}
         <div className="balance-box glass">
           <div className="balance-info">
             <small className="balance-label">Your Balance</small>
             <span className="balance-text">₹{balance.toLocaleString()}</span>
-            <small className="username-text">Logged in as: <strong>{username}</strong></small>
+            <small className="username-text">
+              Logged in as: <strong>{username}</strong>
+            </small>
           </div>
           <FaWallet className="wallet-icon" onClick={toggleWallet} />
         </div>
@@ -176,48 +201,43 @@ function Dashboard() {
           </div>
         )}
 
-        {/* Leaderboard Toggle */}
-        <button
-          className="leaderboard-toggle-btn"
-          onClick={() => setLeaderboardVisible(v => !v)}
-        >
+        {/* Leaderboard toggle */}
+        <button className="leaderboard-toggle-btn glass" onClick={() => setLeaderboardVisible(v => !v)}>
           {leaderboardVisible ? (
-            <>
-              Hide Leaderboard <FaChevronUp />
-            </>
+            <>Hide Leaderboard <FaChevronUp /></>
           ) : (
-            <>
-              Show Leaderboard <FaChevronDown />
-            </>
+            <>Show Leaderboard <FaChevronDown /></>
           )}
         </button>
 
         {/* Leaderboard */}
         {leaderboardVisible && (
           <div className="leaderboard-glass glass">
-            <div className="leaderboard-title">Top Players Today</div>
-            {leaderboard.map(({ name, prize }, idx) => (
+            <div className="leaderboard-title">
+              Top Players Today
+            </div>
+            {leaderboard.map(({ name, prize }, i) => (
               <div className="leaderboard-row" key={name}>
                 <div>
-                  <span className="lb-pos">{idx + 1}</span>
+                  <span className="lb-pos">{i + 1}</span>
                   <span className="lb-name">🎮 {name}</span>
                 </div>
-                <span className="lb-prize">₹{(prize / 1000).toFixed(1)}K</span>
+                <span className="lb-prize">₹{prize.toLocaleString()}</span>
               </div>
             ))}
             <div className="lb-note">* This leaderboard refreshes every hour</div>
           </div>
         )}
 
-        {/* Next Match Widget */}
+        {/* Next match */}
         <div className="next-match-glass glass">
           <span role="img" aria-label="timer">⏰</span>
-          <span style={{ marginLeft: 12 }}>
-            Next Battle Royale starts in <b>00:12:41</b>
+          <span style={{ marginLeft: 10 }}>
+            Next Battle Royale starts in <b>{mm}:{ss}</b>
           </span>
         </div>
 
-        {/* Matches Available */}
+        {/* Mode cards */}
         <div className="game-zone glass">
           <h2 className="game-zone-heading">
             <span role="img" aria-label="controller">🎮</span> Matches Available Now
@@ -235,7 +255,7 @@ function Dashboard() {
                 </div>
                 <div className="mode-caption">{mode.caption}</div>
                 <div className="mode-desc">{mode.description}</div>
-                <button className="enter-btn">Enter</button>
+                <button className="enter-btn">Enter Battle</button>
               </div>
             ))}
           </div>
@@ -243,7 +263,7 @@ function Dashboard() {
       </div>
 
       {loggingOut && (
-        <div className="logout-overlay">
+        <div className="logout-overlay glass">
           <div className="spinner"></div>
           <p>Logging you out... 🧳</p>
         </div>

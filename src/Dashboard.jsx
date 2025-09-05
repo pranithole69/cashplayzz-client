@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
 import { FaWallet, FaBars, FaTimes, FaChevronDown, FaChevronUp, FaBell, FaCog, FaStar } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
@@ -12,18 +12,28 @@ const playerPool = [
   "PhantomFox", "StormRider"
 ];
 
+// Generate leaderboard with realistic hourly increments
 function generateLeaderboard(hour) {
-  // Base prizes and gradual hourly increments for stable leaderboard
-  const base = [10000, 9000, 8000];
-  return playerPool.slice(0, 3).map((name, i) => ({
-    name,
-    prize: base[i] + hour * (1000 + Math.floor(Math.random() * 2000))
-  })).sort((a, b) => b.prize - a.prize);
+  const basePrizes = [10000, 9000, 8000];
+  const randomIncrement = () => Math.floor(Math.random() * 2000) + 1000;
+  let leaderboard = [];
+
+  for (let i = 0; i < 3; i++) {
+    const playerIndex = (hour + i * 7) % playerPool.length;
+    const prize = basePrizes[i] + hour * randomIncrement();
+    leaderboard.push({
+      name: playerPool[playerIndex],
+      prize,
+    });
+  }
+
+  leaderboard.sort((a, b) => b.prize - a.prize);
+  return leaderboard;
 }
 
 const modes = [
   { name: "Battle Royale", icon: "🔥", caption: "Intense battles, big prizes 🔥", description: "Classic survival mode" },
-  { name: "Clash Squad", icon: "⚡", caption: "Fast-paced, big wins ⚡", description: "Quick 4v4 matches" },
+  { name: "Clash Squad", icon: "⚡", caption: "Fast-paced, big wins ⚡", description: "Quick 4v4 battles" },
   { name: "Lone Wolf", icon: "🐺", caption: "Quick way to make profit 🐺", description: "Intense 1v1 duels" },
 ];
 
@@ -36,6 +46,7 @@ export default function Dashboard() {
   const [balance, setBalance] = useState(0);
   const [leaderboardVisible, setLeaderboardVisible] = useState(false);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const userToken = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -61,29 +72,27 @@ export default function Dashboard() {
     setShowDeposit(false);
     setShowWithdraw(false);
   };
-
   const handleLogout = () => {
+    setLoggingOut(true);
+    toast.info("Logging out...");
     setTimeout(() => {
       localStorage.removeItem("token");
       window.location.href = "/";
-    }, 500);
+    }, 1500);
   };
-
   const toggleDeposit = () => {
     setShowDeposit(!showDeposit);
     setShowWithdraw(false);
   };
-
   const toggleWithdraw = () => {
     setShowWithdraw(!showWithdraw);
     setShowDeposit(false);
   };
-
-  const goToSettings = () => toast.info("Settings coming soon");
+  const goToSettings = () => toast.info("Settings coming soon!");
 
   const handleEnter = (mode) => {
-    toast.info(`You entered ${mode}`);
-    // Replace with navigate(path) or modal open
+    toast.info(`Entering ${mode}`);
+    // Replace with navigation or other logic
   };
 
   return (
@@ -99,9 +108,7 @@ export default function Dashboard() {
             <ul>
               <li onClick={handleLogout}><FaBell /> Logout</li>
               <li onClick={goToSettings}><FaCog /> Settings</li>
-              <li><button className="extra-btn" onClick={() => toast.info("Extra Action!")}>
-                <FaStar /> Extra Action
-              </button></li>
+              <li><button className="extra-btn" onClick={() => toast.info("Extra action!")}> <FaStar /> Extra Action </button></li>
             </ul>
           </div>
         )}
@@ -118,12 +125,8 @@ export default function Dashboard() {
         {walletOpen && (
           <div className="wallet-box glass">
             <div className="wallet-actions">
-              <button className="wallet-btn" onClick={toggleDeposit}>
-                {showDeposit ? "Hide Deposit" : "Deposit"}
-              </button>
-              <button className="wallet-btn" onClick={toggleWithdraw}>
-                {showWithdraw ? "Hide Withdraw" : "Withdraw"}
-              </button>
+              <button className="wallet-btn" onClick={toggleDeposit}>{showDeposit ? "Hide Deposit" : "Deposit"}</button>
+              <button className="wallet-btn" onClick={toggleWithdraw}>{showWithdraw ? "Hide Withdraw" : "Withdraw"}</button>
             </div>
             {showDeposit && <DepositForm token={userToken} refreshBalance={() => {}} />}
             {showWithdraw && <WithdrawForm token={userToken} refreshBalance={() => {}} />}
@@ -138,7 +141,7 @@ export default function Dashboard() {
           <div className="leaderboard glass">
             <div className="leaderboard-header">Top Players Today</div>
             {leaderboard.map(({ name, prize }, idx) => (
-              <div className="leaderboard-row" key={name}>
+              <div key={name} className="leaderboard-row">
                 <div><span className="lb-pos">{idx + 1}</span> <span className="lb-name">🎮 {name}</span></div>
                 <div className="lb-prize">₹{prize.toLocaleString("en-IN")}</div>
               </div>
@@ -148,18 +151,14 @@ export default function Dashboard() {
         )}
 
         <div className="game-zone glass">
-          <h2 className="game-zone-heading">
-            <span role="img" aria-label="controller">🎮</span> Matches Available Now
-          </h2>
+          <h2 className="game-zone-heading"><span role="img" aria-label="game">🎮</span> Matches Available Now</h2>
           <div className="modes-list">
             {modes.map(({ name, icon, caption, description }) => (
-              <div className="mode-card glass" key={name} onClick={() => handleEnter(name)}>
-                <div className="mode-header">
-                  <span className="mode-icon">{icon}</span> <span className="mode-title">{name}</span>
-                </div>
+              <div key={name} className="mode-card glass" onClick={() => handleEnter(name)}>
+                <div className="mode-header"><span className="mode-icon">{icon}</span> <span className="mode-title">{name}</span></div>
                 <div className="mode-caption">{caption}</div>
                 <div className="mode-desc">{description}</div>
-                <button onClick={(e) => { e.stopPropagation(); handleEnter(name); }} className="enter-btn">Enter Battle</button>
+                <button onClick={e => { e.stopPropagation(); handleEnter(name); }} className="enter-btn">Enter Battle</button>
               </div>
             ))}
           </div>

@@ -103,6 +103,23 @@ function Dashboard() {
           </div>
         )}
 
+        {/* PROFILE CARD */}
+        <div className="profile-glass">
+          <div className="profile-avatar"></div>
+          <div>
+            <div className="profile-name">{username || "Loading..."}</div>
+            <div className="profile-rank">🏆 Platinum III</div>
+          </div>
+          <button
+            className="profile-settings-btn"
+            title="Account Settings"
+            onClick={goToSettings}
+          >
+            ⚙️
+          </button>
+        </div>
+
+        {/* BALANCE BOX */}
         <div className="balance-box">
           <div className="balance-info">
             <small className="balance-label">Your Balance</small>
@@ -133,6 +150,32 @@ function Dashboard() {
           </div>
         )}
 
+        {/* LEADERBOARD */}
+        <div className="leaderboard-glass">
+          <div className="leaderboard-title">Top Players</div>
+          <div className="leaderboard-row">
+            <span>🔥 MaxPro</span>
+            <span>₹1,500</span>
+          </div>
+          <div className="leaderboard-row">
+            <span>🦸‍♂️ GamerX</span>
+            <span>₹1,240</span>
+          </div>
+          <div className="leaderboard-row">
+            <span>👑 Mystic</span>
+            <span>₹980</span>
+          </div>
+        </div>
+
+        {/* NEXT MATCH WIDGET */}
+        <div className="next-match-glass">
+          <span role="img" aria-label="timer">
+            ⏰
+          </span>{" "}
+          Next Battle Royale starts in <b>00:12:41</b>
+        </div>
+
+        {/* GAME ZONE */}
         <div className="game-zone">
           <h2 className="game-zone-heading">
             <span role="img" aria-label="controller">

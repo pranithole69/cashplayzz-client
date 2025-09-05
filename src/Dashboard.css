@@ -53,6 +53,76 @@ html {
   color: #fff;
 }
 
+/* === PROFILE CARD - GLOSSY GLASS === */
+.profile-glass {
+  background: rgba(22, 28, 39, 0.65);
+  border-radius: 18px;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 4px 32px 0 rgba(34, 255, 255, 0.07),
+    0 2px 18px rgba(0, 0, 0, 0.16);
+  border: 1.5px solid #67e8fc55;
+  margin: 18px auto 10px auto;
+  max-width: 600px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  gap: 16px;
+  justify-content: start;
+}
+
+.profile-glass:before {
+  content: "";
+  position: absolute;
+  top: -32%;
+  left: -32%;
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.11) 5%,
+    transparent 65%
+  );
+  transform: rotate(21deg);
+  pointer-events: none;
+}
+
+.profile-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(120deg, #13ffd280 40%, #333 100%);
+  border: 2px solid #67e8fc88;
+  box-shadow: 0 2px 8px rgba(19, 255, 210, 0.08);
+}
+
+.profile-name {
+  font-size: 1.07rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.profile-rank {
+  font-size: 0.98rem;
+  color: #7de3affc;
+}
+
+.profile-settings-btn {
+  background: transparent;
+  border: none;
+  color: #7de3af;
+  font-size: 1.13rem;
+  margin-left: auto;
+  cursor: pointer;
+  transition: color 0.16s;
+}
+
+.profile-settings-btn:hover {
+  color: #fff;
+}
+
 /* === Balance Box === */
 .balance-box {
   background: rgba(255, 255, 255, 0.1);
@@ -64,7 +134,7 @@ html {
   justify-content: space-between;
   width: 85%;
   max-width: 300px;
-  margin: 30px auto 10px;
+  margin: 10px auto 10px auto;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
   position: relative;
 }
@@ -134,9 +204,95 @@ html {
   transform: scale(1.03);
 }
 
-/* === Game Zone === */
+/* === LEADERBOARD === */
+.leaderboard-glass {
+  background: rgba(22, 28, 39, 0.65);
+  border-radius: 18px;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 4px 32px 0 rgba(34, 255, 255, 0.07),
+    0 2px 18px rgba(0, 0, 0, 0.16);
+  border: 1.5px solid #67e8fc55;
+  margin: 18px auto 10px auto;
+  max-width: 600px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.leaderboard-glass:before {
+  content: "";
+  position: absolute;
+  top: -32%;
+  left: -32%;
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.11) 5%,
+    transparent 65%
+  );
+  transform: rotate(21deg);
+  pointer-events: none;
+}
+
+.leaderboard-title {
+  font-weight: 700;
+  color: #7de3af;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.leaderboard-row {
+  display: flex;
+  justify-content: space-between;
+  color: #fff;
+  font-size: 1rem;
+  padding: 4px 0;
+}
+
+/* === NEXT MATCH WIDGET === */
+.next-match-glass {
+  background: rgba(22, 28, 39, 0.65);
+  border-radius: 18px;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 4px 32px 0 rgba(34, 255, 255, 0.07),
+    0 2px 18px rgba(0, 0, 0, 0.16);
+  border: 1.5px solid #67e8fc55;
+  margin: 18px auto 30px auto;
+  max-width: 600px;
+  padding: 16px 20px;
+  color: #fff;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.next-match-glass:before {
+  content: "";
+  position: absolute;
+  top: -32%;
+  left: -32%;
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.11) 5%,
+    transparent 65%
+  );
+  transform: rotate(21deg);
+  pointer-events: none;
+}
+
+/* === GAME ZONE === */
 .game-zone {
-  margin-top: 32px;
+  margin-top: 18px;
   padding: 28px 22px;
   border-radius: 20px;
   background: rgba(16, 22, 31, 0.8);
@@ -157,17 +313,20 @@ html {
   text-shadow: 0 2px 16px rgba(19, 255, 210, 0.09);
 }
 
+/* === MODES LIST === */
 .modes-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
+/* === MODE CARDS === */
 .mode-card.clean-glass {
   background: rgba(34, 44, 63, 0.82);
   border: 1.5px solid #13ffd266;
   border-radius: 16px;
-  box-shadow: 0 1.5px 8px rgba(19, 255, 210, 0.06), 0 2px 20px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 1.5px 8px rgba(19, 255, 210, 0.06),
+    0 2px 20px rgba(0, 0, 0, 0.14);
   transition: border 0.2s, box-shadow 0.2s, transform 0.2s;
   padding: 24px 20px;
   display: flex;

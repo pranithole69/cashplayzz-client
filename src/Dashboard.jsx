@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Dashboard.css";
 import { FaWallet, FaBars, FaTimes } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
@@ -8,23 +8,13 @@ import { useNavigate } from "react-router-dom";
 import DepositForm from "./components/DepositForm.jsx";
 import WithdrawForm from "./components/WithdrawForm.jsx";
 
-// Helper function to generate random player names
-const randomPlayerNames = [
-  "priyagaming12",
-  "yt_gamerz",
-  "shadow_knight",
-  "alpha_striker",
-  "crimson_fury",
-  "blade_runner",
-  "neon_ninja",
-  "ghost_reaper",
-  "phantom_fox",
-  "storm_rider",
+const fixedLeaderboard = [
+  { name: "PriyaGaming12", stat: "50 matches played today" },
+  { name: "YT_Gamerz", stat: "42 matches played today" },
+  { name: "Shadow_Knight", stat: "38 matches played today" },
+  { name: "Alpha_Striker", stat: "35 matches played today" },
+  { name: "Crimson_Fury", stat: "30 matches played today" },
 ];
-
-// Helper function to get random integer in range
-const getRandomInt = (min, max) =>
-  Math.floor(Math.random() * (max - min + 1)) + min;
 
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -91,23 +81,18 @@ function Dashboard() {
     if (userToken) fetchUser();
   }, [userToken]);
 
-  // Generate randomized leaderboard data on component mount
-  const [leaderboard, setLeaderboard] = React.useState([]);
+  const [leaderboard, setLeaderboard] = useState(fixedLeaderboard);
+  const intervalRef = useRef(null);
 
   useEffect(() => {
-    // Generate 3 random leaderboard entries
-    const newLeaderboard = Array.from({ length: 3 }, () => {
-      const name =
-        randomPlayerNames[
-          Math.floor(Math.random() * randomPlayerNames.length)
-        ];
-      const matchesPlayed = getRandomInt(10, 50);
-      return {
-        name,
-        stat: `${matchesPlayed} matches played today`,
-      };
-    });
-    setLeaderboard(newLeaderboard);
+    intervalRef.current = setInterval(() => {
+      setLeaderboard((prev) => {
+        const first = prev[0];
+        const rest = prev.slice(1);
+        return [...rest, first];
+      });
+    }, 10000); // shift every 10s
+    return () => clearInterval(intervalRef.current);
   }, []);
 
   const modes = [
@@ -171,10 +156,10 @@ function Dashboard() {
           </div>
         )}
 
-        {/* LEADERBOARD with randomized player names */}
+        {/* LEADERBOARD */}
         <div className="leaderboard-glass">
           <div className="leaderboard-title">Top Players Today</div>
-          {leaderboard.map(({ name, stat }, index) => (
+          {leaderboard.slice(0, 3).map(({ name, stat }, index) => (
             <div className="leaderboard-row" key={index}>
               <span>🎮 {name}</span>
               <span>{stat}</span>

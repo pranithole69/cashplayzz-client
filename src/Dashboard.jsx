@@ -7,7 +7,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DepositForm from "./components/DepositForm.jsx";
 import WithdrawForm from "./components/WithdrawForm.jsx";
-import freefireLogo from "./assets/freefire.png";
 
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -74,8 +73,19 @@ function Dashboard() {
     if (userToken) fetchUser();
   }, [userToken]);
 
-  const handleEnterFreeFire = () => {
-    navigate("/freefire");
+  // Define modes array to display
+  const modes = [
+    { name: "Battle Royale", description: "Classic survival mode" },
+    { name: "Clash Squad", description: "Fast-paced 4v4 matches" },
+    { name: "Lone Wolf", description: "1v1 intense duels" },
+  ];
+
+  // Navigation handler for modes (customize URLs if needed)
+  const handleEnterMode = (modeName) => {
+    if (modeName === "Battle Royale") navigate("/battle-royale");
+    else if (modeName === "Clash Squad") navigate("/clash-squad");
+    else if (modeName === "Lone Wolf") navigate("/lone-wolf");
+    else toast.info(`Mode ${modeName} clicked!`);
   };
 
   return (
@@ -129,13 +139,24 @@ function Dashboard() {
 
         {/* ==== Game Zone ==== */}
         <div className="game-zone">
-          <h2>🎮 Game Zone</h2>
-          <div className="balance-box game-card-glass" onClick={handleEnterFreeFire}>
-            <div style={{ textAlign: "center", width: "100%" }}>
-              <img src={freefireLogo} alt="Free Fire" className="game-image" />
-              <h3 className="game-name">Free Fire</h3>
-              <button className="enter-button">Enter</button>
-            </div>
+          <h2>🎮 Matches Available Now</h2>
+          <div className="modes-list">
+            {modes.map((mode) => (
+              <div
+                key={mode.name}
+                className="balance-box game-card-glass mode-card"
+                onClick={() => handleEnterMode(mode.name)}
+                style={{ cursor: "pointer", marginBottom: "20px" }}
+              >
+                <div style={{ textAlign: "center", width: "100%" }}>
+                  <h3 className="game-name">{mode.name}</h3>
+                  <p style={{ color: "#00ffeecc", marginBottom: "12px" }}>
+                    {mode.description}
+                  </p>
+                  <button className="enter-button">Enter</button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

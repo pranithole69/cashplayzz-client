@@ -74,9 +74,9 @@ function Dashboard() {
   }, [userToken]);
 
   const modes = [
-    { name: "Battle Royale", description: "Classic survival mode" },
-    { name: "Clash Squad", description: "Fast-paced 4v4 matches" },
-    { name: "Lone Wolf", description: "1v1 intense duels" },
+    { name: "Battle Royale", description: "Classic survival mode", icon: "🔥" },
+    { name: "Clash Squad", description: "Fast-paced 4v4 matches", icon: "⚔️" },
+    { name: "Lone Wolf", description: "1v1 intense duels", icon: "🐺" },
   ];
 
   const handleEnterMode = (modeName) => {
@@ -141,13 +141,12 @@ function Dashboard() {
                 key={mode.name}
                 className="balance-box game-card-glass mode-card"
                 onClick={() => handleEnterMode(mode.name)}
-                style={{ cursor: "pointer" }}
               >
                 <div style={{ textAlign: "center", width: "100%" }}>
-                  <h3 className="game-name">{mode.name}</h3>
-                  <p style={{ color: "#00ffeecc", marginBottom: "12px" }}>
-                    {mode.description}
-                  </p>
+                  <h3 className="game-name">
+                    <span className="mode-icon">{mode.icon}</span> {mode.name}
+                  </h3>
+                  <p>{mode.description}</p>
                   <button className="enter-button">Enter</button>
                 </div>
               </div>

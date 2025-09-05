@@ -1,126 +1,123 @@
 import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
-import { FaWallet, FaBars, FaTimes } from "react-icons/fa";
-import { toast, ToastContainer } from "react-toastify";
+import { FaWallet, FaBars, FaTimes, FaChevronDown, FaChevronUp, FaBell, FaCog } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import DepositForm from "./components/DepositForm.jsx";
-import WithdrawForm from "./components/WithdrawForm.jsx";
 
-// Helper function to generate random player names
-const randomPlayerNames = [
-  "priyagaming12",
-  "yt_gamerz",
-  "shadow_knight",
-  "alpha_striker",
-  "crimson_fury",
-  "blade_runner",
-  "neon_ninja",
-  "ghost_reaper",
-  "phantom_fox",
-  "storm_rider",
+const playerPool = [
+  "PriyaGaming12", "YT_Gamerz", "ShadowKnight",
+  "AlphaStriker", "CrimsonFury", "BladeRunner",
+  "NeonNinja", "GhostReaper", "PhantomFox", "StormRider"
 ];
 
-// Helper function to get random integer in range
-const getRandomInt = (min, max) =>
-  Math.floor(Math.random() * (max - min + 1)) + min;
+function generateLeaderboard(hour) {
+  const basePrizes = [9500, 8200, 7650];
+  const multiplier = 1100;
+  let leaderboard = [];
 
-function Dashboard() {
+  for (let i = 0; i < 3; i++) {
+    const idx = (hour + i * 7) % playerPool.length;
+    const prize = basePrizes[i] + multiplier * hour + Math.floor(Math.random() * 500);
+    leaderboard.push({ name: playerPool[idx], prize });
+  }
+
+  return leaderboard.sort((a, b) => b.prize - a.prize);
+}
+
+const modes = [
+  {
+    name: "Battle Royale",
+    icon: "🔥",
+    caption: "Intense battles, big prizes",
+    description: "Classic survival mode",
+  },
+  {
+    name: "Clash Squad",
+    icon: "⚡",
+    caption: "Fast-paced, big wins",
+    description: "Quick 4v4 battles",
+  },
+  {
+    name: "Lone Wolf",
+    icon: "🐺",
+    caption: "Quick way to profit",
+    description: "Intense 1v1 duels",
+  },
+];
+
+export default function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
-  const [loggingOut, setLoggingOut] = useState(false);
-  const [showDepositForm, setShowDepositForm] = useState(false);
-  const [showWithdrawForm, setShowWithdrawForm] = useState(false);
+  const [showDeposit, setShowDeposit] = useState(false);
+  const [showWithdraw, setShowWithdraw] = useState(false);
   const [username, setUsername] = useState("");
   const [balance, setBalance] = useState(0);
+  const [leaderboardVisible, setLeaderboardVisible] = useState(false);
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [loggingOut, setLoggingOut] = useState(false);
 
-  const userToken = localStorage.getItem("token");
   const navigate = useNavigate();
+  const userToken = localStorage.getItem("token");
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  useEffect(() => {
+    if (!userToken) return;
+    axios
+      .get("https://cashplayzz-backend.herokuapp.com/api/profile", {
+        headers: { Authorization: `Bearer ${userToken}` },
+      })
+      .then((res) => {
+        setUsername(res.data.username || "Guest");
+        setBalance(res.data.balance || 0);
+      })
+      .catch(() => {
+        toast.error("Unable to load user info");
+        setUsername("Guest");
+        setBalance(0);
+      });
+  }, [userToken]);
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    setLeaderboard(generateLeaderboard(hour));
+    const now = new Date();
+    const msToNextHour =
+      (60 - now.getMinutes()) * 60000 - now.getSeconds() * 1000 - now.getMilliseconds();
+
+    const timeout = setTimeout(() => {
+      setLeaderboard(generateLeaderboard(new Date().getHours()));
+      const interval = setInterval(() => {
+        setLeaderboard(generateLeaderboard(new Date().getHours()));
+      }, 3600 * 1000);
+      window._leaderboardInterval = interval;
+    }, msToNextHour);
+
+    return () => {
+      clearTimeout(timeout);
+      if (window._leaderboardInterval) clearInterval(window._leaderboardInterval);
+    };
+  }, []);
+
+  const toggleMenu = () => setMenuOpen((v) => !v);
   const toggleWallet = () => {
-    setWalletOpen(!walletOpen);
-    setShowDepositForm(false);
-    setShowWithdrawForm(false);
+    setWalletOpen((v) => !v);
+    setShowDeposit(false);
+    setShowWithdraw(false);
   };
-
+  const toggleDeposit = () => setShowDeposit((v) => !v);
+  const toggleWithdraw = () => setShowWithdraw((v) => !v);
   const handleLogout = () => {
     setLoggingOut(true);
-    toast.info("Logging out...");
     setTimeout(() => {
       localStorage.removeItem("token");
       window.location.href = "/";
-    }, 1500);
+    }, 1200);
   };
-
-  const goToSettings = () => {
-    toast.info("Settings feature coming soon!");
-  };
-
-  const handleDeposit = () => {
-    setShowDepositForm(!showDepositForm);
-    setShowWithdrawForm(false);
-  };
-
-  const handleWithdraw = () => {
-    setShowWithdrawForm(!showWithdrawForm);
-    setShowDepositForm(false);
-  };
-
-  const fetchUser = async () => {
-    try {
-      const res = await axios.get(
-        "https://cashplayzz-backend-1.onrender.com/api/user/profile",
-        {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        }
-      );
-      const { username, balance } = res.data;
-      setUsername(username);
-      setBalance(balance);
-    } catch (err) {
-      toast.error("Failed to load user info");
-      console.error("❌ Fetch user error:", err.response?.data || err.message);
-    }
-  };
-
-  useEffect(() => {
-    if (userToken) fetchUser();
-  }, [userToken]);
-
-  // Generate randomized leaderboard data on component mount
-  const [leaderboard, setLeaderboard] = React.useState([]);
-
-  useEffect(() => {
-    // Generate 3 random leaderboard entries
-    const newLeaderboard = Array.from({ length: 3 }, () => {
-      const name =
-        randomPlayerNames[
-          Math.floor(Math.random() * randomPlayerNames.length)
-        ];
-      const matchesPlayed = getRandomInt(10, 50);
-      return {
-        name,
-        stat: `${matchesPlayed} matches played today`,
-      };
-    });
-    setLeaderboard(newLeaderboard);
-  }, []);
-
-  const modes = [
-    { name: "Battle Royale", description: "Classic survival mode", icon: "🔥" },
-    { name: "Clash Squad", description: "Fast-paced 4v4 matches", icon: "⚔️" },
-    { name: "Lone Wolf", description: "1v1 intense duels", icon: "🐺" },
-  ];
-
-  const handleEnterMode = (modeName) => {
-    if (modeName === "Battle Royale") navigate("/battle-royale");
-    else if (modeName === "Clash Squad") navigate("/clash-squad");
-    else if (modeName === "Lone Wolf") navigate("/lone-wolf");
-    else toast.info(`Mode ${modeName} clicked!`);
+  const goToSettings = () => toast.info("Settings coming soon!");
+  const handleEnter = (mode) => {
+    toast.success(`Ready to enter ${mode}!`);
+    // Navigate or other functionality here
   };
 
   return (
@@ -132,85 +129,97 @@ function Dashboard() {
         </div>
 
         {menuOpen && (
-          <div className="sidebar">
+          <div className="sidebar glass">
             <ul>
-              <li onClick={handleLogout}>Logout</li>
-              <li onClick={goToSettings}>Settings</li>
+              <li onClick={handleLogout}><FaBell /> Logout</li>
+              <li onClick={goToSettings}><FaCog /> Settings</li>
             </ul>
           </div>
         )}
 
-        {/* BALANCE BOX */}
-        <div className="balance-box">
-          <div className="balance-info">
-            <small className="balance-label">Your Balance</small>
-            <span className="balance-text">₹{balance.toLocaleString()}</span>
-            <small className="username-text">
-              Logged in as: <strong>{username}</strong>
-            </small>
+        <div className="balance-box glass">
+          <div>
+            <div className="balance-label">YOUR BALANCE</div>
+            <div className="balance-amount">
+              ₹{balance.toLocaleString("en-IN")}
+            </div>
+            <div className="balance-user">
+              Logged in as <b>{username}</b>
+            </div>
           </div>
           <FaWallet className="wallet-icon" onClick={toggleWallet} />
         </div>
 
         {walletOpen && (
-          <div className="wallet-box">
+          <div className="wallet-box glass">
             <div className="wallet-actions">
-              <button className="wallet-btn" onClick={handleDeposit}>
-                {showDepositForm ? "Hide Deposit" : "Deposit"}
+              <button className="wallet-btn" onClick={toggleDeposit}>
+                {showDeposit ? "Hide Deposit" : "Deposit"}
               </button>
-              <button className="wallet-btn" onClick={handleWithdraw}>
-                {showWithdrawForm ? "Hide Withdraw" : "Withdraw"}
+              <button className="wallet-btn" onClick={toggleWithdraw}>
+                {showWithdraw ? "Hide Withdraw" : "Withdraw"}
               </button>
             </div>
-            {showDepositForm && (
-              <DepositForm token={userToken} refreshBalance={fetchUser} />
-            )}
-            {showWithdrawForm && (
-              <WithdrawForm token={userToken} refreshBalance={fetchUser} />
-            )}
+            {showDeposit && <div className="wallet-form">[Deposit Form]</div>}
+            {showWithdraw && <div className="wallet-form">[Withdraw Form]</div>}
           </div>
         )}
 
-        {/* LEADERBOARD with randomized player names */}
-        <div className="leaderboard-glass">
-          <div className="leaderboard-title">Top Players Today</div>
-          {leaderboard.map(({ name, stat }, index) => (
-            <div className="leaderboard-row" key={index}>
-              <span>🎮 {name}</span>
-              <span>{stat}</span>
+        <button
+          className="leaderboard-toggle glass"
+          onClick={() => setLeaderboardVisible((v) => !v)}
+        >
+          {leaderboardVisible ? "Hide Leaderboard" : "Show Leaderboard"}{" "}
+          {leaderboardVisible ? <FaChevronUp /> : <FaChevronDown />}
+        </button>
+
+        {leaderboardVisible && (
+          <div className="leaderboard glass">
+            <div className="leaderboard-header">Top Players Today</div>
+            {leaderboard.map(({ name, prize }, idx) => (
+              <div key={name} className="leaderboard-row">
+                <span className="lb-pos">{idx + 1}</span>
+                <span className="lb-name">🎮 {name}</span>
+                <span className="lb-prize">
+                  ₹{prize.toLocaleString("en-IN")}
+                </span>
+              </div>
+            ))}
+            <div className="leaderboard-note">
+              * This leaderboard refreshes every hour
             </div>
-          ))}
-        </div>
+          </div>
+        )}
 
-        {/* NEXT MATCH WIDGET */}
-        <div className="next-match-glass">
-          <span role="img" aria-label="timer">
-            ⏰
-          </span>{" "}
-          Next Battle Royale starts in <b>00:12:41</b>
-        </div>
-
-        {/* GAME ZONE */}
-        <div className="game-zone">
-          <h2 className="game-zone-heading">
-            <span role="img" aria-label="controller">
+        <div className="game-zone glass">
+          <div className="game-header">
+            <span role="img" aria-label="game">
               🎮
             </span>{" "}
             Matches Available Now
-          </h2>
+          </div>
           <div className="modes-list">
-            {modes.map((mode) => (
+            {modes.map(({ name, icon, caption, description }) => (
               <div
-                key={mode.name}
-                className="mode-card clean-glass"
-                onClick={() => handleEnterMode(mode.name)}
+                key={name}
+                className="mode-card glass"
+                onClick={() => handleEnter(name)}
               >
                 <div className="mode-header">
-                  <span className="mode-icon">{mode.icon}</span>
-                  <span className="mode-title">{mode.name}</span>
+                  <span className="mode-icon">{icon}</span>{" "}
+                  <span className="mode-title">{name}</span>
                 </div>
-                <p className="mode-desc">{mode.description}</p>
-                <button className="enter-btn">Enter</button>
+                <div className="mode-caption">{caption}</div>
+                <div className="mode-desc">{description}</div>
+                <button
+                  className="enter-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEnter(name);
+                  }}
+                >
+                  Enter Battle
+                </button>
               </div>
             ))}
           </div>
@@ -218,13 +227,11 @@ function Dashboard() {
       </div>
 
       {loggingOut && (
-        <div className="logout-overlay">
+        <div className="overlay">
           <div className="spinner"></div>
-          <p>Logging you out... 🧳</p>
+          <div>Logging out...</div>
         </div>
       )}
     </div>
   );
 }
-
-export default Dashboard;

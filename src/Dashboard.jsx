@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
-import { FaWallet, FaBars, FaTimes, FaInfoCircle, FaBolt } from "react-icons/fa";
+import { FaWallet, FaBars, FaTimes, FaInfoCircle } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -91,21 +91,16 @@ function Dashboard() {
 
       {/* Hamburger Menu */}
       <div className="hamburger" onClick={toggleMenu}>
-        {menuOpen ? <FaTimes size={26} /> : <FaBars size={26} />}
+        {menuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
       </div>
 
-      {/* Info Icon outside balance box */}
-      <div className="info-outer">
-        <FaInfoCircle className="info-icon-large" onClick={() => setShowTips(!showTips)} />
+      {/* Info Icon */}
+      <div className="info-corner">
+        <FaInfoCircle className="info-icon" onClick={() => setShowTips(!showTips)} />
         {showTips && (
-          <div className="tips-tooltip">
-            <b>💡 Tips for Players</b>
-            <ul>
-              <li>To deposit, tap the <FaWallet style={{verticalAlign:'middle'}} /> icon on your balance card.</li>
-              <li>Keep your balance topped up to join matches instantly.</li>
-              <li>Your wallet & transactions are fully secure.</li>
-              <li>Contact support anytime via the menu.</li>
-            </ul>
+          <div className="info-popup">
+            <p><strong>How to deposit?</strong></p>
+            <p>Click the wallet icon in your balance box to add funds instantly.</p>
           </div>
         )}
       </div>
@@ -123,17 +118,11 @@ function Dashboard() {
       )}
 
       {/* Balance Box */}
-      <div className="balance-box premium">
+      <div className="balance-box">
         <div className="balance-info">
           <span className="balance-label">YOUR BALANCE</span>
-          <span className="balance-text">₹{balance}</span>
-          <span className="balance-user">
-            Logged in as: <b>{username}</b>
-          </span>
-          <div className="balance-extras">
-            <span className="last-deposit">Last Deposit: ₹100</span>
-            <FaBolt className="verified-badge" title="Account Verified" />
-          </div>
+          <span className="balance-amount">₹{balance}</span>
+          <span className="logged-user">Logged in as: {username}</span>
         </div>
         <FaWallet className="wallet-icon" onClick={toggleWallet} />
       </div>
@@ -141,29 +130,39 @@ function Dashboard() {
       {/* Wallet Forms */}
       {walletOpen && (
         <div className="wallet-box">
+          <div className="wallet-actions">
+            <button className="wallet-btn" onClick={handleDeposit}>
+              Deposit
+            </button>
+            <button className="wallet-btn" onClick={handleWithdraw}>
+              Withdraw
+            </button>
+          </div>
           {showDepositForm && <DepositForm />}
           {showWithdrawForm && <WithdrawForm />}
         </div>
       )}
 
-      {/* Main Gamezone with minimal, premium styles */}
-      <div className="main-gamezone-glass">
-        <h2 className="gamezone-title neon-glow">CHOOSE YOUR PREFERENCE OF BATTLE</h2>
-        <div className="wide-modes-list">
+      {/* Game Zone */}
+      <div className="game-zone">
+        <h2 className="zone-title">CHOOSE YOUR PREFERENCE OF BATTLE</h2>
+        <div className="modes-container">
           {modes.map((mode) => (
-            <div className="mode-card-v2" key={mode.name}>
-              <div className="game-name">{mode.name}</div>
-              <p className="game-desc">{mode.description}</p>
-              <button
-                className="enter-button minimal"
+            <div className="mode-card" key={mode.name}>
+              <h3 className="mode-name">{mode.name}</h3>
+              <p className="mode-desc">{mode.description}</p>
+              <button 
+                className="enter-btn" 
                 onClick={() => handleEnterMode(mode.name)}
-              >Enter</button>
+              >
+                Enter
+              </button>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Logout spinner overlay */}
+      {/* Logout Overlay */}
       {loggingOut && (
         <div className="logout-overlay">
           <div className="spinner"></div>

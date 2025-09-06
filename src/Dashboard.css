@@ -18,7 +18,7 @@ body, html {
   flex-direction: column;
   padding: 15px;
   box-sizing: border-box;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 /* Hamburger Menu */
@@ -36,7 +36,7 @@ body, html {
   position: absolute;
   top: 50px;
   left: 15px;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.95);
   padding: 10px;
   border-radius: 8px;
   z-index: 999;
@@ -70,7 +70,7 @@ body, html {
 }
 
 .info-icon {
-  color: #00D4FF;
+  color: #1DD1A1;
   font-size: 20px;
   cursor: pointer;
 }
@@ -79,7 +79,7 @@ body, html {
   position: absolute;
   top: 30px;
   right: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.95);
   color: #fff;
   padding: 10px;
   border-radius: 6px;
@@ -96,9 +96,9 @@ body, html {
   background: rgba(0, 0, 0, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 15px 20px;
+  padding: 18px 20px;
   max-width: 280px;
-  margin: 50px auto 0 auto;
+  margin: 50px auto 15px auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -118,7 +118,7 @@ body, html {
 
 .balance-amount {
   color: #fff;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
   margin-bottom: 4px;
 }
@@ -129,8 +129,8 @@ body, html {
 }
 
 .wallet-icon {
-  color: #00D4FF;
-  font-size: 20px;
+  color: #1DD1A1;
+  font-size: 22px;
   cursor: pointer;
 }
 
@@ -140,7 +140,7 @@ body, html {
   border-radius: 10px;
   padding: 15px;
   max-width: 300px;
-  margin: 10px auto 0 auto;
+  margin: 0 auto 15px auto;
 }
 
 .wallet-actions {
@@ -150,7 +150,7 @@ body, html {
 }
 
 .wallet-btn {
-  background: #00D4FF;
+  background: #1DD1A1;
   color: #000;
   border: none;
   padding: 8px 16px;
@@ -162,22 +162,23 @@ body, html {
 
 /* Game Zone */
 .game-zone {
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   border-radius: 15px;
-  padding: 20px 15px;
+  padding: 25px 15px;
   max-width: 500px;
-  margin: 20px auto 0 auto;
+  margin: 0 auto;
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
 }
 
 .zone-title {
-  color: #00D4FF;
+  color: #1DD1A1;
   font-size: 1.4rem;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   letter-spacing: 1px;
 }
 
@@ -185,14 +186,13 @@ body, html {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  flex: 1;
 }
 
 .mode-card {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  padding: 18px;
+  padding: 20px;
   text-align: center;
   transition: all 0.2s ease;
 }
@@ -204,31 +204,31 @@ body, html {
 
 .mode-name {
   color: #fff;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 600;
   margin: 0 0 8px 0;
 }
 
 .mode-desc {
   color: #ccc;
-  font-size: 0.9rem;
+  font-size: 1rem;
   margin: 0 0 15px 0;
 }
 
 .enter-btn {
-  background: #00D4FF;
+  background: #1DD1A1;
   color: #000;
   border: none;
-  padding: 10px 25px;
-  border-radius: 20px;
+  padding: 12px 30px;
+  border-radius: 25px;
   font-weight: 600;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 15px;
   transition: all 0.2s ease;
 }
 
 .enter-btn:hover {
-  background: #00B8E6;
+  background: #17c497;
   transform: scale(1.05);
 }
 
@@ -245,15 +245,15 @@ body, html {
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  color: #00D4FF;
+  color: #1DD1A1;
   font-size: 16px;
 }
 
 .spinner {
   width: 30px;
   height: 30px;
-  border: 3px solid rgba(0, 212, 255, 0.3);
-  border-top: 3px solid #00D4FF;
+  border: 3px solid rgba(29, 209, 161, 0.3);
+  border-top: 3px solid #1DD1A1;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 10px;
@@ -272,11 +272,12 @@ body, html {
   
   .balance-box {
     max-width: 260px;
+    margin: 40px auto 15px auto;
   }
   
   .game-zone {
     max-width: 100%;
-    padding: 15px 10px;
+    padding: 20px 10px;
   }
   
   .zone-title {
@@ -284,6 +285,6 @@ body, html {
   }
   
   .mode-card {
-    padding: 15px;
+    padding: 18px;
   }
 }

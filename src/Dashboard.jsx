@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
-import { FaWallet, FaBars, FaTimes } from "react-icons/fa";
+import { FaWallet, FaBars, FaTimes, FaInfoCircle } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -14,6 +14,7 @@ function Dashboard() {
   const [loggingOut, setLoggingOut] = useState(false);
   const [showDepositForm, setShowDepositForm] = useState(false);
   const [showWithdrawForm, setShowWithdrawForm] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
   const [username, setUsername] = useState("");
   const [balance, setBalance] = useState(0);
 
@@ -26,6 +27,7 @@ function Dashboard() {
     setShowDepositForm(false);
     setShowWithdrawForm(false);
   };
+  const toggleInfo = () => setShowInfo(!showInfo);
 
   const handleLogout = () => {
     setLoggingOut(true);
@@ -55,9 +57,7 @@ function Dashboard() {
       const res = await axios.get(
         "https://cashplayzz-backend-1.onrender.com/api/user/profile",
         {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
+          headers: { Authorization: `Bearer ${userToken}` },
         }
       );
       const { username, balance } = res.data;
@@ -88,78 +88,79 @@ function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <ToastContainer />
-      <div className="dashboard-scroll">
-        <div className="hamburger" onClick={toggleMenu}>
-          {menuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
-        </div>
+      <ToastContainer limit={1} />
+      {/* Hamburger Menu */}
+      <div className="hamburger" onClick={toggleMenu}>
+        {menuOpen ? <FaTimes size={26} /> : <FaBars size={26} />}
+      </div>
 
-        {menuOpen && (
-          <div className="sidebar">
-            <ul>
-              <li onClick={handleLogout}>Logout</li>
-              <li onClick={goToSettings}>Settings</li>
-            </ul>
+      {/* Sidebar Menu */}
+      {menuOpen && (
+        <div className="sidebar">
+          <ul>
+            <li onClick={handleDeposit}>Deposit</li>
+            <li onClick={handleWithdraw}>Withdraw</li>
+            <li onClick={goToSettings}>Settings</li>
+            <li onClick={handleLogout}>Logout</li>
+          </ul>
+        </div>
+      )}
+
+      {/* Balance Box */}
+      <div className="balance-box">
+        <div className="balance-info">
+          <span className="balance-label">YOUR BALANCE</span>
+          <span className="balance-text">₹{balance}</span>
+          <span className="balance-user">
+            Logged in as: <b>{username}</b>
+          </span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <FaWallet className="wallet-icon" onClick={toggleWallet} />
+          <FaInfoCircle className="info-icon" onClick={toggleInfo} />
+        </div>
+        {showInfo && (
+          <div className="info-tooltip">
+            How to deposit? Click wallet{" "}
+            <FaWallet style={{ verticalAlign: "middle" }} /> and follow instructions.
           </div>
         )}
+      </div>
 
-        <div className="balance-box">
-          <div className="balance-info">
-            <small className="balance-label">Your Balance</small>
-            <span className="balance-text">₹{balance.toLocaleString()}</span>
-            <small className="username-text">
-              Logged in as: <strong>{username}</strong>
-            </small>
-          </div>
-          <FaWallet className="wallet-icon" onClick={toggleWallet} />
+      {/* Wallet Forms */}
+      {walletOpen && (
+        <div className="wallet-box">
+          {showDepositForm && <DepositForm />}
+          {showWithdrawForm && <WithdrawForm />}
         </div>
+      )}
 
-        {walletOpen && (
-          <div className="wallet-box">
-            <div className="wallet-actions">
-              <button className="wallet-btn" onClick={handleDeposit}>
-                {showDepositForm ? "Hide Deposit" : "Deposit"}
-              </button>
-              <button className="wallet-btn" onClick={handleWithdraw}>
-                {showWithdrawForm ? "Hide Withdraw" : "Withdraw"}
+      {/* Section Heading */}
+      <h2 className="gamezone-title">CHOOSE YOUR PREFERENCE OF BATTLE</h2>
+
+      {/* Game Zone */}
+      <div className="game-zone minimal">
+        <div className="modes-list">
+          {modes.map((mode) => (
+            <div className="mode-card minimal" key={mode.name}>
+              <div className="game-name">{mode.name}</div>
+              <p className="game-desc">{mode.description}</p>
+              <button
+                className="enter-button minimal"
+                onClick={() => handleEnterMode(mode.name)}
+              >
+                Enter
               </button>
             </div>
-            {showDepositForm && (
-              <DepositForm token={userToken} refreshBalance={fetchUser} />
-            )}
-            {showWithdrawForm && (
-              <WithdrawForm token={userToken} refreshBalance={fetchUser} />
-            )}
-          </div>
-        )}
-
-        <div className="game-zone">
-          <h2>🎮 Matches Available Now</h2>
-          <div className="modes-list">
-            {modes.map((mode) => (
-              <div
-                key={mode.name}
-                className="balance-box game-card-glass mode-card"
-                onClick={() => handleEnterMode(mode.name)}
-                style={{ cursor: "pointer" }}
-              >
-                <div style={{ textAlign: "center", width: "100%" }}>
-                  <h3 className="game-name">{mode.name}</h3>
-                  <p style={{ color: "#00ffeecc", marginBottom: "12px" }}>
-                    {mode.description}
-                  </p>
-                  <button className="enter-button">Enter</button>
-                </div>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
 
+      {/* Logout spinner overlay */}
       {loggingOut && (
         <div className="logout-overlay">
           <div className="spinner"></div>
-          <p>Logging you out... 🧳</p>
+          Logging out...
         </div>
       )}
     </div>

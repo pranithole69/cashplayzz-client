@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
-import { FaWallet, FaBars, FaTimes, FaInfoCircle } from "react-icons/fa";
+import { FaWallet, FaBars, FaTimes, FaInfoCircle, FaBolt } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -14,7 +14,7 @@ function Dashboard() {
   const [loggingOut, setLoggingOut] = useState(false);
   const [showDepositForm, setShowDepositForm] = useState(false);
   const [showWithdrawForm, setShowWithdrawForm] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
+  const [showTips, setShowTips] = useState(false);
   const [username, setUsername] = useState("");
   const [balance, setBalance] = useState(0);
 
@@ -27,7 +27,6 @@ function Dashboard() {
     setShowDepositForm(false);
     setShowWithdrawForm(false);
   };
-  const toggleInfo = () => setShowInfo(!showInfo);
 
   const handleLogout = () => {
     setLoggingOut(true);
@@ -89,12 +88,29 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <ToastContainer limit={1} />
+
       {/* Hamburger Menu */}
       <div className="hamburger" onClick={toggleMenu}>
         {menuOpen ? <FaTimes size={26} /> : <FaBars size={26} />}
       </div>
 
-      {/* Sidebar Menu */}
+      {/* Info Icon outside balance box */}
+      <div className="info-outer">
+        <FaInfoCircle className="info-icon-large" onClick={() => setShowTips(!showTips)} />
+        {showTips && (
+          <div className="tips-tooltip">
+            <b>💡 Tips for Players</b>
+            <ul>
+              <li>To deposit, tap the <FaWallet style={{verticalAlign:'middle'}} /> icon on your balance card.</li>
+              <li>Keep your balance topped up to join matches instantly.</li>
+              <li>Your wallet & transactions are fully secure.</li>
+              <li>Contact support anytime via the menu.</li>
+            </ul>
+          </div>
+        )}
+      </div>
+
+      {/* Sidebar */}
       {menuOpen && (
         <div className="sidebar">
           <ul>
@@ -107,24 +123,19 @@ function Dashboard() {
       )}
 
       {/* Balance Box */}
-      <div className="balance-box">
+      <div className="balance-box premium">
         <div className="balance-info">
           <span className="balance-label">YOUR BALANCE</span>
           <span className="balance-text">₹{balance}</span>
           <span className="balance-user">
             Logged in as: <b>{username}</b>
           </span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <FaWallet className="wallet-icon" onClick={toggleWallet} />
-          <FaInfoCircle className="info-icon" onClick={toggleInfo} />
-        </div>
-        {showInfo && (
-          <div className="info-tooltip">
-            How to deposit? Click wallet{" "}
-            <FaWallet style={{ verticalAlign: "middle" }} /> and follow instructions.
+          <div className="balance-extras">
+            <span className="last-deposit">Last Deposit: ₹100</span>
+            <FaBolt className="verified-badge" title="Account Verified" />
           </div>
-        )}
+        </div>
+        <FaWallet className="wallet-icon" onClick={toggleWallet} />
       </div>
 
       {/* Wallet Forms */}
@@ -135,22 +146,18 @@ function Dashboard() {
         </div>
       )}
 
-      {/* Section Heading */}
-      <h2 className="gamezone-title">CHOOSE YOUR PREFERENCE OF BATTLE</h2>
-
-      {/* Game Zone */}
-      <div className="game-zone minimal">
-        <div className="modes-list">
+      {/* Main Gamezone with minimal, premium styles */}
+      <div className="main-gamezone-glass">
+        <h2 className="gamezone-title neon-glow">CHOOSE YOUR PREFERENCE OF BATTLE</h2>
+        <div className="wide-modes-list">
           {modes.map((mode) => (
-            <div className="mode-card minimal" key={mode.name}>
+            <div className="mode-card-v2" key={mode.name}>
               <div className="game-name">{mode.name}</div>
               <p className="game-desc">{mode.description}</p>
               <button
                 className="enter-button minimal"
                 onClick={() => handleEnterMode(mode.name)}
-              >
-                Enter
-              </button>
+              >Enter</button>
             </div>
           ))}
         </div>

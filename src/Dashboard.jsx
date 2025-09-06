@@ -91,7 +91,7 @@ function Dashboard() {
 
       {/* Hamburger Menu */}
       <div className="hamburger" onClick={toggleMenu}>
-        {menuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+        {menuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
       </div>
 
       {/* Info Icon */}
@@ -100,7 +100,7 @@ function Dashboard() {
         {showTips && (
           <div className="info-popup">
             <p><strong>How to deposit?</strong></p>
-            <p>Click the wallet icon in your balance box to add funds instantly.</p>
+            <p>Click wallet icon to add funds</p>
           </div>
         )}
       </div>
@@ -131,12 +131,8 @@ function Dashboard() {
       {walletOpen && (
         <div className="wallet-box">
           <div className="wallet-actions">
-            <button className="wallet-btn" onClick={handleDeposit}>
-              Deposit
-            </button>
-            <button className="wallet-btn" onClick={handleWithdraw}>
-              Withdraw
-            </button>
+            <button className="wallet-btn" onClick={handleDeposit}>Deposit</button>
+            <button className="wallet-btn" onClick={handleWithdraw}>Withdraw</button>
           </div>
           {showDepositForm && <DepositForm />}
           {showWithdrawForm && <WithdrawForm />}
@@ -147,8 +143,8 @@ function Dashboard() {
       <div className="game-zone">
         <h2 className="zone-title">CHOOSE YOUR PREFERENCE OF BATTLE</h2>
         <div className="modes-container">
-          {modes.map((mode, index) => (
-            <div className="mode-card" key={mode.name} style={{"--delay": `${index * 0.1}s`}}>
+          {modes.map((mode) => (
+            <div className="mode-card" key={mode.name}>
               <h3 className="mode-name">{mode.name}</h3>
               <p className="mode-desc">{mode.description}</p>
               <button 

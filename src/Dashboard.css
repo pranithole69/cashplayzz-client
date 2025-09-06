@@ -27,6 +27,11 @@ body, html {
   cursor: pointer;
   color: #fff;
   z-index: 1000;
+  transition: transform 0.2s ease;
+}
+
+.hamburger:hover {
+  transform: scale(1.1);
 }
 
 /* Sidebar */
@@ -34,12 +39,25 @@ body, html {
   position: absolute;
   top: 55px;
   left: 15px;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(15px);
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 12px;
   z-index: 999;
   min-width: 120px;
+  border: 1px solid rgba(64, 158, 255, 0.2);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .sidebar ul {
@@ -49,15 +67,19 @@ body, html {
 }
 
 .sidebar li {
-  padding: 10px 0;
+  padding: 12px 0;
   cursor: pointer;
   color: #fff;
   font-weight: 500;
-  transition: color 0.2s;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  padding-left: 8px;
 }
 
 .sidebar li:hover {
-  color: #4CAF50;
+  color: #409EFF;
+  background: rgba(64, 158, 255, 0.1);
+  transform: translateX(5px);
 }
 
 /* Info Icon */
@@ -69,9 +91,25 @@ body, html {
 }
 
 .info-icon {
-  color: #4CAF50;
+  color: #409EFF;
   font-size: 24px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+.info-icon:hover {
+  color: #66B2FF;
+  transform: scale(1.1);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .info-popup {
@@ -81,9 +119,16 @@ body, html {
   background: rgba(0, 0, 0, 0.9);
   color: #fff;
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 12px;
   width: 200px;
   font-size: 14px;
+  border: 1px solid rgba(64, 158, 255, 0.3);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .info-popup p {
@@ -92,16 +137,35 @@ body, html {
 
 /* Balance Box */
 .balance-box {
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 20px;
-  max-width: 300px;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(64, 158, 255, 0.1) 100%);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(64, 158, 255, 0.3);
+  border-radius: 18px;
+  padding: 24px;
+  max-width: 320px;
   margin: 60px auto 20px auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 8px 32px rgba(64, 158, 255, 0.2);
+  transition: all 0.3s ease;
+  animation: slideUp 0.6s ease;
+}
+
+.balance-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(64, 158, 255, 0.3);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .balance-info {
@@ -110,44 +174,51 @@ body, html {
 }
 
 .balance-label {
-  color: #ccc;
-  font-size: 12px;
+  color: #B0C4DE;
+  font-size: 13px;
   font-weight: 600;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
 }
 
 .balance-amount {
   color: #fff;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
+  background: linear-gradient(45deg, #409EFF, #66B2FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .logged-user {
-  color: #aaa;
+  color: #9BB5D1;
   font-size: 12px;
 }
 
 .wallet-icon {
-  color: #4CAF50;
-  font-size: 24px;
+  color: #409EFF;
+  font-size: 26px;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.3s ease;
 }
 
 .wallet-icon:hover {
-  color: #66BB6A;
+  color: #66B2FF;
+  transform: scale(1.1);
 }
 
 /* Wallet Box */
 .wallet-box {
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(64, 158, 255, 0.2);
   border-radius: 15px;
   padding: 20px;
   max-width: 400px;
   margin: 0 auto 20px auto;
+  animation: slideUp 0.4s ease;
 }
 
 .wallet-actions {
@@ -158,38 +229,54 @@ body, html {
 }
 
 .wallet-btn {
-  background: rgba(76, 175, 80, 0.8);
+  background: linear-gradient(135deg, #409EFF, #66B2FF);
   color: #fff;
   border: none;
   padding: 12px 24px;
-  border-radius: 8px;
+  border-radius: 25px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background 0.2s;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .wallet-btn:hover {
-  background: rgba(76, 175, 80, 1);
+  background: linear-gradient(135deg, #66B2FF, #409EFF);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(64, 158, 255, 0.4);
 }
 
 /* Game Zone */
 .game-zone {
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(64, 158, 255, 0.2);
   border-radius: 20px;
   padding: 30px 20px;
   max-width: 600px;
   margin: 20px auto;
+  animation: slideUp 0.8s ease;
 }
 
 .zone-title {
-  color: #4CAF50;
+  background: linear-gradient(45deg, #409EFF, #66B2FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-size: 1.8rem;
   font-weight: bold;
   text-align: center;
   margin-bottom: 30px;
   letter-spacing: 1px;
+  animation: glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    filter: drop-shadow(0 0 5px rgba(64, 158, 255, 0.5));
+  }
+  to {
+    filter: drop-shadow(0 0 15px rgba(64, 158, 255, 0.8));
+  }
 }
 
 .modes-container {
@@ -200,44 +287,63 @@ body, html {
 
 .mode-card {
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border: 1px solid rgba(64, 158, 255, 0.2);
+  border-radius: 15px;
   padding: 20px;
   text-align: center;
-  transition: transform 0.2s, background 0.2s;
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.6s ease var(--delay);
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .mode-card:hover {
-  transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-5px);
+  background: rgba(64, 158, 255, 0.1);
+  border-color: rgba(64, 158, 255, 0.4);
+  box-shadow: 0 10px 25px rgba(64, 158, 255, 0.2);
 }
 
 .mode-name {
   color: #fff;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 600;
   margin: 0 0 10px 0;
 }
 
 .mode-desc {
-  color: #ccc;
+  color: #B0C4DE;
   font-size: 1rem;
-  margin: 0 0 15px 0;
+  margin: 0 0 18px 0;
 }
 
 .enter-btn {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
+  background: linear-gradient(135deg, #409EFF, #66B2FF);
   color: #fff;
   border: none;
-  padding: 12px 30px;
+  padding: 14px 35px;
   border-radius: 25px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.3s ease;
+  font-size: 16px;
 }
 
 .enter-btn:hover {
+  background: linear-gradient(135deg, #66B2FF, #85C1FF);
   transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(64, 158, 255, 0.4);
 }
 
 /* Logout Overlay */
@@ -254,15 +360,15 @@ body, html {
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  color: #4CAF50;
+  color: #409EFF;
   font-size: 18px;
 }
 
 .spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid rgba(76, 175, 80, 0.3);
-  border-top: 4px solid #4CAF50;
+  border: 4px solid rgba(64, 158, 255, 0.3);
+  border-top: 4px solid #409EFF;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 15px;

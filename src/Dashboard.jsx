@@ -147,8 +147,8 @@ function Dashboard() {
       <div className="game-zone">
         <h2 className="zone-title">CHOOSE YOUR PREFERENCE OF BATTLE</h2>
         <div className="modes-container">
-          {modes.map((mode) => (
-            <div className="mode-card" key={mode.name}>
+          {modes.map((mode, index) => (
+            <div className="mode-card" key={mode.name} style={{"--delay": `${index * 0.1}s`}}>
               <h3 className="mode-name">{mode.name}</h3>
               <p className="mode-desc">{mode.description}</p>
               <button 

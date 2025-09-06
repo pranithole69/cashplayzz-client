@@ -132,16 +132,20 @@ body, html {
 }
 
 .wallet-icon {
-  color: #FFD700;
+  background: linear-gradient(135deg, #87CEEB, #4682B4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-size: 20px;
   cursor: pointer;
+  filter: drop-shadow(0 0 3px rgba(135, 206, 235, 0.5));
 }
 
-/* Wallet Box - Light Blue */
+/* Wallet Box - Blackish Glossy Translucent */
 .wallet-box {
-  background: rgba(173, 216, 230, 0.15);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(173, 216, 230, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   padding: 15px;
   max-width: 300px;
@@ -207,22 +211,10 @@ body, html {
 }
 
 .mode-name {
+  color: #FF6B6B;
   font-size: 1.2rem;
   font-weight: 600;
   margin: 0 0 6px 0;
-}
-
-/* Different colors for each mode */
-.mode-1 {
-  color: #FF6B6B; /* Soft red for Battle Royale */
-}
-
-.mode-2 {
-  color: #4ECDC4; /* Teal for Clash Squad */
-}
-
-.mode-3 {
-  color: #A8E6CF; /* Soft green for Lone Wolf */
 }
 
 .mode-desc {

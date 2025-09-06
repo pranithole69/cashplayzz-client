@@ -91,7 +91,7 @@ function Dashboard() {
 
       {/* Hamburger Menu */}
       <div className="hamburger" onClick={toggleMenu}>
-        {menuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+        {menuOpen ? <FaTimes size={18} /> : <FaBars size={18} />}
       </div>
 
       {/* Info Icon */}

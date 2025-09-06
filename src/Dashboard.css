@@ -132,7 +132,7 @@ body, html {
 }
 
 .wallet-icon {
-  color: #1DD1A1;
+  color: #FFD700;
   font-size: 20px;
   cursor: pointer;
 }
@@ -207,10 +207,22 @@ body, html {
 }
 
 .mode-name {
-  color: #fff;
   font-size: 1.2rem;
   font-weight: 600;
   margin: 0 0 6px 0;
+}
+
+/* Different colors for each mode */
+.mode-1 {
+  color: #FF6B6B; /* Soft red for Battle Royale */
+}
+
+.mode-2 {
+  color: #4ECDC4; /* Teal for Clash Squad */
+}
+
+.mode-3 {
+  color: #A8E6CF; /* Soft green for Lone Wolf */
 }
 
 .mode-desc {

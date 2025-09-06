@@ -74,7 +74,7 @@ function Dashboard() {
 
   const modes = [
     { name: "Battle Royale", description: "Classic survival mode" },
-    { name: "Clash Squad", description: "Fast-paced 4v4 matches" },
+    { name: "Clash Squad", description: "Fast Paced, Fast Wins" },
     { name: "Lone Wolf", description: "1v1 intense duels" },
   ];
 
@@ -143,9 +143,9 @@ function Dashboard() {
       <div className="game-zone">
         <h2 className="zone-title">CHOOSE YOUR PREFERENCE OF BATTLE</h2>
         <div className="modes-container">
-          {modes.map((mode) => (
+          {modes.map((mode, index) => (
             <div className="mode-card" key={mode.name}>
-              <h3 className="mode-name">{mode.name}</h3>
+              <h3 className={`mode-name mode-${index + 1}`}>{mode.name}</h3>
               <p className="mode-desc">{mode.description}</p>
               <button 
                 className="enter-btn" 

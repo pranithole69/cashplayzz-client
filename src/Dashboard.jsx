@@ -105,12 +105,10 @@ function Dashboard() {
         )}
       </div>
 
-      {/* Sidebar */}
+      {/* Sidebar - CLEAN VERSION WITH ONLY SETTINGS AND LOGOUT */}
       {menuOpen && (
         <div className="sidebar">
           <ul>
-            <li onClick={handleDeposit}>Deposit</li>
-            <li onClick={handleWithdraw}>Withdraw</li>
             <li onClick={goToSettings}>Settings</li>
             <li onClick={handleLogout}>Logout</li>
           </ul>

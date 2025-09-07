@@ -176,6 +176,13 @@ body {
   background: rgba(26, 22, 4, 0.56);
 }
 
+/* Joined card violet theme */
+.battle-card.joined {
+  border: 2.5px solid #b570ff;
+  box-shadow: 0 4px 16px #b570ff, 0 2px 32px #742fb4bb;
+  background: rgba(44, 21, 66, 0.52);
+}
+
 /* Card type */
 .battle-card-type {
   color: #00ffee;

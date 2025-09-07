@@ -5,19 +5,48 @@ body, html {
   height: 100%;
   overflow: auto;
   font-family: 'Segoe UI', sans-serif;
+
+  /* Smooth scrolling globally */
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar styling for WebKit browsers */
+body::-webkit-scrollbar {
+  width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 255, 255, 0.3);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+/* Scrollbar styling for Firefox */
+body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,255,255,0.3) transparent;
 }
 
 .dashboard-container {
   background: url("./assets/bg.png") no-repeat center center fixed;
   background-size: cover;
   min-height: 100vh;
-  overflow-y: auto;
+  max-height: 100vh; /* Limit to viewport height */
+  overflow-y: auto; /* Enable vertical scrolling */
   color: #fff;
   position: relative;
   display: flex;
   flex-direction: column;
   padding: 15px;
   box-sizing: border-box;
+
+  /* Enable smooth scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Hamburger Menu */

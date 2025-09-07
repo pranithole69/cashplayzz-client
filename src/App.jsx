@@ -4,7 +4,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Eye, EyeOff } from "lucide-react";
-import Agreement from "./components/Agreement.jsx";   // Correct relative import
+import Agreement from "./Agreement.jsx";   // Correct relative import
 
 const backendURL = "https://cashplayzz-backend-1.onrender.com";
 const background = "/bg.png"; // Public folder asset

@@ -43,6 +43,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  position: relative; /* to contain absolute buttons */
 }
 
 /* Battle title */
@@ -54,23 +55,7 @@
   margin: 0 auto;
 }
 
-/* Help button */
-.battle-help-btn {
-  background: rgba(0, 255, 231, 0.12);
-  border: 1px solid #00ffe7;
-  color: #00ffe7;
-  border-radius: 25px;
-  padding: 7px 18px;
-  font-weight: bold;
-  font-size: 1rem;
-  margin-right: 22px;
-  cursor: pointer;
-  box-shadow: 0 2px 0px #00ffe7a8;
-  transition: background 0.15s;
-}
-.battle-help-btn:hover {
-  background: rgba(0, 255, 231, 0.22);
-}
+/* Help button replaced by icon has inline styles in JSX */
 
 /* Greeting */
 .battle-greeting {
@@ -127,8 +112,7 @@
 }
 .battle-card.super-premium {
   border: 2.5px solid gold;
-  box-shadow: 0 4px 16px #ffe066,
-    0 2px 32px #fff20813;
+  box-shadow: 0 4px 16px #ffe066, 0 2px 32px #fff20813;
   background: rgba(26, 22, 4, 0.56);
 }
 
@@ -218,7 +202,7 @@
   }
 }
 
-/* Close button */
+/* Modal close button */
 .battle-modal-close {
   position: absolute;
   right: 23px;
@@ -230,7 +214,7 @@
   cursor: pointer;
 }
 
-/* Modal titles and info */
+/* Modal titles */
 .battle-modal-title {
   font-size: 1.2rem;
   color: #00ffe7;
@@ -239,13 +223,14 @@
   text-align: center;
 }
 
+/* Modal info */
 .battle-modal-info {
   font-size: 1rem;
   margin-bottom: 14px;
   color: #eafff9;
 }
 
-/* Modal confirm action */
+/* Modal action */
 .battle-modal-action {
   background: #00ffe7;
   color: #222;
@@ -262,7 +247,7 @@
   box-shadow: 0 2px 8px #00ffe743;
 }
 
-/* Collapse toggle button */
+/* Collapse toggle */
 .battle-collapse-toggle {
   font-size: 1.08rem;
   font-weight: 600;
@@ -273,12 +258,11 @@
   margin-bottom: 8px;
   transition: color 0.2s;
 }
-
 .battle-collapse-toggle:hover {
   color: #72fff6;
 }
 
-/* Mobile responsiveness */
+/* Mobile responsive */
 @media (max-width: 768px) {
   .battle-bg {
     max-height: none;

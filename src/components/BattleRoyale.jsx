@@ -81,6 +81,7 @@ export default function BattleRoyale() {
   const [modalTournament, setModalTournament] = useState(null);
   const [balance, setBalance] = useState(69);
   const [showJoined, setShowJoined] = useState(false);
+  const [joinMessage, setJoinMessage] = useState("");
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -133,9 +134,13 @@ export default function BattleRoyale() {
         setTournaments((prev) =>
           prev.map((t) => (t.id === modalTournament.id ? { ...t, joined: true } : t))
         );
-        alert(data.message);
+        // Show joined section and join message
+        setShowJoined(true);
+        setJoinMessage("Be ready for the battle");
         setModalTournament(null);
         setExpanded(null);
+        // Clear join message after 4 seconds
+        setTimeout(() => setJoinMessage(""), 4000);
       } else {
         alert(data.message || "Failed to join the match.");
       }
@@ -147,22 +152,45 @@ export default function BattleRoyale() {
 
   return (
     <div className="battle-bg">
-      <div className="battle-topbar">
-        <span style={{ marginLeft: 22 }}>
-          <button
-            className="battle-help-btn"
-            onClick={() => alert("Contact support@cashplayzz.com or WhatsApp 24x7!")}
-          >
-            Help
-          </button>
+      <div className="battle-topbar" style={{ position: "relative" }}>
+        <button
+          onClick={() => window.history.back()}
+          style={{
+            position: "absolute",
+            left: 15,
+            top: 12,
+            background: "none",
+            border: "none",
+            color: "#00ffe7",
+            fontWeight: "bold",
+            fontSize: "16px",
+            cursor: "pointer",
+            padding: 0,
+          }}
+        >
+          ← Back
+        </button>
+        <span style={{ marginLeft: "auto", position: "absolute", right: 15, top: 12, cursor: "pointer", color: "#00ffe7", fontSize: 22 }}
+          onClick={() =>
+            alert("Contact support@cashplayzz.com or WhatsApp 24x7!")
+          }
+          role="button"
+          aria-label="Help"
+        >
+          &#9432;
         </span>
-        <div style={{ width: "60%", height: 5 }} />
       </div>
       <div className="battle-greeting">Welcome, Survivor!</div>
 
       <div className="balance-box">
         <span>Balance:</span> <span style={{ color: "#00ffe7" }}>₹{balance}</span>
       </div>
+
+      {joinMessage && (
+        <div style={{ color: "#00ffe7", fontWeight: "bold", textAlign: "center", marginTop: 12 }}>
+          {joinMessage}
+        </div>
+      )}
 
       <button
         className="battle-collapse-toggle"

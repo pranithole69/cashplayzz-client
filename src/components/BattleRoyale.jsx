@@ -82,7 +82,6 @@ export default function BattleRoyale() {
   const [balance, setBalance] = useState(69);
   const [showJoined, setShowJoined] = useState(false);
 
-  // Fetch current balance from backend on load
   useEffect(() => {
     const fetchBalance = async () => {
       try {
@@ -115,10 +114,8 @@ export default function BattleRoyale() {
     return "battle-card";
   };
 
-  // Show confirmation modal
   const handleJoin = (t) => setModalTournament(t);
 
-  // Confirm join and deduct balance via backend API
   const confirmJoin = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -150,7 +147,6 @@ export default function BattleRoyale() {
 
   return (
     <div className="battle-bg">
-      {/* Topbar */}
       <div className="battle-topbar">
         <span style={{ marginLeft: 22 }}>
           <button
@@ -164,12 +160,10 @@ export default function BattleRoyale() {
       </div>
       <div className="battle-greeting">Welcome, Survivor!</div>
 
-      {/* Balance box */}
       <div className="balance-box">
         <span>Balance:</span> <span style={{ color: "#00ffe7" }}>₹{balance}</span>
       </div>
 
-      {/* Joined matches */}
       <button
         className="battle-collapse-toggle"
         onClick={() => setShowJoined((j) => !j)}
@@ -196,7 +190,6 @@ export default function BattleRoyale() {
         </div>
       )}
 
-      {/* Upcoming matches */}
       <div className="section-label">Upcoming Matches</div>
       <div className="battle-cards-section">
         {upcoming.map((t) => {
@@ -245,7 +238,6 @@ export default function BattleRoyale() {
         })}
       </div>
 
-      {/* Join confirmation modal */}
       {modalTournament && (
         <div className="battle-modal-overlay">
           <div className="battle-modal-box">

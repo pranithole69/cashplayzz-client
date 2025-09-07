@@ -1,3 +1,33 @@
+/* Global Reset and Base */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; /* Momentum scrolling on iOS */
+  scroll-behavior: smooth;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Scrollbar styling for WebKit */
+body::-webkit-scrollbar {
+  width: 8px;
+}
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+body::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 255, 231, 0.4);
+  border-radius: 6px;
+}
+
+/* Scrollbar styling for Firefox */
+body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 255, 231, 0.4) transparent;
+}
+
 /* Main container - battle-bg expands naturally */
 .battle-bg {
   width: 100vw;
@@ -15,7 +45,6 @@
   position: relative;
   padding: 20px 15px 40px 15px;
   box-sizing: border-box;
-
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
@@ -31,19 +60,52 @@
   max-height: none !important;
 }
 
-/* Glassy sticky topbar */
+/* Glassy sticky topbar with no background (no black bar) */
 .battle-topbar {
   width: 100vw;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 18px 0 8px;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(6px);
+  padding: 0;
+  background: none;
+  backdrop-filter: none;
   position: sticky;
   top: 0;
   z-index: 100;
-  position: relative; /* to contain absolute buttons */
+  height: 48px;
+  box-sizing: border-box;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Back button at top-left */
+.battle-back-btn {
+  background: none;
+  border: none;
+  color: #00ffe7;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 16px 0 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+/* Spacer to push help icon to right */
+.battle-topbar-spacer {
+  flex-grow: 1;
+}
+
+/* Help icon at top-right */
+.battle-help-icon {
+  font-size: 22px;
+  color: #00ffe7;
+  cursor: pointer;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+  padding-right: 0;
 }
 
 /* Battle title */
@@ -54,8 +116,6 @@
   text-shadow: 0 0 8px #00ffe7;
   margin: 0 auto;
 }
-
-/* Help button replaced by icon has inline styles in JSX */
 
 /* Greeting */
 .battle-greeting {
@@ -112,7 +172,7 @@
 }
 .battle-card.super-premium {
   border: 2.5px solid gold;
-  box-shadow: 0 4px 16px #ffe066, 0 2px 32px #fff20813;
+  box-shadow: 0 4px 16px #ffe066,0 2px 32px #fff20813;
   background: rgba(26, 22, 4, 0.56);
 }
 

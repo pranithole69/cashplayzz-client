@@ -16,13 +16,14 @@
   /* Smooth scrolling for modern browsers */
   scroll-behavior: smooth;
 
-  padding-bottom: 40px;
-
-  /* Enable momentum scrolling on iOS */
+  /* Momentum scrolling on iOS */
   -webkit-overflow-scrolling: touch;
 
-  /* Limit max height to viewport height */
+  /* Limit height to viewport height */
   max-height: 100vh;
+
+  /* Enable hardware acceleration for smoother scroll */
+  transform: translateZ(0);
 }
 
 /* Scrollbar styling for WebKit browsers */
@@ -44,7 +45,6 @@
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 255, 231, 0.4) transparent;
 }
-
 
 /* Glassy topbar */
 .battle-topbar {

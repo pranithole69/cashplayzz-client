@@ -1,13 +1,13 @@
 /* Global Reset and Base */
 html, body {
-  min-height: 100%;          /* allow page to grow */
-  height: auto;              /* no hard lock */
+  height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;        /* hide horizontal */
-  font-family: 'Segoe UI', sans-serif;
-  -webkit-overflow-scrolling: touch; /* momentum scrolling iOS */
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; /* Momentum scrolling on iOS */
   scroll-behavior: smooth;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Scrollbar styling for WebKit */
@@ -28,7 +28,7 @@ body {
   scrollbar-color: rgba(0, 255, 231, 0.4) transparent;
 }
 
-/* Main container - battle-bg expands with content */
+/* Main container - battle-bg expands with content, no fixed height */
 .battle-bg {
   width: 100vw;
   min-height: 100vh;
@@ -47,7 +47,7 @@ body {
   box-sizing: border-box;
 }
 
-/* Tournament list container */
+/* Tournament list container visible and flexible */
 .battle-cards-section {
   width: 96vw;
   max-width: 560px;
@@ -81,7 +81,7 @@ body {
   margin: 0 auto;
 }
 
-/* Help button */
+/* Help button styling */
 .battle-help-btn {
   background: rgba(0, 255, 231, 0.12);
   border: 1px solid #00ffe7;
@@ -272,7 +272,7 @@ body {
   box-shadow: 0 2px 8px #00ffe743;
 }
 
-/* Collapse toggle */
+/* Collapse toggle button */
 .battle-collapse-toggle {
   font-size: 1.08rem;
   font-weight: 600;

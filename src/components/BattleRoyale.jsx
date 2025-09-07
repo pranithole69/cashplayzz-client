@@ -28,6 +28,7 @@ export default function BattleRoyale() {
   const [balance, setBalance] = useState(0);
   const [showJoined, setShowJoined] = useState(false);
   const [joinMessage, setJoinMessage] = useState("");
+  const [filterType, setFilterType] = useState("All"); // Filter state
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -50,23 +51,30 @@ export default function BattleRoyale() {
           const toursData = await tourRes.json();
           setTournaments(toursData);
         } else {
-          // fallback empty or static if needed
           setTournaments([]);
         }
       } catch (error) {
         console.error("Failed to fetch user or tournament data", error);
+        setTournaments([]);
       }
     };
     fetchUserData();
   }, []);
 
   const joined = tournaments.filter((t) => t.joined);
-  const upcoming = tournaments.filter((t) => !t.joined);
+
+  const upcoming = tournaments.filter(
+    (t) =>
+      !t.joined &&
+      (filterType === "All" || t.teamType.toLowerCase() === filterType.toLowerCase())
+  );
 
   const getCardClass = (t) => {
-    if (t.entryFee > 50) return "battle-card super-premium";
-    if (t.entryFee > 30) return "battle-card premium";
-    return "battle-card";
+    let base = "battle-card";
+    if (t.joined) return base + " joined";
+    if (t.entryFee > 50) return base + " super-premium";
+    if (t.entryFee > 30) return base + " premium";
+    return base;
   };
 
   const handleJoin = (t) => setModalTournament(t);
@@ -85,7 +93,6 @@ export default function BattleRoyale() {
       const data = await response.json();
       if (data.success) {
         setBalance(data.balance);
-        // Update joined status locally
         setTournaments((prev) =>
           prev.map((t) => (t.id === modalTournament.id ? { ...t, joined: true } : t))
         );
@@ -101,6 +108,11 @@ export default function BattleRoyale() {
       alert("Server error occurred, please try again.");
       console.error(err);
     }
+  };
+
+  const handleFilterChange = (type) => {
+    setFilterType(type);
+    setExpanded(null); // Collapse opened cards on filter change
   };
 
   return (
@@ -133,9 +145,7 @@ export default function BattleRoyale() {
             color: "#00ffe7",
             fontSize: 22,
           }}
-          onClick={() =>
-            alert("Contact support@cashplayzz.com or WhatsApp 24x7!")
-          }
+          onClick={() => alert("Contact support@cashplayzz.com or WhatsApp 24x7!")}
           role="button"
           aria-label="Help"
         >
@@ -167,9 +177,15 @@ export default function BattleRoyale() {
             <div key={t.id} className={getCardClass(t)}>
               <div className="battle-card-type">{t.teamType} Tournament</div>
               <div className="battle-card-info">
-                <span>Entry: <b>₹{t.entryFee}</b></span>
-                <span>Prize: <b>₹{t.prizePool}</b></span>
-                <span>Match time: <b>{formatDateTime(t.matchTime)}</b></span>
+                <span>
+                  Entry: <b>₹{t.entryFee}</b>
+                </span>
+                <span>
+                  Prize: <b>₹{t.prizePool}</b>
+                </span>
+                <span>
+                  Match time: <b>{formatDateTime(t.matchTime)}</b>
+                </span>
               </div>
               <span style={{ color: "#00ffe7", fontWeight: 700 }}>Status: Joined</span>
               <div style={{ marginTop: 7, fontSize: 13 }}>
@@ -180,7 +196,46 @@ export default function BattleRoyale() {
         </div>
       )}
 
-      <div className="section-label">Upcoming Matches</div>
+      {/* Filter bar */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "96vw",
+          maxWidth: 560,
+          marginTop: 28,
+        }}
+      >
+        <div className="section-label" style={{ margin: 0 }}>
+          Upcoming Matches
+        </div>
+        <div>
+          {["All", "Solo", "Duo", "Squad"].map((type) => (
+            <button
+              key={type}
+              style={{
+                marginLeft: 8,
+                padding: "3px 10px",
+                borderRadius: 6,
+                border:
+                  filterType === type ? "2px solid #00ffe7" : "1.2px solid #00ffe7a6",
+                backgroundColor:
+                  filterType === type ? "rgba(0, 255, 231, 0.15)" : "transparent",
+                color: "#00ffe7",
+                cursor: "pointer",
+                fontSize: 14,
+                fontWeight: filterType === type ? "bold" : "normal",
+                transition: "background-color 0.3s, border 0.3s",
+              }}
+              onClick={() => handleFilterChange(type)}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="battle-cards-section">
         {upcoming.map((t) => {
           const timeDiff = new Date(t.matchTime).getTime() - Date.now();
@@ -241,11 +296,14 @@ export default function BattleRoyale() {
               Join {modalTournament.teamType} Tournament
             </div>
             <div className="battle-modal-info">
-              Entry Fee: <b style={{ color: "#00ffe7" }}>₹{modalTournament.entryFee}</b>
+              Entry Fee:{" "}
+              <b style={{ color: "#00ffe7" }}>₹{modalTournament.entryFee}</b>
               <br />
-              Prize Pool: <b style={{ color: "#ffe066" }}>{modalTournament.prizePool}</b>
+              Prize Pool:{" "}
+              <b style={{ color: "#ffe066" }}>{modalTournament.prizePool}</b>
               <br />
-              Scheduled Time: <b>{formatDateTime(modalTournament.matchTime)}</b>
+              Scheduled Time:{" "}
+              <b>{formatDateTime(modalTournament.matchTime)}</b>
               <ul style={{ marginTop: 10, marginLeft: 15 }}>
                 {modalTournament.rules.map((rule, i) => (
                   <li key={i}>{rule}</li>

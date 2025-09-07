@@ -1,8 +1,40 @@
+/* Global Reset and Base */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  min-height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;  /* smooth momentum scroll on iOS */
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar styling for WebKit */
+body::-webkit-scrollbar {
+  width: 8px;
+}
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+body::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 255, 231, 0.4);
+  border-radius: 6px;
+}
+
+/* Scrollbar styling for Firefox */
+body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 255, 231, 0.4) transparent;
+}
+
+/* Main container and scroll */
 .battle-bg {
-  min-height: 100vh;
-  height: 100vh;
-  max-height: 100vh;
   width: 100vw;
+  min-height: 100vh;
+  height: auto;
+  max-height: none;
   background-image: url('/bg.png');
   background-size: cover;
   background-position: center;
@@ -10,32 +42,26 @@
   flex-direction: column;
   align-items: center;
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch; /* momentum scroll on iOS */
   padding-bottom: 40px;
-  transform: translateZ(0); /* hardware acceleration */
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0); /* smooth rendering */
 }
 
-/* Scrollbar for WebKit browsers */
-.battle-bg::-webkit-scrollbar {
-  width: 8px;
-}
-.battle-bg::-webkit-scrollbar-track {
-  background: transparent;
-}
-.battle-bg::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 255, 231, 0.4);
-  border-radius: 6px;
-}
-
-/* Scrollbar for Firefox */
-.battle-bg {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 255, 231, 0.4) transparent;
+/* Tournament list container */
+.battle-cards-section {
+  width: 96vw;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-height: none !important;
+  overflow: visible !important;
 }
 
+/* Glassy topbar */
 .battle-topbar {
   width: 100vw;
   display: flex;
@@ -102,18 +128,6 @@
   text-align: left;
   font-weight: 700;
   letter-spacing: 0.8px;
-}
-
-.battle-cards-section {
-  width: 96vw;
-  max-width: 560px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-
-  /* Ensure full height and no overflow clipping */
-  max-height: none;
-  overflow: visible;
 }
 
 .battle-card {
@@ -261,7 +275,8 @@
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .battle-bg {
-    max-height: none; /* Allow natural height on mobile */
+    max-height: none;
+    height: auto;
   }
   .battle-cards-section {
     width: 100vw;

@@ -179,7 +179,7 @@ body {
 /* Joined card violet theme */
 .battle-card.joined {
   border: 3px solid #8A2BE2; /* Blue violet */
-  box-shadow: 0 0 15px 5px rgba(138, 43, 226, 0.7), 0 0 25px 10px rgba(138, 43, 226, 0.4);
+  box-shadow: 0 0 15px 5px rgba(77, 4, 145, 0.7), 0 0 25px 10px rgba(138, 43, 226, 0.4);
   background: rgba(138, 43, 226, 0.15); /* Translucent violet */
   color: #E6E6FA; /* Lavender text */
 }

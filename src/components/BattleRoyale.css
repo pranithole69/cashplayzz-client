@@ -351,3 +351,32 @@ body {
     width: 100%;
   }
 }
+
+/* Filter bar buttons */
+.filter-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 14px;
+  gap: 14px;
+}
+
+.filter-btn {
+  background: transparent;
+  border: 1.5px solid #00ffe7a6;
+  color: #00ffe7;
+  padding: 6px 24px;
+  border-radius: 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.14s, border 0.16s, color 0.16s;
+  font-weight: 500;
+  outline: none;
+}
+
+.filter-btn.active {
+  background: #00ffe7;
+  color: #121212;
+  border: 2.5px solid #00ffe7;
+  font-weight: bold;
+}

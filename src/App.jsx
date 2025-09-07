@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import background from "../assets/bg.png";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,6 +7,8 @@ import { Eye, EyeOff } from "lucide-react";
 import Agreement from "../Agreement";
 
 const backendURL = "https://cashplayzz-backend-1.onrender.com";
+
+const background = "/bg.png"; // Reference image from public folder by URL
 
 const App = () => {
   const navigate = useNavigate();

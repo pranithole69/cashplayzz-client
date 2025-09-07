@@ -1,129 +1,236 @@
-.battle-container {
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(12px);
-  border-radius: 12px;
-  max-width: 600px;
-  margin: 20px auto 40px auto;
-  padding: 28px 32px;
-  color: white;
-  font-family: "Segoe UI", sans-serif;
-  box-shadow: 0 0 18px #00ffe7aa;
-  overflow-y: auto;
-  max-height: 85vh;
+.battle-bg {
+  min-height: 100vh;
+  width: 100vw;
+  background-image: url('/bg.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow-x: hidden;
+  padding-bottom: 40px;
+}
+
+/* Glassy topbar */
+.battle-topbar {
+  width: 100vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0 8px 0;
+  background: rgba(0,0,0,0.30);
+  backdrop-filter: blur(6px);
 }
 
 .battle-title {
-  font-size: 28px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 24px;
+  font-size: 2.1rem;
   color: #00ffe7;
-  text-shadow: 0 0 8px #00ffe7, 0 0 24px #43fff8;
-}
-
-.tournament-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  border-radius: 12px;
-  border: 1px solid #00ffe7;
-  padding: 20px 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 0 14px #00ffe7aa;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-}
-
-.tournament-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 24px #00ffe7cc;
-}
-
-.tournament-header {
   font-weight: bold;
-  font-size: 22px;
-  color: #00ffee;
-  border-left: 6px solid #00ffee;
-  padding-left: 14px;
-  margin-bottom: 16px;
-  text-transform: uppercase;
-  text-shadow: 0 0 6px #00ffff;
+  text-shadow: 0 0 8px #00ffe7;
+  margin: 0 auto;
+}
+
+.battle-help-btn {
+  background: rgba(0, 255, 231, 0.12);
+  border: 1px solid #00ffe7;
+  color: #00ffe7;
+  border-radius: 25px;
+  padding: 7px 18px;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-right: 22px;
+  cursor: pointer;
+  box-shadow: 0 2px 0px #00ffe7a8;
+  transition: background .15s;
+}
+.battle-help-btn:hover {
+  background: rgba(0, 255, 231, 0.22);
+}
+
+.battle-greeting {
+  margin-top: 8px;
+  font-size: 18px;
+  text-align: center;
+  font-weight: 600;
+  color: #b5fff5;
   letter-spacing: 1px;
 }
 
-.tournament-info {
-  display: flex;
-  justify-content: space-between;
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 14px;
-  color: #a2fefe;
+.balance-box {
+  background: rgba(0,0,0,0.54);
+  border-radius: 14px;
+  border: 1.5px solid #00ffe7cc;
+  box-shadow: 0 2px 12px #00ffe74d;
+  padding: 10px 34px;
+  font-size: 1.35rem;
+  color: #00ffe7;
+  font-weight: bold;
+  margin: 22px auto 10px auto;
+  max-width: 300px;
+  text-align: center;
+  letter-spacing: 0.5px;
 }
 
-.tournament-info span {
+.section-label {
+  color: #00ffe7;
+  margin: 28px 0 12px 0;
+  font-size: 1.09rem;
+  text-align: left;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+}
+
+.battle-cards-section {
+  width: 96vw;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.battle-card {
+  background: rgba(0,0,0,0.50);
+  border-radius: 11px;
+  border: 1.2px solid #00ffe7a6;
+  box-shadow: 0 0 12px 2px #00ffd922;
+  padding: 20px 22px 16px 22px;
+  color: #eaffff;
+  transition: transform 0.2s, box-shadow 0.18s;
+  position: relative;
+}
+
+.battle-card.premium {
+  border: 2px solid #72ffdf;
+  box-shadow: 0 2px 16px #6cf8f7;
+}
+.battle-card.super-premium {
+  border: 2.5px solid gold;
+  box-shadow: 0 4px 16px #ffe066,0 2px 32px #fff20813;
+  background: rgba(26, 22, 4, 0.56);
+}
+
+/* Card header */
+.battle-card-type {
+  color: #00ffee;
+  font-size: 1.08rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+  text-shadow: 0 0 4px #61fff9;
+  border-left: 5px solid #00ffe7;
+  padding-left: 12px;
+  margin-bottom: 7px;
+}
+
+/* Match info grid */
+.battle-card-info {
+  display: flex;
+  gap: 16px;
+  font-weight: 600;
+  font-size: 1.01rem;
+  margin-bottom: 10px;
+}
+.battle-card-info span {
   flex: 1;
+}
+
+/* Join button */
+.battle-join-btn {
+  width: 100%;
+  margin: 7px 0 0 0;
+  background: #00ffe7;
+  color: #121212;
+  border-radius: 8px;
+  border: none;
+  font-size: 1.07rem;
+  font-weight: bold;
+  padding: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 12px #00ffe944;
+  transition: background .18s;
+}
+.battle-join-btn:disabled {
+  background: #222;
+  color: #555;
+  cursor: not-allowed;
+}
+
+/* Glassy card modal */
+.battle-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.37);
+  z-index: 9900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.battle-modal-box {
+  background: rgba(13,18,28, 0.93);
+  box-shadow: 0 0 20px 5px #00ffe7aa;
+  border: 2px solid #00ffe7cc;
+  border-radius: 22px;
+  padding: 30px 28px;
+  max-width: 95vw;
+  min-width: 260px;
+  color: #fff;
+  animation: popInB 0.28s;
+  position: relative;
+}
+@keyframes popInB {
+  from { transform: scale(1.07); opacity: 0;}
+  to { transform: scale(1); opacity: 1;}
+}
+.battle-modal-close {
+  position: absolute;
+  right: 23px;
+  top: 22px;
+  background: transparent;
+  border: none;
+  color: #80fff2;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.battle-modal-title {
+  font-size: 1.2rem;
+  color: #00ffe7;
+  font-weight: bold;
+  margin-bottom: 13px;
   text-align: center;
 }
-
-.join-button {
-  background: #00ffee;
-  color: #002020;
+.battle-modal-info {
+  font-size: 1rem;
+  margin-bottom: 14px;
+  color: #eafff9;
+}
+.battle-modal-action {
+  background: #00ffe7;
+  color: #222;
   border: none;
-  padding: 12px 28px;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 16px;
-  box-shadow: 0 4px 20px #00ffe7aa;
+  padding: 9px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.08rem;
+  margin-top: 16px;
   cursor: pointer;
-  width: 100%;
-  transition: background-color 0.3s ease;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 2px 8px #00ffe743;
 }
 
-.join-button:hover:enabled {
-  background-color: #009e9e;
+.battle-collapse-toggle {
+  font-size: 1.08rem;
+  font-weight: 600;
+  background: none;
+  border: none;
+  color: #00ffe7;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: color 0.2s;
 }
-
-.join-button:disabled {
-  background-color: #1a1a1a;
-  color: #555555;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-.tournament-details {
-  margin-top: 18px;
-  color: #b2ffff;
-  font-size: 14px;
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 10px;
-  padding: 14px 18px;
-  border: 1px solid #00ffe788;
-  line-height: 1.5;
-  box-shadow: 0 0 10px #00ffee77 inset;
-}
-
-.tournament-details ul {
-  list-style-type: disc;
-  margin-left: 22px;
-}
-
-@media (max-width: 480px) {
-  .battle-container {
-    padding: 18px 14px;
-    max-height: 90vh;
-  }
-  .tournament-info {
-    flex-direction: column;
-    gap: 8px;
-  }
-  .tournament-info span {
-    text-align: left;
-  }
-  .tournament-header {
-    font-size: 18px;
-    padding-left: 10px;
-  }
-  .join-button {
-    font-size: 14px;
-    padding: 10px 18px;
-  }
+.battle-collapse-toggle:hover {
+  color: #72fff6;
 }

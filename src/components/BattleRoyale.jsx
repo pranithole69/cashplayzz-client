@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./BattleRoyale.css";
 
+// Simulated tournaments (replace with backend data as needed)
 const DEMO_TOURNAMENTS = [
   {
     id: 1,
     teamType: "Solo",
     entryFee: 15,
     prizePool: 200,
-    matchTime: new Date(Date.now() + 16 * 60 * 1000),
+    matchTime: new Date(Date.now() + 10 * 60 * 1000),
     joined: false,
     players: 11,
     maxPlayers: 48,
@@ -22,10 +23,10 @@ const DEMO_TOURNAMENTS = [
   {
     id: 2,
     teamType: "Duo",
-    entryFee: 30,
-    prizePool: 350,
-    matchTime: new Date(Date.now() + 42 * 60 * 1000),
-    joined: false,
+    entryFee: 50,
+    prizePool: 800,
+    matchTime: new Date(Date.now() + 22 * 60 * 1000),
+    joined: true, // joined
     players: 24,
     maxPlayers: 96,
     roomId: "987653",
@@ -39,9 +40,9 @@ const DEMO_TOURNAMENTS = [
   {
     id: 3,
     teamType: "Squad",
-    entryFee: 50,
-    prizePool: 800,
-    matchTime: new Date(Date.now() + 70 * 60 * 1000),
+    entryFee: 85,
+    prizePool: 1800,
+    matchTime: new Date(Date.now() + 40 * 60 * 1000),
     joined: false,
     players: 38,
     maxPlayers: 100,
@@ -52,90 +53,166 @@ const DEMO_TOURNAMENTS = [
       "Stream sniping not allowed.",
       "Any hacks = instant ban.",
     ],
-  },
+  }
 ];
 
+function formatDateTime(date) {
+  // Format: 4:12:16 pm (12-hr, seconds included)
+  return date.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
+}
 function formatCountdown(ms) {
   if (ms < 0) return "Started";
   const min = Math.floor(ms / 60000);
   const sec = Math.floor((ms % 60000) / 1000);
-  return `${min}:${sec < 10 ? "0" : ""}${sec} min`;
+  return `${min >= 60 ? `${Math.floor(min/60)} hr ` : ""}${min%60}:${sec < 10 ? "0" : ""}${sec}`;
 }
 
 export default function BattleRoyale() {
   const [tournaments, setTournaments] = useState(DEMO_TOURNAMENTS);
   const [expanded, setExpanded] = useState(null);
+  const [modalTournament, setModalTournament] = useState(null);
   const [balance, setBalance] = useState(69);
+  const [showJoined, setShowJoined] = useState(false);  // collapsed by default
 
   useEffect(() => {
-    const interval = setInterval(() => setTournaments((prev) => [...prev]), 1000);
+    const interval = setInterval(() => setTournaments((prev) => [...prev]), 950);
     return () => clearInterval(interval);
   }, []);
 
-  const handleJoin = (tournament) => {
-    if (balance < tournament.entryFee) {
-      alert("Insufficient balance!");
-      return;
-    }
-    if (window.confirm(`Confirm join for ₹${tournament.entryFee}?`)) {
-      setBalance((bal) => bal - tournament.entryFee);
-      setTournaments((prev) =>
-        prev.map((t) => (t.id === tournament.id ? { ...t, joined: true } : t))
-      );
-    }
+  // Sections
+  const joined = tournaments.filter(t => t.joined);
+  const upcoming = tournaments.filter(t => !t.joined);
+
+  // Card class based on premium
+  const getCardClass = (t) => {
+    if (t.entryFee > 50) return 'battle-card super-premium';
+    if (t.entryFee > 30) return 'battle-card premium';
+    return 'battle-card';
+  };
+
+  // Handle join popout
+  const handleJoin = (t) => setModalTournament(t);
+
+  const confirmJoin = () => {
+    // Actually join (simulate)
+    setBalance((bal) => bal - modalTournament.entryFee);
+    setTournaments(prev =>
+      prev.map(t =>
+        t.id === modalTournament.id ? { ...t, joined: true } : t
+      )
+    );
+    setModalTournament(null);
+    setExpanded(null);
   };
 
   return (
-    <div className="battle-container">
-      <h2 className="battle-title">Battle Royale Tournaments</h2>
-      <div style={{ color: "#00ffe7", fontWeight: 600, marginBottom: 20, textAlign: "center", fontSize: 18 }}>
-        Your Balance: <span style={{ color: "#4affbe" }}>₹{balance}</span>
+    <div className="battle-bg">
+      {/* Topbar */}
+      <div className="battle-topbar">
+        <span style={{ marginLeft: 22 }}>
+          <button className="battle-help-btn" onClick={() => alert("Contact support@cashplayzz.com or WhatsApp 24x7!")}>Help</button>
+        </span>
+        <div style={{ width: "60%", height: 5 }} /> {/* For centering */}
       </div>
-
-      {tournaments.map((t) => {
-        const timeDiff = t.matchTime.getTime() - Date.now();
-        return (
-          <div
-            key={t.id}
-            className="tournament-card"
-            onClick={() => setExpanded(expanded === t.id ? null : t.id)}
-          >
-            <div className="tournament-header">{t.teamType} Tournament</div>
-            <div className="tournament-info">
-              <span>Entry: ₹{t.entryFee}</span>
-              <span>Prize: ₹{t.prizePool}</span>
-              <span>Starts in: {formatCountdown(timeDiff)}</span>
-            </div>
-            <button
-              className="join-button"
-              disabled={t.joined || balance < t.entryFee || timeDiff <= 0}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleJoin(t);
-              }}
-            >
-              {t.joined ? "Joined" : "Join"}
-            </button>
-
-            {expanded === t.id && (
-              <div className="tournament-details">
-                <p>
-                  <b>Room ID:</b> <span style={{ color: "#ffd200" }}>{t.roomId}</span>{" "}
-                  <b>Pass:</b> <span style={{ color: "#16ff77" }}>{t.roomPassword}</span>{" "}
-                  <b>Players:</b> {t.players}/{t.maxPlayers}
-                </p>
-                <p>
-                  <b style={{ color: "#43fff8" }}>Rules:</b>
-                </p>
-                <ul>{t.rules.map((rule, i) => <li key={i}>{rule}</li>)}</ul>
-                <p style={{ marginTop: 10 }}>
-                  <b style={{ color: "#66ffb6" }}>Prize Pool:</b> ₹{t.prizePool}
-                </p>
+      <div className="battle-greeting">Welcome, Survivor!</div>
+      {/* Balance box, dashboard-like */}
+      <div className="balance-box">
+        <span>Balance:</span> <span style={{color: "#00ffe7"}}>₹{balance}</span>
+      </div>
+      {/* Joined matches (collapsed by default) */}
+      <button className="battle-collapse-toggle"
+        onClick={() => setShowJoined(j => !j)}
+        style={{ display: joined.length ? "block" : "none" }}>
+        {showJoined ? "Hide Joined Matches" : `Joined Matches (${joined.length})`}
+      </button>
+      {showJoined && (
+        <div className="battle-cards-section">
+          {joined.map((t) => (
+            <div key={t.id} className={getCardClass(t)}>
+              <div className="battle-card-type">{t.teamType} Tournament</div>
+              <div className="battle-card-info">
+                <span>Entry: <b>₹{t.entryFee}</b></span>
+                <span>Prize: <b>₹{t.prizePool}</b></span>
+                <span>
+                  Match time: <b>{formatDateTime(t.matchTime)}</b>
+                </span>
               </div>
-            )}
+              <span style={{color:"#00ffe7",fontWeight:700}}>Status: Joined</span>
+              <div style={{marginTop:7,fontSize:13}}>
+                Players: {t.players}/{t.maxPlayers}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {/* Upcoming matches */}
+      <div className="section-label">Upcoming Matches</div>
+      <div className="battle-cards-section">
+        {upcoming.map((t) => {
+          const timeDiff = t.matchTime.getTime() - Date.now();
+          return (
+            <div
+              key={t.id}
+              className={getCardClass(t)}
+              onClick={() => setExpanded(expanded === t.id ? null : t.id)}
+            >
+              <div className="battle-card-type">{t.teamType} Tournament</div>
+              <div className="battle-card-info">
+                <span>Entry: ₹{t.entryFee}</span>
+                <span>Prize: ₹{t.prizePool}</span>
+                <span>
+                  {timeDiff > 0
+                    ? `Starts: ${formatCountdown(timeDiff)} | ${formatDateTime(t.matchTime)}`
+                    : "Started"}
+                </span>
+              </div>
+              <button
+                className="battle-join-btn"
+                disabled={t.joined || balance < t.entryFee || timeDiff <= 0}
+                onClick={e => {
+                  e.stopPropagation();
+                  handleJoin(t);
+                }}>
+                Join
+              </button>
+              {expanded === t.id && (
+                <div className="tournament-details" style={{marginTop:11}}>
+                  <b>Rules:</b>
+                  <ul>
+                    {t.rules.map((rule, i) => <li key={i}>{rule}</li>)}
+                  </ul>
+                  <div style={{marginTop:8, fontSize:13, color:"#e1ffe4"}}>
+                    Players: {t.players}/{t.maxPlayers}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {/* Glassy card modal for join confirm/details */}
+      {modalTournament && <div className="battle-modal-overlay">
+          <div className="battle-modal-box">
+            <button className="battle-modal-close" onClick={()=>setModalTournament(null)}>&times;</button>
+            <div className="battle-modal-title">
+              Join {modalTournament.teamType} Tournament
+            </div>
+            <div className="battle-modal-info">
+              Entry Fee: <b style={{ color: "#00ffe7" }}>₹{modalTournament.entryFee}</b><br />
+              Prize Pool: <b style={{ color: "#ffe066" }}>₹{modalTournament.prizePool}</b><br />
+              Scheduled Time: <b>{formatDateTime(modalTournament.matchTime)}</b>
+              <ul style={{ marginTop: 10, marginLeft: 15 }}>
+                {modalTournament.rules.map((rule, i) =>
+                  <li key={i}>{rule}</li>
+                )}
+              </ul>
+            </div>
+            <button className="battle-modal-action" onClick={confirmJoin}>
+              Confirm & Join Now
+            </button>
           </div>
-        );
-      })}
+        </div>
+      }
     </div>
   );
 }

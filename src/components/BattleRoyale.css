@@ -1,0 +1,124 @@
+/* Container covering full viewport with background */
+.battle-royale-container {
+  min-height: 100vh;
+  width: 100%;
+  background-image: url('/bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  color: white;
+  font-family: 'Orbitron', monospace;
+  text-shadow: 0 2px 16px rgba(0, 255, 255, 0.7);
+}
+
+/* Heading */
+.battle-royale-heading {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff, 0 0 25px #43fff8;
+}
+
+/* Tournament card */
+.tournament-card {
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid #444;
+  border-radius: 15px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  width: 320px;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.tournament-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px #0ff;
+}
+
+/* Header inside card */
+.tournament-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-left: 6px solid #0ff;
+  padding-left: 0.75rem;
+  margin-bottom: 1rem;
+  color: #0ff;
+  text-transform: uppercase;
+}
+
+/* Tournament info grid */
+.tournament-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: #ccc;
+  margin-bottom: 1rem;
+}
+
+.tournament-info span {
+  font-weight: 600;
+}
+
+/* Join button */
+.join-btn {
+  width: 100%;
+  padding: 0.6rem 0;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  background-color: #0bc5ea;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.join-btn:hover:enabled {
+  background-color: #0891b2;
+}
+
+.join-btn:disabled {
+  background-color: #333;
+  color: #888;
+  cursor: not-allowed;
+}
+
+/* Expanded details */
+.tournament-details {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #222;
+  border-radius: 10px;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  color: #ddd;
+}
+
+.tournament-details ul {
+  list-style-type: disc;
+  margin-left: 1.2rem;
+  margin-top: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 400px) {
+  .battle-royale-container {
+    padding: 1rem;
+  }
+  .tournament-card {
+    width: 100%;
+  }
+  .battle-royale-heading {
+    font-size: 2rem;
+  }
+}

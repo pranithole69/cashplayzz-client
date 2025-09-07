@@ -1,4 +1,3 @@
-// client/src/components/BattleRoyale.jsx
 import React, { useState, useEffect } from "react";
 
 const DEMO_TOURNAMENTS = [
@@ -7,7 +6,7 @@ const DEMO_TOURNAMENTS = [
     teamType: "Solo",
     entryFee: 15,
     prizePool: 200,
-    matchTime: new Date(Date.now() + 16 * 60 * 1000), // 16 mins from now
+    matchTime: new Date(Date.now() + 16 * 60 * 1000),
     joined: false,
     players: 11,
     maxPlayers: 48,
@@ -24,7 +23,7 @@ const DEMO_TOURNAMENTS = [
     teamType: "Duo",
     entryFee: 30,
     prizePool: 350,
-    matchTime: new Date(Date.now() + 42 * 60 * 1000), // 42 mins from now
+    matchTime: new Date(Date.now() + 42 * 60 * 1000),
     joined: false,
     players: 24,
     maxPlayers: 96,
@@ -41,7 +40,7 @@ const DEMO_TOURNAMENTS = [
     teamType: "Squad",
     entryFee: 50,
     prizePool: 800,
-    matchTime: new Date(Date.now() + 70 * 60 * 1000), // 70 mins from now
+    matchTime: new Date(Date.now() + 70 * 60 * 1000),
     joined: false,
     players: 38,
     maxPlayers: 100,
@@ -71,13 +70,11 @@ function formatCountdown(ms) {
 export default function BattleRoyale() {
   const [tournaments, setTournaments] = useState(DEMO_TOURNAMENTS);
   const [expanded, setExpanded] = useState(null);
-  const [balance, setBalance] = useState(69); // Simulated user balance
+  const [balance, setBalance] = useState(69);
 
-  // Live countdown timer
   useEffect(() => {
-    const interval = setInterval(() => setTournaments([...tournaments]), 1000);
+    const interval = setInterval(() => setTournaments((prev) => [...prev]), 1000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line
   }, []);
 
   const handleJoin = (tournament) => {
@@ -97,84 +94,97 @@ export default function BattleRoyale() {
 
   return (
     <div
-      className="min-h-screen bg-black flex flex-col items-center py-6"
+      className="min-h-screen bg-black flex flex-col items-center py-8 px-4"
       style={{
         backgroundImage: "url('/bg.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className="mb-5 w-full max-w-md mx-auto text-center">
-        <div className="text-lg font-mono text-cyan-300 font-bold py-2">
+      <div className="mb-6 w-full max-w-lg mx-auto text-center">
+        <div className="text-lg font-mono text-cyan-300 font-bold py-3">
           Your Balance: <span className="text-green-400">₹{balance}</span>
         </div>
-        <h2 className="text-2xl md:text-3xl font-bold mb-4" style={{textShadow:"0 0 7px #0ff, 0 0 24px #43fff8"}}>
+        <h2
+          className="text-3xl font-bold mb-6"
+          style={{ textShadow: "0 0 12px #0ff, 0 0 30px #43fff8" }}
+        >
           Battle Royale Tournaments
         </h2>
       </div>
-      <div className="flex flex-col gap-5 w-full max-w-md">
+      <div className="flex flex-col gap-6 w-full max-w-lg">
         {tournaments.map((t) => {
           const timeDiff = t.matchTime.getTime() - Date.now();
           return (
             <div
               key={t.id}
-              className={`bg-black/80 rounded-xl border border-gray-700 px-5 py-4 transition-all ${
-                expanded === t.id ? "shadow-lg scale-105" : ""
+              className={`bg-black/80 rounded-xl border border-gray-700 px-6 py-5 shadow-md transition-transform duration-300 ease-in-out ${
+                expanded === t.id ? "shadow-lg scale-105" : "hover:scale-[1.03]"
               }`}
             >
               {/* Card Header */}
-              <div className="flex flex-col md:flex-row gap-2 justify-between items-center cursor-pointer"
-                onClick={() => setExpanded(expanded === t.id ? null : t.id)}>
-                <div className={`font-bold uppercase border-l-4 pl-3 text-xl ${typeColors[t.teamType]}`}>
+              <div
+                className="flex flex-col md:flex-row gap-3 justify-between items-center cursor-pointer"
+                onClick={() => setExpanded(expanded === t.id ? null : t.id)}
+              >
+                <div
+                  className={`font-bold uppercase border-l-4 pl-4 text-2xl ${typeColors[t.teamType]}`}
+                >
                   {t.teamType}
                 </div>
-                <div className="flex-1 grid grid-cols-3 gap-1 text-sm mt-1 md:mt-0">
+                <div className="flex-1 grid grid-cols-3 gap-3 text-base mt-2 md:mt-0">
                   <div>
-                    Entry: <span className="font-semibold text-green-400">₹{t.entryFee}</span>
+                    Entry:{" "}
+                    <span className="font-semibold text-green-400">₹{t.entryFee}</span>
                   </div>
                   <div>
-                    Prize: <span className="font-semibold text-yellow-400">₹{t.prizePool}</span>
+                    Prize:{" "}
+                    <span className="font-semibold text-yellow-400">₹{t.prizePool}</span>
                   </div>
                   <div>
                     Starts in:{" "}
-                    <span className="font-mono text-cyan-400">
-                      {formatCountdown(timeDiff)}
-                    </span>
+                    <span className="font-mono text-cyan-400">{formatCountdown(timeDiff)}</span>
                   </div>
                 </div>
                 <button
-                  className={`rounded-full px-4 py-2 font-bold mt-2 md:mt-0
-                  ${t.joined ? "bg-gray-700 text-gray-300 cursor-not-allowed" : "bg-cyan-700 hover:bg-cyan-500 text-white"}
-                  transition`}
+                  className={`rounded-full px-5 py-3 font-bold mt-4 md:mt-0 ${
+                    t.joined
+                      ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+                      : "bg-cyan-700 hover:bg-cyan-500 text-white"
+                  } transition`}
                   disabled={t.joined || balance < t.entryFee || timeDiff <= 0}
-                  onClick={e => { e.stopPropagation(); handleJoin(t); }}>
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleJoin(t);
+                  }}
+                >
                   {t.joined ? "Joined" : "Join"}
                 </button>
               </div>
               {/* Card Details */}
               {expanded === t.id && (
-                <div className="mt-4 bg-black/60 rounded-lg p-3 text-gray-100 border border-gray-700">
-                  <div className="flex flex-wrap gap-2 text-xs">
-                    <span className="px-2 py-1 bg-gray-900 rounded">
+                <div className="mt-5 bg-black/70 rounded-lg p-4 text-gray-200 border border-gray-700">
+                  <div className="flex flex-wrap gap-3 text-sm mb-3">
+                    <span className="px-3 py-1 bg-gray-900 rounded-lg">
                       Room ID: <span className="text-yellow-300">{t.roomId}</span>
                     </span>
-                    <span className="px-2 py-1 bg-gray-900 rounded">
+                    <span className="px-3 py-1 bg-gray-900 rounded-lg">
                       Pass: <span className="text-green-300">{t.roomPassword}</span>
                     </span>
-                    <span className="px-2 py-1 bg-gray-900 rounded">
+                    <span className="px-3 py-1 bg-gray-900 rounded-lg">
                       Players: {t.players}/{t.maxPlayers}
                     </span>
                   </div>
-                  <div className="mt-2">
+                  <div>
                     <b className="text-cyan-300">Rules:</b>
-                    <ul className="pl-5 text-sm list-disc">
+                    <ul className="pl-5 list-disc mt-2 text-sm space-y-1">
                       {t.rules.map((rule, idx) => (
                         <li key={idx}>{rule}</li>
                       ))}
                     </ul>
                   </div>
-                  <div className="mt-2 flex flex-col gap-1">
-                    <span className="text-green-200 font-bold">Prize Pool: ₹{t.prizePool}</span>
+                  <div className="mt-3 font-semibold text-green-300">
+                    Prize Pool: ₹{t.prizePool}
                   </div>
                 </div>
               )}

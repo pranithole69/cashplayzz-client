@@ -178,9 +178,17 @@ body {
 
 /* Joined card violet theme */
 .battle-card.joined {
-  border: 2.5px solid #b570ff;
-  box-shadow: 0 4px 16px #b570ff, 0 2px 32px #742fb4bb;
-  background: rgba(44, 21, 66, 0.52);
+  border: 3px solid #8A2BE2; /* Blue violet */
+  box-shadow: 0 0 15px 5px rgba(138, 43, 226, 0.7), 0 0 25px 10px rgba(138, 43, 226, 0.4);
+  background: rgba(138, 43, 226, 0.15); /* Translucent violet */
+  color: #E6E6FA; /* Lavender text */
+}
+
+.battle-card.joined .battle-card-type,
+.battle-card.joined .battle-card-info,
+.battle-card.joined span {
+  text-shadow: 0 0 6px #8A2BE2;
+  color: #E6E6FA;
 }
 
 /* Card type */

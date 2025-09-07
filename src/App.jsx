@@ -4,7 +4,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Eye, EyeOff } from "lucide-react";
-import Agreement from "./Agreement.jsx";   // Correct relative import
+import Agreement from "./Agreement.jsx";
 
 const backendURL = "https://cashplayzz-backend-1.onrender.com";
 const background = "/bg.png"; // Public folder asset
@@ -24,6 +24,7 @@ const App = () => {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupUsername, setSignupUsername] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [signupReferral, setSignupReferral] = useState(""); // NEW FIELD
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
 
@@ -47,23 +48,42 @@ const App = () => {
 
   const toggleAgreement = () => setShowAgreement(!showAgreement);
 
+  // Signup function with referral and direct dashboard navigation
   const handleSignup = async () => {
     if (!agreeChecked) return toast.warn("Please accept the user agreement.");
-    if (!signupEmail || !signupUsername || !signupPassword) return toast.warn("All fields required.");
+    if (!signupEmail || !signupUsername || !signupPassword)
+      return toast.warn("All fields required.");
     const toastId = toast.loading("⏳ Signing up...");
     try {
       const res = await axios.post(`${backendURL}/api/auth/signup`, {
         email: signupEmail.trim(),
         username: signupUsername.trim(),
         password: signupPassword.trim(),
+        referral: signupReferral.trim() || undefined // pass referral only if set
       });
       toast.update(toastId, {
         render: res.data.message || "Signup successful!",
         type: "success",
         isLoading: false,
-        autoClose: 2000,
+        autoClose: 1800,
       });
-      setShowSignup(false);
+
+      // Assume backend auto-logs-in and returns token after signup:
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+        setShowSignup(false);
+        // Decode token to check user role (if role-based routing)
+        const decodedToken = JSON.parse(atob(res.data.token.split(".")[1]));
+        if (decodedToken.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
+      } else {
+        // fallback: show login after signup if no token returned
+        setShowSignup(false);
+        setTimeout(() => setShowLogin(true), 1000);
+      }
     } catch (err) {
       toast.update(toastId, {
         render: err.response?.data?.message || "Signup failed.",
@@ -74,13 +94,16 @@ const App = () => {
     }
   };
 
-  const navigateToBattleRoyale = () => navigate("/battle-royale");
-
+  // Existing login logic unchanged
   const handleLogin = async () => {
-    if (!loginCredential || !loginPassword) return toast.error("⚠️ Email/Username and password required.");
+    if (!loginCredential || !loginPassword)
+      return toast.error("⚠️ Email/Username and password required.");
     setIsLoggingIn(true);
     const warmUpTimeout = setTimeout(() => {
-      toast.info("🚀 Server warming up...", { position: "top-center", autoClose: 4000 });
+      toast.info("🚀 Server warming up...", {
+        position: "top-center",
+        autoClose: 4000,
+      });
     }, 5000);
     const toastId = toast.loading("⏳ Logging in...");
     try {
@@ -128,35 +151,24 @@ const App = () => {
         </div>
       )}
       <div className="center-box">
-        <p className="time-indicator">🌐 World → 🇮🇳 India → 🕓 {currentTime}</p>
+        <p className="time-indicator">
+          🌐 World → 🇮🇳 India → 🕓 {currentTime}
+        </p>
         <h1 className="welcome">
           Welcome to <span className="highlight">CashPlayzz</span>
         </h1>
-
         <div className="buttons">
           <button onClick={() => setShowLogin(true)}>Login</button>
           <button onClick={() => setShowSignup(true)}>Signup</button>
           <button onClick={toggleAgreement}>View User Agreement</button>
-          <button
-            onClick={navigateToBattleRoyale}
-            style={{
-              marginTop: "15px",
-              backgroundColor: "#06b6d4",
-              color: "white",
-              padding: "10px 20px",
-              borderRadius: "8px",
-              fontWeight: "bold",
-            }}
-          >
-            Battle Royale
-          </button>
         </div>
-
         <div className="info-section">
           <p>🔥 {activeUsers.toLocaleString()} players active</p>
           <p>💸 ₹{wageredAmount.toLocaleString()} wagered this second</p>
         </div>
-        <div className="footer-note">Powered by CashPlayzz — Play smart. Stay in control.</div>
+        <div className="footer-note">
+          Powered by CashPlayzz — Play smart. Stay in control.
+        </div>
         <p className="footer-msg">
           You’re on a safe platform, <span>BUDDYY!</span>
         </p>
@@ -222,18 +234,33 @@ const App = () => {
                 {showSignupPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
             </div>
+            {/* REFERRAL FIELD */}
+            <input
+              type="text"
+              placeholder="Referral Code (optional)"
+              value={signupReferral}
+              onChange={(e) => setSignupReferral(e.target.value)}
+            />
             <label className="agreement-checkbox">
               <input
                 type="checkbox"
                 checked={agreeChecked}
                 onChange={() => setAgreeChecked(!agreeChecked)}
               />
-              I accept the <span onClick={toggleAgreement}>User Agreement</span>
+              I accept the{" "}
+              <span onClick={toggleAgreement}>User Agreement</span>
             </label>
-            <button className="modal-btn" onClick={handleSignup} disabled={!agreeChecked}>
+            <button
+              className="modal-btn"
+              onClick={handleSignup}
+              disabled={!agreeChecked}
+            >
               Signup
             </button>
-            <button className="modal-close" onClick={() => setShowSignup(false)}>
+            <button
+              className="modal-close"
+              onClick={() => setShowSignup(false)}
+            >
               Close
             </button>
           </div>

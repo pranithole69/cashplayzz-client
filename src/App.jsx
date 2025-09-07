@@ -4,11 +4,10 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Eye, EyeOff } from "lucide-react";
-import Agreement from "../Agreement";
+import Agreement from "./components/Agreement.jsx";   // Correct relative import
 
 const backendURL = "https://cashplayzz-backend-1.onrender.com";
-
-const background = "/bg.png"; // Reference image from public folder by URL
+const background = "/bg.png"; // Public folder asset
 
 const App = () => {
   const navigate = useNavigate();

@@ -1,14 +1,13 @@
 /* Global Reset and Base */
 html, body {
+  height: 100%;
   margin: 0;
   padding: 0;
-  height: 100%;
-  min-height: 100%;
-  font-family: 'Segoe UI', sans-serif;
-  overflow-x: hidden;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;  /* smooth momentum scroll on iOS */
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; /* Momentum scrolling on iOS */
   scroll-behavior: smooth;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Scrollbar styling for WebKit */
@@ -29,36 +28,34 @@ body {
   scrollbar-color: rgba(0, 255, 231, 0.4) transparent;
 }
 
-/* Main container and scroll */
+/* Main container - battle-bg expands with content, no fixed height */
 .battle-bg {
   width: 100vw;
   min-height: 100vh;
   height: auto;
   max-height: none;
+  overflow: visible;
   background-image: url('/bg.png');
-  background-size: cover;
+  background-repeat: no-repeat;
   background-position: center;
+  background-size: cover;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  padding-bottom: 40px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  transform: translateZ(0); /* smooth rendering */
+  padding: 20px 15px 40px 15px;
+  box-sizing: border-box;
 }
 
-/* Tournament list container */
+/* Tournament list container visible and flexible */
 .battle-cards-section {
   width: 96vw;
   max-width: 560px;
   display: flex;
   flex-direction: column;
   gap: 18px;
-  max-height: none !important;
   overflow: visible !important;
+  max-height: none !important;
 }
 
 /* Glassy topbar */
@@ -70,8 +67,12 @@ body {
   padding: 18px 0 8px 0;
   background: rgba(0,0,0,0.30);
   backdrop-filter: blur(6px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
+/* Battle title */
 .battle-title {
   font-size: 2.1rem;
   color: #00ffe7;
@@ -80,6 +81,7 @@ body {
   margin: 0 auto;
 }
 
+/* Help button styling */
 .battle-help-btn {
   background: rgba(0, 255, 231, 0.12);
   border: 1px solid #00ffe7;
@@ -97,6 +99,7 @@ body {
   background: rgba(0, 255, 231, 0.22);
 }
 
+/* Greeting text */
 .battle-greeting {
   margin-top: 8px;
   font-size: 18px;
@@ -106,6 +109,7 @@ body {
   letter-spacing: 1px;
 }
 
+/* Balance box */
 .balance-box {
   background: rgba(0,0,0,0.54);
   border-radius: 14px;
@@ -121,6 +125,7 @@ body {
   letter-spacing: 0.5px;
 }
 
+/* Section labels */
 .section-label {
   color: #00ffe7;
   margin: 28px 0 12px 0;
@@ -130,6 +135,7 @@ body {
   letter-spacing: 0.8px;
 }
 
+/* Battle card */
 .battle-card {
   background: rgba(0,0,0,0.50);
   border-radius: 11px;
@@ -141,6 +147,7 @@ body {
   position: relative;
 }
 
+/* Premium cards */
 .battle-card.premium {
   border: 2px solid #72ffdf;
   box-shadow: 0 2px 16px #6cf8f7;
@@ -151,6 +158,7 @@ body {
   background: rgba(26, 22, 4, 0.56);
 }
 
+/* Card header */
 .battle-card-type {
   color: #00ffee;
   font-size: 1.08rem;
@@ -163,6 +171,7 @@ body {
   margin-bottom: 7px;
 }
 
+/* Card info grid */
 .battle-card-info {
   display: flex;
   gap: 16px;
@@ -174,6 +183,7 @@ body {
   flex: 1;
 }
 
+/* Join buttons */
 .battle-join-btn {
   width: 100%;
   margin: 7px 0 0 0;
@@ -194,6 +204,7 @@ body {
   cursor: not-allowed;
 }
 
+/* Modal overlay */
 .battle-modal-overlay {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
@@ -203,6 +214,7 @@ body {
   align-items: center;
   justify-content: center;
 }
+/* Modal box */
 .battle-modal-box {
   background: rgba(13,18,28, 0.93);
   box-shadow: 0 0 20px 5px #00ffe7aa;
@@ -219,6 +231,7 @@ body {
   from { transform: scale(1.07); opacity: 0;}
   to { transform: scale(1); opacity: 1;}
 }
+/* Modal close button */
 .battle-modal-close {
   position: absolute;
   right: 23px;
@@ -230,6 +243,7 @@ body {
   cursor: pointer;
 }
 
+/* Modal content */
 .battle-modal-title {
   font-size: 1.2rem;
   color: #00ffe7;
@@ -258,6 +272,7 @@ body {
   box-shadow: 0 2px 8px #00ffe743;
 }
 
+/* Collapse toggle button */
 .battle-collapse-toggle {
   font-size: 1.08rem;
   font-weight: 600;

@@ -4,15 +4,44 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
 
+/* Global reset and base styles */
 html, body, #root {
   margin: 0;
   padding: 0;
   height: 100%;
   font-family: 'Orbitron', sans-serif;
   background-color: #000;
-  overflow: hidden;
+
+  /* Enable vertical page scrolling */
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* Smooth scroll and momentum on iOS */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
+/* Scrollbar styling for WebKit browsers */
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 255, 231, 0.4);
+  border-radius: 6px;
+}
+
+/* Scrollbar styling for Firefox */
+body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 255, 231, 0.4) transparent;
+}
+
+/* Simple zoom-in animation */
 @keyframes zoom-in {
   from {
     transform: scale(1.1);

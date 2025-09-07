@@ -43,7 +43,7 @@ body {
   flex-direction: column;
   align-items: center;
   position: relative;
-  padding: 20px 15px 40px 15px;
+  padding: 20px 8px 40px 8px; /* Adjusted side padding */
   box-sizing: border-box;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
@@ -51,13 +51,14 @@ body {
 
 /* Tournament list container */
 .battle-cards-section {
-  width: 96vw;
-  max-width: 560px;
+  width: 93vw;       /* Reduced from 96vw for card edge space */
+  max-width: 520px;  /* Reduced max width */
   display: flex;
   flex-direction: column;
   gap: 18px;
   overflow: visible !important;
   max-height: none !important;
+  margin: 0 auto;   /* Center horizontally */
 }
 
 /* Glassy sticky topbar with no background (no black bar) */
@@ -65,7 +66,8 @@ body {
   width: 100vw;
   display: flex;
   align-items: center;
-  padding: 0;
+  justify-content: space-between; /* Place buttons on corners */
+  padding: 0 16px; /* Padding left and right */
   background: none;
   backdrop-filter: none;
   position: sticky;
@@ -73,8 +75,6 @@ body {
   z-index: 100;
   height: 48px;
   box-sizing: border-box;
-  padding-left: 15px;
-  padding-right: 15px;
 }
 
 /* Back button at top-left */
@@ -85,15 +85,10 @@ body {
   font-weight: bold;
   font-size: 16px;
   cursor: pointer;
-  padding: 0 16px 0 0;
   height: 48px;
   display: flex;
   align-items: center;
-}
-
-/* Spacer to push help icon to right */
-.battle-topbar-spacer {
-  flex-grow: 1;
+  padding: 0;
 }
 
 /* Help icon at top-right */
@@ -104,8 +99,6 @@ body {
   height: 48px;
   display: flex;
   align-items: center;
-  padding-left: 16px;
-  padding-right: 0;
 }
 
 /* Battle title */
@@ -137,7 +130,7 @@ body {
   font-size: 1.35rem;
   color: #00ffe7;
   font-weight: bold;
-  margin: 22px auto 10px auto;
+  margin: 16px auto 8px auto; /* Reduced top and bottom margin */
   max-width: 300px;
   text-align: center;
   letter-spacing: 0.5px;
@@ -146,7 +139,7 @@ body {
 /* Section label */
 .section-label {
   color: #00ffe7;
-  margin: 28px 0 12px 0;
+  margin: 16px 0 8px 0; /* Reduced margins for closer spacing */
   font-size: 1.09rem;
   text-align: left;
   font-weight: 700;
@@ -172,7 +165,7 @@ body {
 }
 .battle-card.super-premium {
   border: 2.5px solid gold;
-  box-shadow: 0 4px 16px #ffe066,0 2px 32px #fff20813;
+  box-shadow: 0 4px 16px #ffe066, 0 2px 32px #fff20813;
   background: rgba(26, 22, 4, 0.56);
 }
 
@@ -359,6 +352,9 @@ body {
   align-items: center;
   margin-bottom: 14px;
   gap: 14px;
+  padding-left: 8px;
+  padding-right: 8px;
+  flex-wrap: wrap;
 }
 
 .filter-btn {

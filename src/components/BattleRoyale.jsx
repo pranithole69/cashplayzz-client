@@ -3,62 +3,8 @@ import "./BattleRoyale.css";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-const DEMO_TOURNAMENTS = [
-  {
-    id: 1,
-    teamType: "Solo",
-    entryFee: 15,
-    prizePool: 200,
-    matchTime: new Date(Date.now() + 10 * 60 * 1000),
-    joined: false,
-    players: 11,
-    maxPlayers: 48,
-    roomId: "124542",
-    roomPassword: "21asdz",
-    rules: [
-      "No emulators allowed.",
-      "Room ID & Pass shared 5 min prior.",
-      "Prize after result screenshot.",
-    ],
-  },
-  {
-    id: 2,
-    teamType: "Duo",
-    entryFee: 50,
-    prizePool: 800,
-    matchTime: new Date(Date.now() + 22 * 60 * 1000),
-    joined: true,
-    players: 24,
-    maxPlayers: 96,
-    roomId: "987653",
-    roomPassword: "duo789",
-    rules: [
-      "Classic mode only.",
-      "Teaming with others is strictly prohibited.",
-      "Winners must submit screenshot.",
-    ],
-  },
-  {
-    id: 3,
-    teamType: "Squad",
-    entryFee: 85,
-    prizePool: 1800,
-    matchTime: new Date(Date.now() + 40 * 60 * 1000),
-    joined: false,
-    players: 38,
-    maxPlayers: 100,
-    roomId: "830141",
-    roomPassword: "squad007",
-    rules: [
-      "Prize split as per rules.",
-      "Stream sniping not allowed.",
-      "Any hacks = instant ban.",
-    ],
-  },
-];
-
 function formatDateTime(date) {
-  return date.toLocaleTimeString("en-IN", {
+  return new Date(date).toLocaleTimeString("en-IN", {
     hour: "numeric",
     minute: "2-digit",
     second: "2-digit",
@@ -76,34 +22,42 @@ function formatCountdown(ms) {
 }
 
 export default function BattleRoyale() {
-  const [tournaments, setTournaments] = useState(DEMO_TOURNAMENTS);
+  const [tournaments, setTournaments] = useState([]);
   const [expanded, setExpanded] = useState(null);
   const [modalTournament, setModalTournament] = useState(null);
-  const [balance, setBalance] = useState(69);
+  const [balance, setBalance] = useState(0);
   const [showJoined, setShowJoined] = useState(false);
   const [joinMessage, setJoinMessage] = useState("");
 
   useEffect(() => {
-    const fetchBalance = async () => {
+    const fetchUserData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`${BACKEND_URL}/api/user/profile`, {
+        // Fetch user balance
+        const profileRes = await fetch(`${BACKEND_URL}/api/user/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (res.ok) {
-          const json = await res.json();
-          setBalance(json.balance);
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          setBalance(profileData.balance);
         }
-      } catch (err) {
-        console.error("Failed to fetch balance", err);
+
+        // Fetch tournaments with joined info
+        const tourRes = await fetch(`${BACKEND_URL}/api/user/tournaments`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (tourRes.ok) {
+          const toursData = await tourRes.json();
+          setTournaments(toursData);
+        } else {
+          // fallback empty or static if needed
+          setTournaments([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user or tournament data", error);
       }
     };
-    fetchBalance();
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => setTournaments((prev) => [...prev]), 950);
-    return () => clearInterval(interval);
+    fetchUserData();
   }, []);
 
   const joined = tournaments.filter((t) => t.joined);
@@ -131,15 +85,14 @@ export default function BattleRoyale() {
       const data = await response.json();
       if (data.success) {
         setBalance(data.balance);
+        // Update joined status locally
         setTournaments((prev) =>
           prev.map((t) => (t.id === modalTournament.id ? { ...t, joined: true } : t))
         );
-        // Show joined section and join message
         setShowJoined(true);
         setJoinMessage("Be ready for the battle");
         setModalTournament(null);
         setExpanded(null);
-        // Clear join message after 4 seconds
         setTimeout(() => setJoinMessage(""), 4000);
       } else {
         alert(data.message || "Failed to join the match.");
@@ -170,7 +123,16 @@ export default function BattleRoyale() {
         >
           ← Back
         </button>
-        <span style={{ marginLeft: "auto", position: "absolute", right: 15, top: 12, cursor: "pointer", color: "#00ffe7", fontSize: 22 }}
+        <span
+          style={{
+            marginLeft: "auto",
+            position: "absolute",
+            right: 15,
+            top: 12,
+            cursor: "pointer",
+            color: "#00ffe7",
+            fontSize: 22,
+          }}
           onClick={() =>
             alert("Contact support@cashplayzz.com or WhatsApp 24x7!")
           }
@@ -221,7 +183,7 @@ export default function BattleRoyale() {
       <div className="section-label">Upcoming Matches</div>
       <div className="battle-cards-section">
         {upcoming.map((t) => {
-          const timeDiff = t.matchTime.getTime() - Date.now();
+          const timeDiff = new Date(t.matchTime).getTime() - Date.now();
           return (
             <div
               key={t.id}

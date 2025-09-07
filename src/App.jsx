@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
-import background from "./assets/bg.png";
+import { useNavigate } from "react-router-dom";
+import background from "../assets/bg.png";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Eye, EyeOff } from "lucide-react";
-import Agreement from "./Agreement";
-import BattleRoyale from "./components/BattleRoyale";
+import Agreement from "../Agreement";
 
 const backendURL = "https://cashplayzz-backend-1.onrender.com";
 
@@ -234,14 +233,4 @@ const Home = () => {
   );
 };
 
-const App = () => (
-  <Router>
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/battle-royale" element={<BattleRoyale />} />
-      {/* Add other routes here */}
-    </Routes>
-  </Router>
-);
-
-export default App;
+export default Home;

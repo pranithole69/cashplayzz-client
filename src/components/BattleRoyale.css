@@ -1,124 +1,129 @@
-/* Container covering full viewport with background */
-.battle-royale-container {
-  min-height: 100vh;
-  width: 100%;
-  background-image: url('/bg.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem 1rem;
+.battle-container {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  max-width: 600px;
+  margin: 20px auto 40px auto;
+  padding: 28px 32px;
   color: white;
-  font-family: 'Orbitron', monospace;
-  text-shadow: 0 2px 16px rgba(0, 255, 255, 0.7);
+  font-family: "Segoe UI", sans-serif;
+  box-shadow: 0 0 18px #00ffe7aa;
+  overflow-y: auto;
+  max-height: 85vh;
 }
 
-/* Heading */
-.battle-royale-heading {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
+.battle-title {
+  font-size: 28px;
+  font-weight: bold;
   text-align: center;
-  color: #0ff;
-  text-shadow: 0 0 10px #0ff, 0 0 25px #43fff8;
+  margin-bottom: 24px;
+  color: #00ffe7;
+  text-shadow: 0 0 8px #00ffe7, 0 0 24px #43fff8;
 }
 
-/* Tournament card */
 .tournament-card {
-  background: rgba(0, 0, 0, 0.75);
-  border: 1px solid #444;
-  border-radius: 15px;
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
-  width: 320px;
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  border: 1px solid #00ffe7;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 14px #00ffe7aa;
   transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
 .tournament-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px #0ff;
+  transform: scale(1.03);
+  box-shadow: 0 0 24px #00ffe7cc;
 }
 
-/* Header inside card */
-.tournament-card-header {
+.tournament-header {
+  font-weight: bold;
+  font-size: 22px;
+  color: #00ffee;
+  border-left: 6px solid #00ffee;
+  padding-left: 14px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  text-shadow: 0 0 6px #00ffff;
+  letter-spacing: 1px;
+}
+
+.tournament-info {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  font-weight: bold;
-  font-size: 1.2rem;
-  border-left: 6px solid #0ff;
-  padding-left: 0.75rem;
-  margin-bottom: 1rem;
-  color: #0ff;
-  text-transform: uppercase;
-}
-
-/* Tournament info grid */
-.tournament-info {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-  font-size: 0.85rem;
-  color: #ccc;
-  margin-bottom: 1rem;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: #a2fefe;
 }
 
 .tournament-info span {
-  font-weight: 600;
+  flex: 1;
+  text-align: center;
 }
 
-/* Join button */
-.join-btn {
-  width: 100%;
-  padding: 0.6rem 0;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 1rem;
+.join-button {
+  background: #00ffee;
+  color: #002020;
   border: none;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 4px 20px #00ffe7aa;
   cursor: pointer;
-  background-color: #0bc5ea;
-  color: white;
+  width: 100%;
   transition: background-color 0.3s ease;
 }
 
-.join-btn:hover:enabled {
-  background-color: #0891b2;
+.join-button:hover:enabled {
+  background-color: #009e9e;
 }
 
-.join-btn:disabled {
-  background-color: #333;
-  color: #888;
+.join-button:disabled {
+  background-color: #1a1a1a;
+  color: #555555;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
-/* Expanded details */
 .tournament-details {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid #222;
+  margin-top: 18px;
+  color: #b2ffff;
+  font-size: 14px;
+  background: rgba(0, 0, 0, 0.25);
   border-radius: 10px;
-  padding: 0.75rem;
-  font-size: 0.85rem;
-  color: #ddd;
+  padding: 14px 18px;
+  border: 1px solid #00ffe788;
+  line-height: 1.5;
+  box-shadow: 0 0 10px #00ffee77 inset;
 }
 
 .tournament-details ul {
   list-style-type: disc;
-  margin-left: 1.2rem;
-  margin-top: 0.25rem;
+  margin-left: 22px;
 }
 
-/* Responsive */
-@media (max-width: 400px) {
-  .battle-royale-container {
-    padding: 1rem;
+@media (max-width: 480px) {
+  .battle-container {
+    padding: 18px 14px;
+    max-height: 90vh;
   }
-  .tournament-card {
-    width: 100%;
+  .tournament-info {
+    flex-direction: column;
+    gap: 8px;
   }
-  .battle-royale-heading {
-    font-size: 2rem;
+  .tournament-info span {
+    text-align: left;
+  }
+  .tournament-header {
+    font-size: 18px;
+    padding-left: 10px;
+  }
+  .join-button {
+    font-size: 14px;
+    padding: 10px 18px;
   }
 }

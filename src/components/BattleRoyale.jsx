@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./BattleRoyale.css";
 
 const DEMO_TOURNAMENTS = [
   {
@@ -54,12 +55,6 @@ const DEMO_TOURNAMENTS = [
   },
 ];
 
-const typeColors = {
-  Solo: "text-purple-400 border-purple-600",
-  Duo: "text-cyan-400 border-cyan-600",
-  Squad: "text-orange-400 border-orange-600",
-};
-
 function formatCountdown(ms) {
   if (ms < 0) return "Started";
   const min = Math.floor(ms / 60000);
@@ -85,113 +80,62 @@ export default function BattleRoyale() {
     if (window.confirm(`Confirm join for ₹${tournament.entryFee}?`)) {
       setBalance((bal) => bal - tournament.entryFee);
       setTournaments((prev) =>
-        prev.map((t) =>
-          t.id === tournament.id ? { ...t, joined: true } : t
-        )
+        prev.map((t) => (t.id === tournament.id ? { ...t, joined: true } : t))
       );
     }
   };
 
   return (
-    <div
-      className="min-h-screen bg-black flex flex-col items-center py-8 px-4"
-      style={{
-        backgroundImage: "url('/bg.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <div className="mb-6 w-full max-w-lg mx-auto text-center">
-        <div className="text-lg font-mono text-cyan-300 font-bold py-3">
-          Your Balance: <span className="text-green-400">₹{balance}</span>
-        </div>
-        <h2
-          className="text-3xl font-bold mb-6"
-          style={{ textShadow: "0 0 12px #0ff, 0 0 30px #43fff8" }}
-        >
-          Battle Royale Tournaments
-        </h2>
+    <div className="battle-container">
+      <h2 className="battle-title">Battle Royale Tournaments</h2>
+      <div style={{ color: "#00ffe7", fontWeight: 600, marginBottom: 20, textAlign: "center", fontSize: 18 }}>
+        Your Balance: <span style={{ color: "#4affbe" }}>₹{balance}</span>
       </div>
-      <div className="flex flex-col gap-6 w-full max-w-lg">
-        {tournaments.map((t) => {
-          const timeDiff = t.matchTime.getTime() - Date.now();
-          return (
-            <div
-              key={t.id}
-              className={`bg-black/80 rounded-xl border border-gray-700 px-6 py-5 shadow-md transition-transform duration-300 ease-in-out ${
-                expanded === t.id ? "shadow-lg scale-105" : "hover:scale-[1.03]"
-              }`}
-            >
-              {/* Card Header */}
-              <div
-                className="flex flex-col md:flex-row gap-3 justify-between items-center cursor-pointer"
-                onClick={() => setExpanded(expanded === t.id ? null : t.id)}
-              >
-                <div
-                  className={`font-bold uppercase border-l-4 pl-4 text-2xl ${typeColors[t.teamType]}`}
-                >
-                  {t.teamType}
-                </div>
-                <div className="flex-1 grid grid-cols-3 gap-3 text-base mt-2 md:mt-0">
-                  <div>
-                    Entry:{" "}
-                    <span className="font-semibold text-green-400">₹{t.entryFee}</span>
-                  </div>
-                  <div>
-                    Prize:{" "}
-                    <span className="font-semibold text-yellow-400">₹{t.prizePool}</span>
-                  </div>
-                  <div>
-                    Starts in:{" "}
-                    <span className="font-mono text-cyan-400">{formatCountdown(timeDiff)}</span>
-                  </div>
-                </div>
-                <button
-                  className={`rounded-full px-5 py-3 font-bold mt-4 md:mt-0 ${
-                    t.joined
-                      ? "bg-gray-700 text-gray-400 cursor-not-allowed"
-                      : "bg-cyan-700 hover:bg-cyan-500 text-white"
-                  } transition`}
-                  disabled={t.joined || balance < t.entryFee || timeDiff <= 0}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleJoin(t);
-                  }}
-                >
-                  {t.joined ? "Joined" : "Join"}
-                </button>
-              </div>
-              {/* Card Details */}
-              {expanded === t.id && (
-                <div className="mt-5 bg-black/70 rounded-lg p-4 text-gray-200 border border-gray-700">
-                  <div className="flex flex-wrap gap-3 text-sm mb-3">
-                    <span className="px-3 py-1 bg-gray-900 rounded-lg">
-                      Room ID: <span className="text-yellow-300">{t.roomId}</span>
-                    </span>
-                    <span className="px-3 py-1 bg-gray-900 rounded-lg">
-                      Pass: <span className="text-green-300">{t.roomPassword}</span>
-                    </span>
-                    <span className="px-3 py-1 bg-gray-900 rounded-lg">
-                      Players: {t.players}/{t.maxPlayers}
-                    </span>
-                  </div>
-                  <div>
-                    <b className="text-cyan-300">Rules:</b>
-                    <ul className="pl-5 list-disc mt-2 text-sm space-y-1">
-                      {t.rules.map((rule, idx) => (
-                        <li key={idx}>{rule}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="mt-3 font-semibold text-green-300">
-                    Prize Pool: ₹{t.prizePool}
-                  </div>
-                </div>
-              )}
+
+      {tournaments.map((t) => {
+        const timeDiff = t.matchTime.getTime() - Date.now();
+        return (
+          <div
+            key={t.id}
+            className="tournament-card"
+            onClick={() => setExpanded(expanded === t.id ? null : t.id)}
+          >
+            <div className="tournament-header">{t.teamType} Tournament</div>
+            <div className="tournament-info">
+              <span>Entry: ₹{t.entryFee}</span>
+              <span>Prize: ₹{t.prizePool}</span>
+              <span>Starts in: {formatCountdown(timeDiff)}</span>
             </div>
-          );
-        })}
-      </div>
+            <button
+              className="join-button"
+              disabled={t.joined || balance < t.entryFee || timeDiff <= 0}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleJoin(t);
+              }}
+            >
+              {t.joined ? "Joined" : "Join"}
+            </button>
+
+            {expanded === t.id && (
+              <div className="tournament-details">
+                <p>
+                  <b>Room ID:</b> <span style={{ color: "#ffd200" }}>{t.roomId}</span>{" "}
+                  <b>Pass:</b> <span style={{ color: "#16ff77" }}>{t.roomPassword}</span>{" "}
+                  <b>Players:</b> {t.players}/{t.maxPlayers}
+                </p>
+                <p>
+                  <b style={{ color: "#43fff8" }}>Rules:</b>
+                </p>
+                <ul>{t.rules.map((rule, i) => <li key={i}>{rule}</li>)}</ul>
+                <p style={{ marginTop: 10 }}>
+                  <b style={{ color: "#66ffb6" }}>Prize Pool:</b> ₹{t.prizePool}
+                </p>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

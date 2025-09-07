@@ -33,28 +33,28 @@ export default function BattleRoyale() {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem("token");
-        // Fetch user profile (balance)
+        // Fetch user balance
         const profileRes = await fetch(`${BACKEND_URL}/api/user/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (profileRes.ok) {
-          const profile = await profileRes.json();
-          setBalance(profile.balance);
+          const profileData = await profileRes.json();
+          setBalance(profileData.balance);
         }
 
-        // Fetch tournaments with joined flags from backend
+        // Fetch tournaments with joined info
         const tourRes = await fetch(`${BACKEND_URL}/api/user/tournaments`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (tourRes.ok) {
-          const data = await tourRes.json();
-          setTournaments(data);
+          const toursData = await tourRes.json();
+          setTournaments(toursData);
         } else {
+          // fallback empty or static if needed
           setTournaments([]);
         }
-      } catch (err) {
-        console.error("Failed to fetch user or tournament data", err);
-        setTournaments([]);
+      } catch (error) {
+        console.error("Failed to fetch user or tournament data", error);
       }
     };
     fetchUserData();
@@ -80,18 +80,14 @@ export default function BattleRoyale() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          entryFee: modalTournament.entryFee,
-          matchId: modalTournament.id,
-        }),
+        body: JSON.stringify({ entryFee: modalTournament.entryFee, matchId: modalTournament.id }),
       });
       const data = await response.json();
       if (data.success) {
         setBalance(data.balance);
+        // Update joined status locally
         setTournaments((prev) =>
-          prev.map((t) =>
-            t.id === modalTournament.id ? { ...t, joined: true } : t
-          )
+          prev.map((t) => (t.id === modalTournament.id ? { ...t, joined: true } : t))
         );
         setShowJoined(true);
         setJoinMessage("Be ready for the battle");
@@ -149,19 +145,11 @@ export default function BattleRoyale() {
       <div className="battle-greeting">Welcome, Survivor!</div>
 
       <div className="balance-box">
-        <span>Balance:</span>{" "}
-        <span style={{ color: "#00ffe7" }}>₹{balance}</span>
+        <span>Balance:</span> <span style={{ color: "#00ffe7" }}>₹{balance}</span>
       </div>
 
       {joinMessage && (
-        <div
-          style={{
-            color: "#00ffe7",
-            fontWeight: "bold",
-            textAlign: "center",
-            marginTop: 12,
-          }}
-        >
+        <div style={{ color: "#00ffe7", fontWeight: "bold", textAlign: "center", marginTop: 12 }}>
           {joinMessage}
         </div>
       )}
@@ -171,9 +159,7 @@ export default function BattleRoyale() {
         onClick={() => setShowJoined((j) => !j)}
         style={{ display: joined.length ? "block" : "none" }}
       >
-        {showJoined
-          ? "Hide Joined Matches"
-          : `Joined Matches (${joined.length})`}
+        {showJoined ? "Hide Joined Matches" : `Joined Matches (${joined.length})`}
       </button>
       {showJoined && (
         <div className="battle-cards-section">
@@ -181,19 +167,11 @@ export default function BattleRoyale() {
             <div key={t.id} className={getCardClass(t)}>
               <div className="battle-card-type">{t.teamType} Tournament</div>
               <div className="battle-card-info">
-                <span>
-                  Entry: <b>₹{t.entryFee}</b>
-                </span>
-                <span>
-                  Prize: <b>₹{t.prizePool}</b>
-                </span>
-                <span>
-                  Match time: <b>{formatDateTime(t.matchTime)}</b>
-                </span>
+                <span>Entry: <b>₹{t.entryFee}</b></span>
+                <span>Prize: <b>₹{t.prizePool}</b></span>
+                <span>Match time: <b>{formatDateTime(t.matchTime)}</b></span>
               </div>
-              <span style={{ color: "#00ffe7", fontWeight: 700 }}>
-                Status: Joined
-              </span>
+              <span style={{ color: "#00ffe7", fontWeight: 700 }}>Status: Joined</span>
               <div style={{ marginTop: 7, fontSize: 13 }}>
                 Players: {t.players}/{t.maxPlayers}
               </div>
@@ -218,9 +196,7 @@ export default function BattleRoyale() {
                 <span>Prize: ₹{t.prizePool}</span>
                 <span>
                   {timeDiff > 0
-                    ? `Starts: ${formatCountdown(
-                        timeDiff
-                      )} | ${formatDateTime(t.matchTime)}`
+                    ? `Starts: ${formatCountdown(timeDiff)} | ${formatDateTime(t.matchTime)}`
                     : "Started"}
                 </span>
               </div>
@@ -235,23 +211,14 @@ export default function BattleRoyale() {
                 Join
               </button>
               {expanded === t.id && (
-                <div
-                  className="tournament-details"
-                  style={{ marginTop: 11 }}
-                >
+                <div className="tournament-details" style={{ marginTop: 11 }}>
                   <b>Rules:</b>
                   <ul>
                     {t.rules.map((rule, i) => (
                       <li key={i}>{rule}</li>
                     ))}
                   </ul>
-                  <div
-                    style={{
-                      marginTop: 8,
-                      fontSize: 13,
-                      color: "#e1ffe4",
-                    }}
-                  >
+                  <div style={{ marginTop: 8, fontSize: 13, color: "#e1ffe4" }}>
                     Players: {t.players}/{t.maxPlayers}
                   </div>
                 </div>
@@ -274,28 +241,18 @@ export default function BattleRoyale() {
               Join {modalTournament.teamType} Tournament
             </div>
             <div className="battle-modal-info">
-              Entry Fee:{" "}
-              <b style={{ color: "#00ffe7" }}>
-                ₹{modalTournament.entryFee}
-              </b>
+              Entry Fee: <b style={{ color: "#00ffe7" }}>₹{modalTournament.entryFee}</b>
               <br />
-              Prize Pool:{" "}
-              <b style={{ color: "#ffe066" }}>
-                {modalTournament.prizePool}
-              </b>
+              Prize Pool: <b style={{ color: "#ffe066" }}>{modalTournament.prizePool}</b>
               <br />
-              Scheduled Time:{" "}
-              <b>{formatDateTime(modalTournament.matchTime)}</b>
+              Scheduled Time: <b>{formatDateTime(modalTournament.matchTime)}</b>
               <ul style={{ marginTop: 10, marginLeft: 15 }}>
                 {modalTournament.rules.map((rule, i) => (
                   <li key={i}>{rule}</li>
                 ))}
               </ul>
             </div>
-            <button
-              className="battle-modal-action"
-              onClick={confirmJoin}
-            >
+            <button className="battle-modal-action" onClick={confirmJoin}>
               Confirm & Join Now
             </button>
           </div>

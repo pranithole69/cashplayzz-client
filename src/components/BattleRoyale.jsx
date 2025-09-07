@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./BattleRoyale.css";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const DEMO_TOURNAMENTS = [
   {
     id: 1,
@@ -85,7 +87,7 @@ export default function BattleRoyale() {
     const fetchBalance = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("/api/user/profile", {
+        const res = await fetch(`${BACKEND_URL}/api/user/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
@@ -120,7 +122,7 @@ export default function BattleRoyale() {
   const confirmJoin = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("/api/user/join-match", {
+      const response = await fetch(`${BACKEND_URL}/api/user/join-match`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -181,15 +183,9 @@ export default function BattleRoyale() {
             <div key={t.id} className={getCardClass(t)}>
               <div className="battle-card-type">{t.teamType} Tournament</div>
               <div className="battle-card-info">
-                <span>
-                  Entry: <b>₹{t.entryFee}</b>
-                </span>
-                <span>
-                  Prize: <b>₹{t.prizePool}</b>
-                </span>
-                <span>
-                  Match time: <b>{formatDateTime(t.matchTime)}</b>
-                </span>
+                <span>Entry: <b>₹{t.entryFee}</b></span>
+                <span>Prize: <b>₹{t.prizePool}</b></span>
+                <span>Match time: <b>{formatDateTime(t.matchTime)}</b></span>
               </div>
               <span style={{ color: "#00ffe7", fontWeight: 700 }}>Status: Joined</span>
               <div style={{ marginTop: 7, fontSize: 13 }}>
@@ -253,14 +249,19 @@ export default function BattleRoyale() {
       {modalTournament && (
         <div className="battle-modal-overlay">
           <div className="battle-modal-box">
-            <button className="battle-modal-close" onClick={() => setModalTournament(null)}>
+            <button
+              className="battle-modal-close"
+              onClick={() => setModalTournament(null)}
+            >
               &times;
             </button>
-            <div className="battle-modal-title">Join {modalTournament.teamType} Tournament</div>
+            <div className="battle-modal-title">
+              Join {modalTournament.teamType} Tournament
+            </div>
             <div className="battle-modal-info">
               Entry Fee: <b style={{ color: "#00ffe7" }}>₹{modalTournament.entryFee}</b>
               <br />
-              Prize Pool: <b style={{ color: "#ffe066" }}>₹{modalTournament.prizePool}</b>
+              Prize Pool: <b style={{ color: "#ffe066" }}>{modalTournament.prizePool}</b>
               <br />
               Scheduled Time: <b>{formatDateTime(modalTournament.matchTime)}</b>
               <ul style={{ marginTop: 10, marginLeft: 15 }}>

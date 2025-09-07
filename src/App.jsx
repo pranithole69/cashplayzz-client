@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import background from "./assets/bg.png";
-import "./App.css";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Eye, EyeOff } from "lucide-react";
 import Agreement from "./Agreement";
-import { useNavigate } from "react-router-dom";
+import BattleRoyale from "./components/BattleRoyale";
 
 const backendURL = "https://cashplayzz-backend-1.onrender.com";
 
-const App = () => {
+const Home = () => {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -75,6 +75,8 @@ const App = () => {
     }
   };
 
+  const navigateToBattleRoyale = () => navigate("/battle-royale");
+
   const handleLogin = async () => {
     if (!loginCredential || !loginPassword) return toast.error("⚠️ Email/Username and password required.");
     setIsLoggingIn(true);
@@ -131,11 +133,16 @@ const App = () => {
         <h1 className="welcome">
           Welcome to <span className="highlight">CashPlayzz</span>
         </h1>
+
         <div className="buttons">
           <button onClick={() => setShowLogin(true)}>Login</button>
           <button onClick={() => setShowSignup(true)}>Signup</button>
           <button onClick={toggleAgreement}>View User Agreement</button>
+          <button onClick={navigateToBattleRoyale} style={{ marginTop: "15px", backgroundColor: "#06b6d4", color: "white", padding: "10px 20px", borderRadius: "8px", fontWeight: "bold" }}>
+            Battle Royale
+          </button>
         </div>
+
         <div className="info-section">
           <p>🔥 {activeUsers.toLocaleString()} players active</p>
           <p>💸 ₹{wageredAmount.toLocaleString()} wagered this second</p>
@@ -226,5 +233,15 @@ const App = () => {
     </div>
   );
 };
+
+const App = () => (
+  <Router>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/battle-royale" element={<BattleRoyale />} />
+      {/* Add other routes here */}
+    </Routes>
+  </Router>
+);
 
 export default App;

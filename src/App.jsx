@@ -9,7 +9,7 @@ import Agreement from "../Agreement";
 
 const backendURL = "https://cashplayzz-backend-1.onrender.com";
 
-const Home = () => {
+const App = () => {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -137,7 +137,17 @@ const Home = () => {
           <button onClick={() => setShowLogin(true)}>Login</button>
           <button onClick={() => setShowSignup(true)}>Signup</button>
           <button onClick={toggleAgreement}>View User Agreement</button>
-          <button onClick={navigateToBattleRoyale} style={{ marginTop: "15px", backgroundColor: "#06b6d4", color: "white", padding: "10px 20px", borderRadius: "8px", fontWeight: "bold" }}>
+          <button
+            onClick={navigateToBattleRoyale}
+            style={{
+              marginTop: "15px",
+              backgroundColor: "#06b6d4",
+              color: "white",
+              padding: "10px 20px",
+              borderRadius: "8px",
+              fontWeight: "bold",
+            }}
+          >
             Battle Royale
           </button>
         </div>
@@ -147,7 +157,9 @@ const Home = () => {
           <p>💸 ₹{wageredAmount.toLocaleString()} wagered this second</p>
         </div>
         <div className="footer-note">Powered by CashPlayzz — Play smart. Stay in control.</div>
-        <p className="footer-msg">You’re on a safe platform, <span>BUDDYY!</span></p>
+        <p className="footer-msg">
+          You’re on a safe platform, <span>BUDDYY!</span>
+        </p>
       </div>
 
       {/* Login Modal */}
@@ -233,4 +245,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default App;

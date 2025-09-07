@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import Home from './components/Home';               // Home component extracted from old App.jsx
-import BattleRoyale from './components/BattleRoyale';
+import App from './App.jsx';                       // Main app (home, login/signup UI)
+import BattleRoyale from './components/BattleRoyale.jsx';  // Battle Royale page
 import Dashboard from './Dashboard.jsx';
 import AdminRoutes from './admin/AdminRoutes.jsx';
 
@@ -14,8 +14,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />               {/* Home page */}
-        <Route path="/battle-royale" element={<BattleRoyale />} />  {/* Battle Royale page */}
+        <Route path="/" element={<App />} />                 {/* Root route */}
+        <Route path="/battle-royale" element={<BattleRoyale />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>

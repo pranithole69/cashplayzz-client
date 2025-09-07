@@ -1,5 +1,7 @@
 .battle-bg {
   min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
   width: 100vw;
   background-image: url('/bg.png');
   background-size: cover;
@@ -9,44 +11,31 @@
   align-items: center;
   position: relative;
   overflow-x: hidden;
-
-  /* Enable vertical scrolling */
   overflow-y: auto;
-
-  /* Smooth scrolling for modern browsers */
   scroll-behavior: smooth;
-
-  /* Momentum scrolling on iOS */
-  -webkit-overflow-scrolling: touch;
-
-  /* Limit height to viewport height */
-  max-height: 100vh;
-
-  /* Enable hardware acceleration for smoother scroll */
-  transform: translateZ(0);
+  -webkit-overflow-scrolling: touch; /* momentum scroll on iOS */
+  padding-bottom: 40px;
+  transform: translateZ(0); /* hardware acceleration */
 }
 
-/* Scrollbar styling for WebKit browsers */
+/* Scrollbar for WebKit browsers */
 .battle-bg::-webkit-scrollbar {
   width: 8px;
 }
-
 .battle-bg::-webkit-scrollbar-track {
   background: transparent;
 }
-
 .battle-bg::-webkit-scrollbar-thumb {
   background-color: rgba(0, 255, 231, 0.4);
   border-radius: 6px;
 }
 
-/* Scrollbar styling for Firefox */
+/* Scrollbar for Firefox */
 .battle-bg {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 255, 231, 0.4) transparent;
 }
 
-/* Glassy topbar */
 .battle-topbar {
   width: 100vw;
   display: flex;
@@ -121,6 +110,10 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+
+  /* Ensure full height and no overflow clipping */
+  max-height: none;
+  overflow: visible;
 }
 
 .battle-card {
@@ -144,7 +137,6 @@
   background: rgba(26, 22, 4, 0.56);
 }
 
-/* Card header */
 .battle-card-type {
   color: #00ffee;
   font-size: 1.08rem;
@@ -157,7 +149,6 @@
   margin-bottom: 7px;
 }
 
-/* Match info grid */
 .battle-card-info {
   display: flex;
   gap: 16px;
@@ -169,7 +160,6 @@
   flex: 1;
 }
 
-/* Join button */
 .battle-join-btn {
   width: 100%;
   margin: 7px 0 0 0;
@@ -190,7 +180,6 @@
   cursor: not-allowed;
 }
 
-/* Glassy card modal */
 .battle-modal-overlay {
   position: fixed;
   top: 0; left: 0; width: 100vw; height: 100vh;
@@ -267,4 +256,18 @@
 }
 .battle-collapse-toggle:hover {
   color: #72fff6;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .battle-bg {
+    max-height: none; /* Allow natural height on mobile */
+  }
+  .battle-cards-section {
+    width: 100vw;
+    max-width: none;
+  }
+  .battle-topbar {
+    width: 100%;
+  }
 }

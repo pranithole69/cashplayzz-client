@@ -1,40 +1,29 @@
-/* Global Reset and Base */
+/* --- GLOBAL RESET --- */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  -webkit-overflow-scrolling: touch; /* Momentum scrolling on iOS */
-  scroll-behavior: smooth;
   font-family: 'Segoe UI', sans-serif;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Scrollbar styling for WebKit */
-body::-webkit-scrollbar {
-  width: 8px;
-}
-body::-webkit-scrollbar-track {
-  background: transparent;
-}
-body::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 255, 231, 0.4);
-  border-radius: 6px;
-}
+/* --- SCROLLBAR --- */
+body::-webkit-scrollbar { width: 8px; }
+body::-webkit-scrollbar-track { background: transparent; }
+body::-webkit-scrollbar-thumb { background-color: rgba(0,255,231,0.4); border-radius: 6px; }
 
-/* Scrollbar styling for Firefox */
 body {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 255, 231, 0.4) transparent;
+  scrollbar-color: rgba(0,255,231,0.4) transparent;
 }
 
-/* Main container - battle-bg expands naturally */
+/* --- MAIN WRAPPER LAYOUT --- */
 .battle-bg {
   width: 100vw;
   min-height: 100vh;
-  height: auto;
-  max-height: none;
-  overflow: visible;
   background-image: url('/bg.png');
   background-repeat: no-repeat;
   background-position: center;
@@ -43,79 +32,52 @@ body {
   flex-direction: column;
   align-items: center;
   position: relative;
-  padding: 14px 0 40px 0; /* reduced top padding from 20px to 14px */
-  margin-top: -6px; /* slight upward shift */
+  padding: 0 0 32px 0;      /* no top padding for maximum upwardness */
+  margin-top: -16px;        /* sharper upward shift! */
   box-sizing: border-box;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
 }
 
-/* Tournament list container */
-.battle-cards-section {
-  width: 90vw;              /* Edge margin */
-  max-width: 440px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  overflow: visible !important;
-  max-height: none !important;
-  margin: 0 auto;           /* Center horizontally */
-}
-
-/* Glassy sticky topbar with no background (no black bar) */
+/* --- TOP BAR --- */
 .battle-topbar {
-  width: 100vw;
+  width: 100%;
+  height: 48px;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Place buttons on corners */
-  padding: 0 16px;                      /* Side padding */
+  justify-content: space-between;
+  padding: 0 7px;
   background: none;
-  backdrop-filter: none;
   position: sticky;
   top: 0;
   z-index: 100;
-  height: 48px;
-  box-sizing: border-box;
 }
-
-/* Back button at top-left - add balanced margin */
 .battle-back-btn {
   background: none;
   border: none;
   color: #00ffe7;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 17px;
   cursor: pointer;
   height: 48px;
+  min-width: 60px;
   display: flex;
   align-items: center;
-  padding: 0;
-  margin-left: 4px;  /* slight left margin for better positioning */
+  margin-left: 2px;
 }
-
-/* Help icon at top-right */
 .battle-help-icon {
-  font-size: 22px;
+  font-size: 23px;
   color: #00ffe7;
   cursor: pointer;
   height: 48px;
+  width: 36px;
   display: flex;
   align-items: center;
-  margin-right: 4px; /* slight right margin for better positioning */
+  justify-content: flex-end;
+  margin-right: 2px;
 }
 
-/* Battle title */
-.battle-title {
-  font-size: 2.1rem;
-  color: #00ffe7;
-  font-weight: bold;
-  text-shadow: 0 0 8px #00ffe7;
-  margin: 0 auto;
-}
-
-/* Greeting */
+/* --- GREETING --- */
 .battle-greeting {
-  margin-top: 8px;
+  margin: 9px 0 0 0;
   font-size: 18px;
   text-align: center;
   font-weight: 600;
@@ -123,210 +85,176 @@ body {
   letter-spacing: 1px;
 }
 
-/* Balance box */
+/* --- BALANCE BOX --- */
 .balance-box {
-  background: rgba(0, 0, 0, 0.54);
-  border-radius: 14px;
+  background: rgba(0,0,0,0.54);
+  border-radius: 15px;
   border: 1.5px solid #00ffe7cc;
   box-shadow: 0 2px 12px #00ffe74d;
-  padding: 10px 34px;
+  padding: 11px 38px 11px 38px;
   font-size: 1.35rem;
   color: #00ffe7;
   font-weight: bold;
-  margin: 16px auto 8px auto; /* Adjusted top and bottom margin */
-  max-width: 300px;
+  margin: 18px auto 8px auto;
+  max-width: 325px;
   text-align: center;
   letter-spacing: 0.5px;
 }
 
-/* Section label */
+/* --- JOINED MATCHES TOGGLE BUTTON (pill, visible) --- */
+.battle-collapse-toggle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: rgba(255,255,255,0.24);
+  padding: 9px 28px;
+  color: #222;
+  border-radius: 22px;
+  backdrop-filter: blur(12px);
+  margin: 15px auto 17px auto;
+  border: 1.7px solid #00ffe7a1;
+  box-shadow: 0 2px 10px #00ffe72a;
+  text-shadow: 0 1px 8px #00fff019;
+  cursor: pointer;
+  outline: none;
+  display: block;
+  transition: background 0.23s, color 0.15s, font-weight 0.2s;
+}
+.battle-collapse-toggle:hover {
+  background: #e0feffec;
+  color: #00ffe7;
+  font-weight: bold;
+}
+
+/* --- TOURNAMENT LIST --- */
+.battle-cards-section {
+  width: 94vw;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 0 auto;
+  padding: 0 1px;
+}
+
 .section-label {
   color: #00ffe7;
-  margin: 16px 0 8px 0;
+  margin: 16px 0 0 1px;
   font-size: 1.09rem;
-  text-align: left;
   font-weight: 700;
   letter-spacing: 0.8px;
+  text-align: left;
 }
 
-/* Battle card */
+/* --- TOURNAMENT CARD --- */
 .battle-card {
-  background: rgba(0, 0, 0, 0.50);
-  border-radius: 11px;
-  border: 1.2px solid #00ffe7a6;
-  box-shadow: 0 0 12px 2px #00ffd922;
-  padding: 20px 22px 16px 22px;
+  background: linear-gradient(123deg,rgba(0,0,0,0.52) 90%,rgba(0,255,231,0.06));
+  border-radius: 14px;
+  border: 2px solid #00ffe7a8;
+  box-shadow: 0 2px 15px 2px #00ffe716;
+  padding: 22px 21px 17px 21px;
   color: #eaffff;
-  transition: transform 0.2s, box-shadow 0.18s;
+  transition: transform 0.18s, box-shadow 0.18s;
   position: relative;
+  margin-bottom: 2px;
 }
-
-/* Premium cards */
-.battle-card.premium {
-  border: 2px solid #72ffdf;
-  box-shadow: 0 2px 16px #6cf8f7;
-}
-.battle-card.super-premium {
-  border: 2.5px solid gold;
-  box-shadow: 0 4px 16px #ffe066, 0 2px 32px #fff20813;
-  background: rgba(26, 22, 4, 0.56);
-}
-
-/* Joined card violet theme - toned down */
-.battle-card.joined {
-  border: 2px solid #8a84b5; /* softer violet */
-  box-shadow:
-    0 0 10px 3px rgba(138, 132, 181, 0.4),
-    0 0 18px 7px rgba(138, 132, 181, 0.2);
-  background: rgba(138, 132, 181, 0.11);
-  color: #d8d8f0;
-}
-
-.battle-card.joined .battle-card-type,
-.battle-card.joined .battle-card-info,
-.battle-card.joined span {
-  text-shadow: 0 0 5px #8a84b5;
-  color: #d8d8f0;
-}
-
-/* Card type */
 .battle-card-type {
   color: #00ffee;
-  font-size: 1.08rem;
+  font-size: 1.12rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.1px;
-  text-shadow: 0 0 4px #61fff9;
+  letter-spacing: 1.15px;
+  text-shadow: 0 0 6px #61fff9;
   border-left: 5px solid #00ffe7;
-  padding-left: 12px;
-  margin-bottom: 7px;
+  padding-left: 13px;
+  margin-bottom: 6px;
 }
-
-/* Card info */
 .battle-card-info {
   display: flex;
-  gap: 16px;
+  gap: 15px;
   font-weight: 600;
   font-size: 1.01rem;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
-.battle-card-info span {
-  flex: 1;
-}
+.battle-card-info span { flex: 1; }
 
-/* Join button */
 .battle-join-btn {
   width: 100%;
-  margin: 7px 0 0 0;
+  margin: 8px 0 0 0;
   background: #00ffe7;
-  color: #121212;
+  color: #171a1b;
   border-radius: 8px;
   border: none;
-  font-size: 1.07rem;
+  font-size: 1.11rem;
   font-weight: bold;
-  padding: 10px;
+  padding: 12px 0 12px 0;
   cursor: pointer;
-  box-shadow: 0 2px 12px #00ffe944;
-  transition: background 0.18s;
+  box-shadow: 0 2px 14px #00ffe944;
+  transition: background 0.15s;
 }
 .battle-join-btn:disabled {
-  background: #222;
+  background: #293639;
   color: #555;
   cursor: not-allowed;
 }
 
-/* Joined Matches toggle as a translucent white pill button */
-.battle-collapse-toggle {
-  font-size: 1.08rem;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.24);
-  padding: 8px 24px;
-  color: #1c1c1c;
-  border-radius: 25px;
-  backdrop-filter: blur(8px);
-  margin: 14px auto 18px auto;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 2px 8px rgba(0, 255, 231, 0.25);
-  text-shadow: 0 1px 6px rgba(255, 255, 255, 0.3);
-  cursor: pointer;
-  outline: none;
-  display: block;
-  transition: background 0.18s, color 0.16s;
+/* --- JOINED CARD TONE --- */
+.battle-card.joined {
+  border: 2px solid #10e1fe;
+  box-shadow: 0 0 10px 2px #6fe3ff44, 0 0 14px 6px #e0fdff22;
+  background: rgba(41, 255, 255, 0.08);
+  color: #e5fdff;
 }
-.battle-collapse-toggle:hover {
-  background: rgba(255, 255, 255, 0.36);
-  color: #00ffe7;
+.battle-card.joined .battle-card-type, .battle-card.joined .battle-card-info, .battle-card.joined span {
+  text-shadow: 0 0 4px #00b5ff50;
+  color: #e5fdff;
 }
 
-/* Modal overlay */
+/* --- MODALS --- */
 .battle-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.37);
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.37);
   z-index: 9900;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
-/* Modal box */
 .battle-modal-box {
-  background: rgba(13, 18, 28, 0.93);
-  box-shadow: 0 0 20px 5px #00ffe7aa;
+  background: rgba(13,18,28,0.93);
+  box-shadow: 0 0 18px 2px #00ffe780;
   border: 2px solid #00ffe7cc;
-  border-radius: 22px;
-  padding: 30px 28px;
+  border-radius: 20px;
+  padding: 28px 22px;
   max-width: 95vw;
   min-width: 260px;
   color: #fff;
   animation: popInB 0.28s;
   position: relative;
 }
-
-/* Modal animation */
 @keyframes popInB {
-  from {
-    transform: scale(1.07);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  from { transform: scale(1.07); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
-
-/* Modal close button */
 .battle-modal-close {
-  position: absolute;
-  right: 23px;
-  top: 22px;
+  position: absolute; right: 20px; top: 17px;
   background: transparent;
   border: none;
   color: #80fff2;
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   cursor: pointer;
 }
-
-/* Modal titles */
 .battle-modal-title {
-  font-size: 1.2rem;
+  font-size: 1.18rem;
   color: #00ffe7;
   font-weight: bold;
   margin-bottom: 13px;
   text-align: center;
 }
-
-/* Modal info */
 .battle-modal-info {
   font-size: 1rem;
   margin-bottom: 14px;
   color: #eafff9;
 }
-
-/* Modal action */
 .battle-modal-action {
   background: #00ffe7;
   color: #222;
@@ -343,57 +271,42 @@ body {
   box-shadow: 0 2px 8px #00ffe743;
 }
 
-/* Mobile responsive */
-@media (max-width: 768px) {
-  .battle-bg {
-    max-height: none;
-    height: auto;
-  }
-  .battle-cards-section {
-    width: 100vw;
-    max-width: none;
-  }
-  .battle-topbar {
-    width: 100%;
-  }
-}
-
-/* Filter bar buttons */
+/* --- FILTER BAR --- */
 .filter-bar {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 14px;
-  gap: 8px;
-  padding-left: 0;
-  padding-right: 0;
-  flex-wrap: nowrap;
+  margin-bottom: 13px;
+  gap: 10px;
   width: 100%;
 }
-
 .filter-btn {
   background: transparent;
-  border: 1.5px solid #00ffe7a6;
+  border: 1.8px solid #00ffe7a4;
   color: #00ffe7;
-  padding: 6px 12px;
-  min-width: 60px;
-  border-radius: 20px;
+  padding: 7px 16px;
+  min-width: 61px;
+  border-radius: 16px;
   font-size: 0.98rem;
   cursor: pointer;
-  transition: background 0.14s, border 0.16s, color 0.16s;
+  transition: background 0.15s, border 0.15s, color 0.15s;
   font-weight: 500;
   outline: none;
 }
 .filter-btn.active {
   background: #00ffe7;
   color: #121212;
-  border: 2.5px solid #00ffe7;
+  border: 2.7px solid #00ffe7;
   font-weight: bold;
 }
-@media (max-width: 375px) {
-  .filter-btn {
-    font-size: 0.85rem;
-    padding: 5px 6px;
-    min-width: 40px;
-  }
+
+/* --- RESPONSIVE --- */
+@media (max-width:768px){
+  .battle-bg{max-height:none;height:auto;}
+  .battle-cards-section{width:100vw;max-width:none;}
+  .battle-topbar{width:100%;}
+}
+
+@media (max-width:375px) {
+  .filter-btn { font-size: 0.85rem; padding: 5px 6px; min-width: 39px; }
 }

@@ -31,7 +31,6 @@ export default function BattleRoyale() {
   const [filterType, setFilterType] = useState("All");
 
   useEffect(() => {
-    // Fetch user profile and tournaments on mount
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -61,11 +60,9 @@ export default function BattleRoyale() {
         setTournaments([]);
       }
     };
-
     fetchUserData();
   }, []);
 
-  // Filter tournaments into joined and upcoming lists
   const joined = tournaments.filter((t) => t.joined);
   const upcoming = tournaments.filter(
     (t) =>
@@ -73,7 +70,6 @@ export default function BattleRoyale() {
       (filterType === "All" || t.teamType.toLowerCase() === filterType.toLowerCase())
   );
 
-  // Dynamic card class based on entry fee and joined status
   const getCardClass = (t) => {
     let base = "battle-card";
     if (t.joined) return `${base} joined`;
@@ -82,10 +78,8 @@ export default function BattleRoyale() {
     return base;
   };
 
-  // Opens the modal for join confirmation
   const handleJoin = (t) => setModalTournament(t);
 
-  // Confirm joining a match, update balance and tournament state
   const confirmJoin = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -95,16 +89,21 @@ export default function BattleRoyale() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        // Use _id here for matchId
         body: JSON.stringify({ entryFee: modalTournament.entryFee, matchId: modalTournament._id }),
       });
       const data = await response.json();
 
       if (data.success) {
         setBalance(data.balance);
-        setTournaments((prev) =>
-          prev.map((t) => (t._id === modalTournament._id ? { ...t, joined: true } : t))
-        );
+
+        const tourRes = await fetch(`${BACKEND_URL}/api/user/tournaments`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (tourRes.ok) {
+          const toursData = await tourRes.json();
+          setTournaments(toursData);
+        }
+
         setShowJoined(true);
         setJoinMessage("Be ready for the battle");
         setModalTournament(null);
@@ -119,7 +118,6 @@ export default function BattleRoyale() {
     }
   };
 
-  // Change filter type and collapse expanded tournaments
   const handleFilterChange = (type) => {
     setFilterType(type);
     setExpanded(null);
@@ -127,7 +125,6 @@ export default function BattleRoyale() {
 
   return (
     <div className="battle-bg">
-      {/* Topbar */}
       <div className="battle-topbar" style={{ position: "relative" }}>
         <button
           onClick={() => window.history.back()}
@@ -156,7 +153,7 @@ export default function BattleRoyale() {
             color: "#00ffe7",
             fontSize: 22,
           }}
-          onClick={() => alert("Contact [support@cashplayzz.com](mailto:support@cashplayzz.com) or WhatsApp 24x7!")}
+          onClick={() => alert("Contact support@cashplayzz.com or WhatsApp 24x7!")}
           role="button"
           aria-label="Help"
         >
@@ -164,22 +161,18 @@ export default function BattleRoyale() {
         </span>
       </div>
 
-      {/* Greeting */}
       <div className="battle-greeting">Welcome, Survivor!</div>
 
-      {/* Balance */}
       <div className="balance-box">
         <span>Balance:</span> <span style={{ color: "#00ffe7" }}>₹{balance}</span>
       </div>
 
-      {/* Join Message */}
       {joinMessage && (
         <div style={{ color: "#00ffe7", fontWeight: "bold", textAlign: "center", marginTop: 12 }}>
           {joinMessage}
         </div>
       )}
 
-      {/* Joined Matches toggle */}
       <button
         className="battle-collapse-toggle"
         onClick={() => setShowJoined((j) => !j)}
@@ -188,7 +181,6 @@ export default function BattleRoyale() {
         {showJoined ? "Hide Joined Matches" : `Joined Matches (${joined.length})`}
       </button>
 
-      {/* Joined Matches list */}
       {showJoined && (
         <div className="battle-cards-section">
           {joined.map((t) => (
@@ -214,12 +206,10 @@ export default function BattleRoyale() {
         </div>
       )}
 
-      {/* Upcoming Matches label */}
       <div className="section-label" style={{ marginTop: 28 }}>
         Upcoming Matches
       </div>
 
-      {/* Filters */}
       <div className="filter-bar">
         {["All", "Solo", "Duo", "Squad"].map((type) => (
           <button
@@ -233,7 +223,6 @@ export default function BattleRoyale() {
         ))}
       </div>
 
-      {/* Upcoming Matches list */}
       <div className="battle-cards-section">
         {upcoming.map((t) => {
           const timeDiff = new Date(t.matchTime).getTime() - Date.now();
@@ -281,7 +270,6 @@ export default function BattleRoyale() {
         })}
       </div>
 
-      {/* Join modal */}
       {modalTournament && (
         <div className="battle-modal-overlay">
           <div className="battle-modal-box">
@@ -310,3 +298,4 @@ export default function BattleRoyale() {
     </div>
   );
 }
+

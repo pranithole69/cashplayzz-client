@@ -77,15 +77,19 @@ export default function ClashSquad() {
       const response = await fetch(`${BACKEND_URL}/api/user/join-match`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        // Use _id here for matchId
         body: JSON.stringify({ entryFee: modalTournament.entryFee, matchId: modalTournament._id }),
       });
       const data = await response.json();
       if (data.success) {
         setBalance(data.balance);
-        setTournaments((prev) =>
-          prev.map((t) => (t._id === modalTournament._id ? { ...t, joined: true } : t))
-        );
+        const tourRes = await fetch(`${BACKEND_URL}/api/user/tournaments?mode=clashsquad`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (tourRes.ok) {
+          const toursData = await tourRes.json();
+          setTournaments(toursData);
+        }
+
         setShowJoined(true);
         setJoinMessage("Get ready for the clash!");
         setModalTournament(null);
@@ -104,14 +108,13 @@ export default function ClashSquad() {
 
   return (
     <div className="clashsquad-bg">
-      {/* Topbar */}
       <div className="clashsquad-topbar">
         <button className="clashsquad-back-btn" onClick={() => window.history.back()}>
           &larr; Back
         </button>
         <span
           className="clashsquad-help-icon"
-          onClick={() => alert("Contact [support@cashplayzz.com](mailto:support@cashplayzz.com) or WhatsApp 24x7!")}
+          onClick={() => alert("Contact support@cashplayzz.com or WhatsApp 24x7!")}
           role="button"
           aria-label="Help"
         >
@@ -125,7 +128,11 @@ export default function ClashSquad() {
         <span>Balance:</span> <span>₹{balance}</span>
       </div>
 
-      {joinMessage && <div style={{ color: "#17e3ff", fontWeight: "bold", textAlign: "center", marginTop: 12 }}>{joinMessage}</div>}
+      {joinMessage && (
+        <div style={{ color: "#17e3ff", fontWeight: "bold", textAlign: "center", marginTop: 12 }}>
+          {joinMessage}
+        </div>
+      )}
 
       <button
         className="clashsquad-collapse-toggle"
@@ -142,7 +149,7 @@ export default function ClashSquad() {
               <div className="clashsquad-card-type">{t.squadSize} Clash Squad</div>
               <div className="clashsquad-card-info">
                 <span>Entry: <b>₹{t.entryFee}</b></span>
-                <span>Prize: <b>₹{t.prizePool}</b></span>
+                <span>Prize: <b>{t.prizePool}</b></span>
                 <span>Match time: <b>{formatDateTime(t.matchTime)}</b></span>
               </div>
               <span style={{ color: "#17e3ff", fontWeight: 700 }}>Status: Joined</span>

@@ -1,23 +1,76 @@
-html, body {
-  height: 100%;
-  margin: 0;
+/* --- TOPBAR (fix: icons always visible) --- */
+.battle-topbar {
+  width: 100%;
+  box-sizing: border-box;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 8px;
+  padding-right: 8px;
+  background: none;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.battle-back-btn {
+  background: none;
+  border: none;
+  color: #00ffe7;
+  font-weight: bold;
+  font-size: 17px;
+  cursor: pointer;
+  height: 36px;
+  width: 60px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   padding: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  font-family: 'Segoe UI', sans-serif;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
+  margin: 0;
 }
 
-body::-webkit-scrollbar { width: 8px; }
-body::-webkit-scrollbar-track { background: transparent; }
-body::-webkit-scrollbar-thumb { background-color: rgba(0,255,231,0.4); border-radius: 6px; }
-
-body {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0,255,231,0.4) transparent;
+.battle-help-icon {
+  font-size: 22px;
+  color: #00ffe7;
+  cursor: pointer;
+  height: 36px;
+  width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0;
+  margin: 0;
 }
 
+/* --- JOINED MATCHES BUTTON: clear, visible, never fuzzy --- */
+.battle-collapse-toggle {
+  font-size: 1.12rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, #00ffe7 0%, #00bbfe 100%);
+  color: #181818;
+  outline: none;
+  border: none;
+  border-radius: 32px;
+  box-shadow: 0 2px 14px #00ffe77c;
+  padding: 13px 0 12px 0;
+  margin: 18px auto 5px auto;
+  min-width: 180px;
+  width: 87%;
+  max-width: 410px;
+  display: block;
+  text-align: center;
+  letter-spacing: 0.7px;
+  transition: filter .16s;
+  filter: none;
+}
+.battle-collapse-toggle:hover {
+  filter: brightness(1.06);
+  color: #0b676b;
+}
+
+/* --- LAYOUT & CONTAINER - move everything a touch upward, but no cutoff --- */
 .battle-bg {
   width: 100vw;
   min-height: 100vh;
@@ -29,165 +82,94 @@ body {
   flex-direction: column;
   align-items: center;
   position: relative;
-  padding: 0 0 30px 0;
-  margin-top: -23px;
+  padding-top: 0;
+  padding-bottom: 28px;
+  margin-top: -18px;
   box-sizing: border-box;
 }
 
-/* --- TOPBAR: No cutting, always visible --- */
-.battle-topbar {
-  width: 100%;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 12px;
-  background: none;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-sizing: border-box;
-}
-.battle-back-btn {
-  background: none;
-  border: none;
-  color: #00ffe7;
-  font-weight: bold;
-  font-size: 17px;
-  cursor: pointer;
-  height: 48px;
-  width: 66px;
-  min-width: 54px;
-  display: flex;
-  align-items: center;
-  padding: 0 0 0 2px;
-  justify-content: flex-start;
-}
-.battle-help-icon {
-  font-size: 23px;
-  color: #00ffe7;
-  cursor: pointer;
-  height: 48px;
-  min-width: 37px;
-  width: 37px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 2px 0 0;
-  box-sizing: border-box;
-}
-
-/* --- GREETING --- */
 .battle-greeting {
-  margin: 9px 0 0 0;
+  margin: 10px 0 0 0;
   font-size: 18px;
   text-align: center;
   font-weight: 600;
   color: #b5fff5;
 }
 
-/* --- BALANCE BOX --- */
 .balance-box {
   background: rgba(0,0,0,0.54);
-  border-radius: 16px;
-  border: 1.6px solid #00ffe7cc;
-  box-shadow: 0 2px 16px #00ffe74f;
-  padding: 11px 38px 11px 38px;
-  font-size: 1.37rem;
+  border-radius: 15px;
+  border: 1.5px solid #00ffe7cc;
+  box-shadow: 0 2px 12px #00ffe74d;
+  padding: 13px 40px;
+  font-size: 1.34rem;
   color: #00ffe7;
   font-weight: bold;
-  margin: 17px auto 10px auto;
-  max-width: 325px;
+  margin: 17px auto 8px auto;
+  max-width: 320px;
   text-align: center;
 }
 
-/* --- JOINED MATCHES BUTTON --- */
-.battle-collapse-toggle {
-  font-size: 1.08rem;
-  font-weight: 700;
-  background: #111;
-  background: linear-gradient(100deg,#00ffe7 50%,#1a222b 100%);
-  color: #00ffe7;
-  padding: 14px 0 13px 0;
-  border-radius: 26px;
-  box-shadow: 0 2px 16px #00ffe75c;
-  border: none;
-  cursor: pointer;
-  margin: 19px auto 8px auto;
-  min-width: 70vw;
-  max-width: 440px;
-  width: 93%;
-  display: block;
-  text-align: center;
-  letter-spacing: 0.6px;
-  transition: background .19s, color .19s;
-}
-.battle-collapse-toggle:hover {
-  background: #096c6402;
-  color: #1cfdfd;
-}
-
-/* --- SECTION LABEL (slight upward) --- */
 .section-label {
   color: #00ffe7;
-  margin: 14px 0 2px 3px;
-  font-size: 1.15rem;
+  margin: 11px 0 2px 5px;
+  font-size: 1.14rem;
   font-weight: 700;
   letter-spacing: 0.9px;
   text-align: left;
 }
 
-/* --- TOURNAMENT CONTAINER closer up, more padding so nothing cuts --- */
 .battle-cards-section {
   width: 97vw;
-  max-width: 448px;
-  min-width: 236px;
+  max-width: 440px;
+  min-width: 230px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 13px;
   margin: 0 auto;
   padding: 0 3px;
 }
 
-/* --- TOURNAMENT CARD, really round/no cut edges --- */
+/* --- CARDS! (softer shadow & no cutoff) --- */
 .battle-card {
-  background: linear-gradient(123deg,rgba(0,0,0,0.54) 98%,rgba(0,255,231,0.05));
-  border-radius: 18px;
-  border: 2.5px solid #00ffe7b7;
-  box-shadow: 0 2px 28px 5px #00ffe73b;
-  padding: 23px 19px 19px 20px;
+  background: linear-gradient(122deg,rgba(0,0,0,0.53) 95%,rgba(0,255,231,0.05));
+  border-radius: 17px;
+  border: 2px solid #00ffe7a8;
+  box-shadow: 0 2px 18px 2px #00ffe75c;
+  padding: 23px 16px 20px 17px;
   color: #eaffff;
-  position: relative;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
   overflow: visible;
 }
+
 .battle-card.premium {
-  border: 2.5px solid #72ffdf;
-  box-shadow: 0 2px 27px #3cffe768;
-  background: linear-gradient(122deg,rgba(0,0,0,0.60) 78%,rgba(114,255,223,0.13));
+  border: 2px solid #72ffdf;
+  box-shadow: 0 3px 22px #33ffe775;
+  background: linear-gradient(119deg,rgba(0,0,0,0.62) 75%,rgba(114,255,223,0.13));
 }
 .battle-card.super-premium {
   border: 3px solid gold;
-  box-shadow: 0 5px 18px #ffe06688, 0 6px 30px #fff20823;
-  background: linear-gradient(120deg,rgba(26,22,4,0.58) 88%,rgba(255,224,102,0.15) 95%);
+  box-shadow: 0 4px 16px #ffe066c4, 0 2px 32px #fff20813;
+  background: linear-gradient(119deg,rgba(26,22,4,0.66) 88%,rgba(255,224,102,0.18) 95%);
 }
+
 .battle-card.joined {
-  border: 2.2px solid #10e1fe;
-  box-shadow: 0 0 18px 2px #6fe3ff4d, 0 0 18px 7px #e0fdff22;
-  background: rgba(41,255,255,0.13);
+  border: 2px solid #10e1fe;
+  box-shadow: 0 0 11px 3px #13d2fd3d, 0 0 14px 2px #e0fdff14;
+  background: rgba(41, 255, 255, 0.12);
   color: #e5fdff;
 }
 .battle-card.joined .battle-card-type, .battle-card.joined .battle-card-info, .battle-card.joined span {
-  text-shadow: 0 0 4px #00b5ff50;
+  text-shadow: 0 0 3px #00b5ff36;
   color: #e5fdff;
 }
 
 .battle-card-type {
   color: #00ffee;
-  font-size: 1.14rem;
+  font-size: 1.12rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.18px;
+  letter-spacing: 1.15px;
   text-shadow: 0 0 6px #61fff9;
   border-left: 5px solid #00ffe7;
   padding-left: 13px;
@@ -200,8 +182,7 @@ body {
   font-size: 1.01rem;
   margin-bottom: 12px;
 }
-
-/* --- JOIN BTN --- */
+.battle-card-info span { flex: 1; }
 .battle-join-btn {
   width: 100%;
   margin: 12px 0 0 0;
@@ -222,22 +203,21 @@ body {
   cursor: not-allowed;
 }
 
-
-/* --- FILTER BAR: Options always visible, no cut --- */
+/* FILTERS: never cut */
 .filter-bar {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 13px;
+  margin-bottom: 12px;
   gap: 13px;
   width: 100%;
   flex-wrap: wrap;
 }
 .filter-btn {
   background: transparent;
-  border: 1.9px solid #00ffe7a4;
+  border: 1.8px solid #00ffe7a4;
   color: #00ffe7;
-  padding: 8px 18px;
+  padding: 9px 18px;
   min-width: 61px;
   border-radius: 19px;
   font-size: 1.09rem;
@@ -249,20 +229,19 @@ body {
 .filter-btn.active {
   background: #00ffe7;
   color: #121212;
-  border: 2.9px solid #00ffe7;
+  border: 2.7px solid #00ffe7;
   font-weight: bold;
 }
 
-/* --- RESPONSIVE CARDS --- */
-@media (max-width: 768px) {
-  .battle-bg { max-height: none; height: auto; }
-  .battle-cards-section { width: 99vw; max-width: none; }
-  .battle-topbar { width: 100%; }
+/* MOBILE: always full width, never cut */
+@media (max-width: 430px) {
+  .battle-topbar{padding-left:1vw;padding-right:1vw;}
+  .battle-cards-section{width:99vw;max-width:none;}
+  .battle-bg{padding-left:0;padding-right:0;}
 }
-
-@media (max-width: 410px) {
-  .balance-box { padding-left: 4vw; padding-right: 4vw; }
-  .section-label { font-size: .96rem; }
-  .battle-card { padding: 10px 4px 13px 9px; }
-  .battle-cards-section { max-width: 99vw; gap: 10px; }
+@media (max-width: 400px) {
+  .filter-btn { font-size: 0.87rem; padding: 6px 8px; min-width: 34px; }
+  .battle-cards-section { max-width: 99vw; gap: 8px; }
+  .battle-card { padding: 10px 3px 13px 8px; }
+  .section-label { font-size: .93rem; }
 }

@@ -43,7 +43,8 @@ body {
   flex-direction: column;
   align-items: center;
   position: relative;
-  padding: 20px 0 40px 0; /* Reduced side padding */
+  padding: 14px 0 40px 0; /* reduced top padding from 20px to 14px */
+  margin-top: -6px; /* slight upward shift */
   box-sizing: border-box;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
@@ -51,14 +52,14 @@ body {
 
 /* Tournament list container */
 .battle-cards-section {
-  width: 90vw;          /* Reduced width for edge margin */
-  max-width: 440px;     /* Reduced max width */
+  width: 90vw;              /* Edge margin */
+  max-width: 440px;
   display: flex;
   flex-direction: column;
   gap: 18px;
   overflow: visible !important;
   max-height: none !important;
-  margin: 0 auto;       /* Center horizontally */
+  margin: 0 auto;           /* Center horizontally */
 }
 
 /* Glassy sticky topbar with no background (no black bar) */
@@ -67,7 +68,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between; /* Place buttons on corners */
-  padding: 0 16px;                /* Side padding */
+  padding: 0 16px;                      /* Side padding */
   background: none;
   backdrop-filter: none;
   position: sticky;
@@ -77,7 +78,7 @@ body {
   box-sizing: border-box;
 }
 
-/* Back button at top-left */
+/* Back button at top-left - add balanced margin */
 .battle-back-btn {
   background: none;
   border: none;
@@ -89,6 +90,7 @@ body {
   display: flex;
   align-items: center;
   padding: 0;
+  margin-left: 4px;  /* slight left margin for better positioning */
 }
 
 /* Help icon at top-right */
@@ -99,6 +101,7 @@ body {
   height: 48px;
   display: flex;
   align-items: center;
+  margin-right: 4px; /* slight right margin for better positioning */
 }
 
 /* Battle title */
@@ -139,7 +142,7 @@ body {
 /* Section label */
 .section-label {
   color: #00ffe7;
-  margin: 16px 0 8px 0; /* Reduced margin for close spacing */
+  margin: 16px 0 8px 0;
   font-size: 1.09rem;
   text-align: left;
   font-weight: 700;
@@ -169,19 +172,21 @@ body {
   background: rgba(26, 22, 4, 0.56);
 }
 
-/* Joined card violet theme */
+/* Joined card violet theme - toned down */
 .battle-card.joined {
-  border: 3px solid #8A2BE2; /* Blue violet */
-  box-shadow: 0 0 15px 5px rgba(77, 4, 145, 0.7), 0 0 25px 10px rgba(138, 43, 226, 0.4);
-  background: rgba(138, 43, 226, 0.15); /* Translucent violet */
-  color: #E6E6FA; /* Lavender text */
+  border: 2px solid #8a84b5; /* softer violet */
+  box-shadow:
+    0 0 10px 3px rgba(138, 132, 181, 0.4),
+    0 0 18px 7px rgba(138, 132, 181, 0.2);
+  background: rgba(138, 132, 181, 0.11);
+  color: #d8d8f0;
 }
 
 .battle-card.joined .battle-card-type,
 .battle-card.joined .battle-card-info,
 .battle-card.joined span {
-  text-shadow: 0 0 6px #8A2BE2;
-  color: #E6E6FA;
+  text-shadow: 0 0 5px #8a84b5;
+  color: #d8d8f0;
 }
 
 /* Card type */
@@ -228,6 +233,29 @@ body {
   background: #222;
   color: #555;
   cursor: not-allowed;
+}
+
+/* Joined Matches toggle as a translucent white pill button */
+.battle-collapse-toggle {
+  font-size: 1.08rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.24);
+  padding: 8px 24px;
+  color: #1c1c1c;
+  border-radius: 25px;
+  backdrop-filter: blur(8px);
+  margin: 14px auto 18px auto;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 255, 231, 0.25);
+  text-shadow: 0 1px 6px rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  outline: none;
+  display: block;
+  transition: background 0.18s, color 0.16s;
+}
+.battle-collapse-toggle:hover {
+  background: rgba(255, 255, 255, 0.36);
+  color: #00ffe7;
 }
 
 /* Modal overlay */
@@ -313,21 +341,6 @@ body {
   margin-left: auto;
   margin-right: auto;
   box-shadow: 0 2px 8px #00ffe743;
-}
-
-/* Collapse toggle */
-.battle-collapse-toggle {
-  font-size: 1.08rem;
-  font-weight: 600;
-  background: none;
-  border: none;
-  color: #00ffe7;
-  cursor: pointer;
-  margin-bottom: 8px;
-  transition: color 0.2s;
-}
-.battle-collapse-toggle:hover {
-  color: #72fff6;
 }
 
 /* Mobile responsive */

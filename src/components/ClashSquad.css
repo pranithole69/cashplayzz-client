@@ -1,19 +1,15 @@
-/* Slightly Modified Battle Royale styles for Clash Squad
-   - primary accent goes slightly blue
-   - subtle upshift for main content
-   - tone down violet joined card
-   - topbar spacing tweaked
-*/
-
+/* Global Reset and Base */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: #05080a; /* Ensures black base beneath BG */
+  overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
+  font-family: 'Segoe UI', sans-serif;
 }
+
+/* Main container */
 .clashsquad-bg {
   width: 100vw;
   min-height: 100vh;
@@ -26,158 +22,200 @@ html, body {
   align-items: center;
   position: relative;
   box-sizing: border-box;
-  padding: 16px 0 40px 0;
-  margin-top: -10px;  /* shunt content upward slightly for more 'game' feel */
+  padding: 10px 0 38px 0;   /* content slightly shifted up */
+  margin-top: -6px;
 }
+
+/* Tournament list container */
+.clashsquad-cards-section {
+  width: 90vw;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 0 auto;
+}
+
+/* Glassy sticky topbar (slight adjustments for this mode) */
 .clashsquad-topbar {
   width: 100vw;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 14px;
+  padding: 0 16px;
   background: none;
   position: sticky;
   top: 0;
   z-index: 100;
   height: 48px;
+  box-sizing: border-box;
 }
+
+/* Back button at top-left */
 .clashsquad-back-btn {
   background: none;
   border: none;
-  color: #17e3ff;     /* Slightly bluer for Clash Squad */
+  color: #21a8ff;
   font-weight: bold;
-  font-size: 17px;
+  font-size: 16px;
   cursor: pointer;
-  align-items: center;
+  height: 48px;
   display: flex;
-  margin-top: 2px;
+  align-items: center;
+  padding: 0;
 }
+
+/* Help icon at top-right */
 .clashsquad-help-icon {
   font-size: 22px;
-  color: #17e3ff;
+  color: #21a8ff;
   cursor: pointer;
-  margin-top: 4px;
+  height: 48px;
+  display: flex;
+  align-items: center;
 }
+
+/* Greeting */
 .clashsquad-greeting {
-  margin-top: 2px;
-  font-size: 19px;
-  font-weight: 600;
-  color: #80f6ff;
-  letter-spacing: 1px;
+  margin-top: 6px;
+  font-size: 18px;
   text-align: center;
+  font-weight: 600;
+  color: #83d0ff;
+  letter-spacing: 1px;
 }
+
+/* Balance box */
 .clashsquad-balance-box {
   background: rgba(0, 0, 0, 0.53);
   border-radius: 14px;
-  border: 1.5px solid #17e3ffcc;
-  box-shadow: 0 2px 12px #17e3ff44;
-  padding: 10px 32px;
-  font-size: 1.33rem;
-  color: #17e3ff;
+  border: 1.5px solid #21a8ffcc;
+  box-shadow: 0 2px 12px #21a8ff33;
+  padding: 10px 34px;
+  font-size: 1.35rem;
+  color: #21a8ff;
   font-weight: bold;
-  margin: 18px auto 10px auto;
+  margin: 16px auto 8px auto;
   max-width: 300px;
   text-align: center;
   letter-spacing: 0.5px;
 }
-/* Section titles */
+
+/* Section label */
 .clashsquad-section-label {
-  color: #17e3ff;
-  margin: 18px 0 7px 0;
-  font-size: 1.10rem;
+  color: #21a8ff;
+  margin: 16px 0 8px 0;
+  font-size: 1.09rem;
   font-weight: 700;
   letter-spacing: 0.8px;
 }
-.clashsquad-cards-section {
-  width: 90vw;
-  max-width: 430px;
-  display: flex;
-  flex-direction: column;
-  gap: 17px;
-  margin: 0 auto;
-}
-.clashsquad-filter-bar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 13px;
-  gap: 8px;
-  width: 100%;
-}
-.clashsquad-filter-btn {
-  background: transparent;
-  border: 1.5px solid #17e3ffa6;
-  color: #17e3ff;
-  padding: 6px 12px;
-  min-width: 58px;
-  border-radius: 16px;
-  font-size: 0.98rem;
-  cursor: pointer;
-  transition: background 0.18s, border 0.17s, color 0.17s;
-  font-weight: 500;
-}
-.clashsquad-filter-btn.active {
-  background: #17e3ff;
-  color: #131b22;
-  border: 2.5px solid #19f1ff;
-  font-weight: bold;
-}
+
+/* Battle (Tournament) card — with hover highlight */
 .clashsquad-card {
-  background: rgba(9, 19, 26, 0.65);
-  border-radius: 10px;
-  border: 1.3px solid #1bf3ffa8;
-  box-shadow: 0 0 11px 1px #059ca825;
-  padding: 19px 20px 14px 20px;
-  color: #eafcff;
-  transition: transform 0.2s, box-shadow 0.18s;
+  background: linear-gradient(120deg, rgba(0,0,0,0.53) 80%, rgba(33,168,255,0.08) 100%);
+  border-radius: 11px;
+  border: 1.3px solid #21a8ff99;
+  box-shadow: 0 1px 13px 2px #21a8ff14;
+  padding: 20px 22px 16px 22px;
+  color: #ecf6ff;
+  transition: transform 0.20s, box-shadow 0.19s;
   position: relative;
+  overflow: hidden;
 }
+.clashsquad-card::after {
+  content: 'CLASH SQUAD';
+  position: absolute;
+  top: 6px;
+  right: -18px;
+  background: rgba(33,168,255,0.13);
+  color: #71cbffb8;
+  font-size: 0.70rem;
+  font-weight: bold;
+  padding: 1px 14px 1px 8px;
+  border-radius: 14px 45px 45px 14px;
+  pointer-events: none;
+  letter-spacing: 2px;
+  transform: rotate(12deg);
+}
+
+/* PREMIUM upgrade for higher entry */
 .clashsquad-card.premium {
-  border: 2px solid #19f1ff;
-  box-shadow: 0 2px 16px #74fff6;
+  border: 2px solid #43baff;
+  box-shadow: 0 2px 14px #43baff33;
 }
 .clashsquad-card.super-premium {
-  border: 2.5px solid #f7ff38;
-  box-shadow: 0 4px 16px #bafff0, 0 2px 32px #eafc081b;
-  background: rgba(30, 33, 8, 0.66);
+  border: 2.5px solid #ecc347;
+  background: linear-gradient(110deg, rgba(33,168,255,0.092) 75%,rgba(236,195,71,0.08) 100%);
+  box-shadow: 0 4px 22px #ffe06626, 0 2px 32px #fff20811;
 }
+
+/* Joined card blue theme (very soft, NOT violet) */
 .clashsquad-card.joined {
-  border: 2px solid #50bfff;
-  box-shadow: 0 0 8px 2px #1ce4fd44;
-  background: rgba(34, 65, 128, 0.15);
-  color: #c6eafe;
+  border: 2px solid #85d3fd;                    /* Subtle blue */
+  box-shadow: 0 0 12px 3px #83d0ff30;
+  background: rgba(33,168,255,0.085);
+  color: #ecf6ff;
 }
+
+/* Joined matches header as a pill */
+.clashsquad-collapse-toggle {
+  font-size: 1.12rem;
+  font-weight: 600;
+  background: rgba(255,255,255,0.24);
+  padding: 8px 24px;
+  color: #1b2940;
+  border-radius: 25px;
+  backdrop-filter: blur(8px);
+  margin: 14px auto 10px auto;
+  border: 1px solid #ddeefd88;
+  box-shadow: 0 2px 8px #21a8ff22;
+  text-shadow: 0 1px 8px #ade3ff38;
+  transition: background 0.18s, color 0.16s;
+  display: block;
+  cursor: pointer;
+  outline: none;
+}
+.clashsquad-collapse-toggle:hover {
+  background: #e5f4ffd0;
+  color: #21a8ff;
+}
+
+/* Tournament type header */
 .clashsquad-card-type {
-  color: #18eaff;
-  font-size: 1.09rem;
+  color: #21a8ff;
+  font-size: 1.08rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.1px;
-  text-shadow: 0 0 5px #19f1ff;
-  border-left: 5px solid #17e3ff;
+  letter-spacing: 1.2px;
+  text-shadow: 0 0 6px #41baffab;
+  border-left: 5px solid #21a8ff;
   padding-left: 12px;
   margin-bottom: 7px;
 }
+
+/* Card info */
 .clashsquad-card-info {
   display: flex;
   gap: 16px;
   font-weight: 600;
-  font-size: 1.01rem;
-  margin-bottom: 7px;
+  font-size: 1.00rem;
+  margin-bottom: 10px;
 }
 .clashsquad-card-info span { flex: 1; }
+
+/* Join button */
 .clashsquad-join-btn {
   width: 100%;
-  margin: 8px 0 0 0;
-  background: #19f1ff;
-  color: #131b22;
+  margin: 7px 0 0 0;
+  background: #21a8ff;
+  color: #121212;
   border-radius: 8px;
   border: none;
   font-size: 1.07rem;
   font-weight: bold;
   padding: 10px;
   cursor: pointer;
-  box-shadow: 0 2px 12px #00ffe744;
+  box-shadow: 0 2px 12px #21a8ff44;
   transition: background 0.18s;
 }
 .clashsquad-join-btn:disabled {
@@ -186,15 +224,44 @@ html, body {
   cursor: not-allowed;
 }
 
+/* Filter bar */
+.clashsquad-filter-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 14px;
+  gap: 8px;
+  width: 100%;
+}
+.clashsquad-filter-btn {
+  background: transparent;
+  border: 1.7px solid #21a8ff99;
+  color: #21a8ff;
+  padding: 6px 12px;
+  min-width: 60px;
+  border-radius: 20px;
+  font-size: 0.98rem;
+  cursor: pointer;
+  transition: background 0.15s, border 0.16s, color 0.16s;
+  font-weight: 500;
+  outline: none;
+}
+.clashsquad-filter-btn.active {
+  background: #21a8ff;
+  color: #181818;
+  border: 2.5px solid #21a8ff;
+  font-weight: bold;
+}
+/* Responsive */
 @media (max-width: 768px) {
-  .clashsquad-bg {
-    padding-top: 9px;
-  }
-  .clashsquad-cards-section {
-    width: 98vw;
-    max-width: none;
-  }
-  .clashsquad-topbar {
-    width: 100%;
+  .clashsquad-bg { max-height: none; height: auto; }
+  .clashsquad-cards-section { width: 100vw; max-width: none; }
+  .clashsquad-topbar { width: 100%; }
+}
+@media (max-width: 375px) {
+  .clashsquad-filter-btn {
+    font-size: 0.85rem;
+    padding: 5px 6px;
+    min-width: 36px;
   }
 }

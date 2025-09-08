@@ -11,6 +11,7 @@ function formatDateTime(date) {
     hour12: true,
   });
 }
+
 function formatCountdown(ms) {
   if (ms < 0) return "Started";
   const min = Math.floor(ms / 60000);
@@ -40,7 +41,6 @@ export default function ClashSquad() {
           const profileData = await profileRes.json();
           setBalance(profileData.balance);
         }
-        // Fetch only Clash Squad tournaments with custom backend field
         const tourRes = await fetch(`${BACKEND_URL}/api/user/tournaments?mode=clashsquad`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -48,7 +48,7 @@ export default function ClashSquad() {
           const toursData = await tourRes.json();
           setTournaments(toursData);
         } else setTournaments([]);
-      } catch (error) {
+      } catch {
         setTournaments([]);
       }
     };
@@ -57,8 +57,7 @@ export default function ClashSquad() {
 
   const joined = tournaments.filter((t) => t.joined);
   const upcoming = tournaments.filter(
-    (t) => !t.joined &&
-      (filterType === "All" || t.squadSize === filterType)
+    (t) => !t.joined && (filterType === "All" || t.squadSize === filterType)
   );
   const SQUAD_FILTERS = ["All", "1v1", "2v2", "3v3", "4v4"];
 
@@ -69,16 +68,15 @@ export default function ClashSquad() {
     if (t.entryFee > 30) return base + " premium";
     return base;
   };
+
   const handleJoin = (t) => setModalTournament(t);
+
   const confirmJoin = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${BACKEND_URL}/api/user/join-match`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ entryFee: modalTournament.entryFee, matchId: modalTournament.id }),
       });
       const data = await response.json();
@@ -92,13 +90,12 @@ export default function ClashSquad() {
         setModalTournament(null);
         setExpanded(null);
         setTimeout(() => setJoinMessage(""), 4000);
-      } else {
-        alert(data.message || "Failed to join the match.");
-      }
-    } catch (err) {
+      } else alert(data.message || "Failed to join the match.");
+    } catch {
       alert("Server error occurred, please try again.");
     }
   };
+
   const handleFilterChange = (type) => {
     setFilterType(type);
     setExpanded(null);
@@ -108,7 +105,9 @@ export default function ClashSquad() {
     <div className="clashsquad-bg">
       {/* Topbar */}
       <div className="clashsquad-topbar">
-        <button className="clashsquad-back-btn" onClick={() => window.history.back()}>&larr; Back</button>
+        <button className="clashsquad-back-btn" onClick={() => window.history.back()}>
+          &larr; Back
+        </button>
         <span
           className="clashsquad-help-icon"
           onClick={() => alert("Contact support@cashplayzz.com or WhatsApp 24x7!")}
@@ -118,33 +117,43 @@ export default function ClashSquad() {
           &#9432;
         </span>
       </div>
+
       <div className="clashsquad-greeting">Welcome to Clash Squad!</div>
-      {/* Balance display and join message */}
+
       <div className="clashsquad-balance-box">
         <span>Balance:</span> <span>₹{balance}</span>
       </div>
+
       {joinMessage && (
         <div style={{ color: "#17e3ff", fontWeight: "bold", textAlign: "center", marginTop: 12 }}>
           {joinMessage}
         </div>
       )}
-      {/* Joined Matches toggle and list */}
+
+      {/* Joined Matches toggle, styled translucent pill */}
       <button
-        className="battle-collapse-toggle"
+        className="clashsquad-collapse-toggle"
         onClick={() => setShowJoined((j) => !j)}
-        style={{ color: "#61d6ff", display: joined.length ? "block" : "none" }}
+        style={{ display: joined.length ? "block" : "none" }}
       >
         {showJoined ? "Hide Joined Matches" : `Joined Matches (${joined.length})`}
       </button>
+
       {showJoined && (
         <div className="clashsquad-cards-section">
           {joined.map((t) => (
             <div key={t.id} className={getCardClass(t)}>
               <div className="clashsquad-card-type">{t.squadSize} Clash Squad</div>
               <div className="clashsquad-card-info">
-                <span>Entry: <b>₹{t.entryFee}</b></span>
-                <span>Prize: <b>₹{t.prizePool}</b></span>
-                <span>Match time: <b>{formatDateTime(t.matchTime)}</b></span>
+                <span>
+                  Entry: <b>₹{t.entryFee}</b>
+                </span>
+                <span>
+                  Prize: <b>₹{t.prizePool}</b>
+                </span>
+                <span>
+                  Match time: <b>{formatDateTime(t.matchTime)}</b>
+                </span>
               </div>
               <span style={{ color: "#17e3ff", fontWeight: 700 }}>Status: Joined</span>
               <div style={{ marginTop: 7, fontSize: 13 }}>
@@ -158,7 +167,8 @@ export default function ClashSquad() {
       <div className="clashsquad-section-label" style={{ marginTop: 27 }}>
         Upcoming Matches
       </div>
-      {/* Filters for 1v1 2v2 3v3 4v4 */}
+
+      {/* Squad filters */}
       <div className="clashsquad-filter-bar">
         {SQUAD_FILTERS.map((type) => (
           <button
@@ -171,7 +181,8 @@ export default function ClashSquad() {
           </button>
         ))}
       </div>
-      {/* Upcoming matches cards */}
+
+      {/* Upcoming Matches */}
       <div className="clashsquad-cards-section">
         {upcoming.map((t) => {
           const timeDiff = new Date(t.matchTime).getTime() - Date.now();
@@ -218,14 +229,12 @@ export default function ClashSquad() {
           );
         })}
       </div>
-      {/* Join modal */}
+
+      {/* Join Modal */}
       {modalTournament && (
         <div className="battle-modal-overlay">
           <div className="battle-modal-box">
-            <button
-              className="battle-modal-close"
-              onClick={() => setModalTournament(null)}
-            >
+            <button className="battle-modal-close" onClick={() => setModalTournament(null)}>
               &times;
             </button>
             <div className="battle-modal-title">

@@ -31,19 +31,25 @@ export default function BattleRoyale() {
   const [filterType, setFilterType] = useState("All");
 
   useEffect(() => {
+    // Fetch user profile and tournaments on mount
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem("token");
+        if (!token) return;
+
         const profileRes = await fetch(`${BACKEND_URL}/api/user/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         if (profileRes.ok) {
           const profileData = await profileRes.json();
           setBalance(profileData.balance);
         }
+
         const tourRes = await fetch(`${BACKEND_URL}/api/user/tournaments`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         if (tourRes.ok) {
           const toursData = await tourRes.json();
           setTournaments(toursData);
@@ -55,9 +61,11 @@ export default function BattleRoyale() {
         setTournaments([]);
       }
     };
+
     fetchUserData();
   }, []);
 
+  // Filter tournaments into joined and upcoming lists
   const joined = tournaments.filter((t) => t.joined);
   const upcoming = tournaments.filter(
     (t) =>
@@ -65,16 +73,19 @@ export default function BattleRoyale() {
       (filterType === "All" || t.teamType.toLowerCase() === filterType.toLowerCase())
   );
 
+  // Dynamic card class based on entry fee and joined status
   const getCardClass = (t) => {
     let base = "battle-card";
-    if (t.joined) return base + " joined";
-    if (t.entryFee > 50) return base + " super-premium";
-    if (t.entryFee > 30) return base + " premium";
+    if (t.joined) return `${base} joined`;
+    if (t.entryFee > 50) return `${base} super-premium`;
+    if (t.entryFee > 30) return `${base} premium`;
     return base;
   };
 
+  // Opens the modal for join confirmation
   const handleJoin = (t) => setModalTournament(t);
 
+  // Confirm joining a match, update balance and tournament state
   const confirmJoin = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -87,6 +98,7 @@ export default function BattleRoyale() {
         body: JSON.stringify({ entryFee: modalTournament.entryFee, matchId: modalTournament.id }),
       });
       const data = await response.json();
+
       if (data.success) {
         setBalance(data.balance);
         setTournaments((prev) =>
@@ -106,6 +118,7 @@ export default function BattleRoyale() {
     }
   };
 
+  // Change filter type and collapse expanded tournaments
   const handleFilterChange = (type) => {
     setFilterType(type);
     setExpanded(null);
@@ -113,7 +126,7 @@ export default function BattleRoyale() {
 
   return (
     <div className="battle-bg">
-      {/* Topbar and greeting */}
+      {/* Topbar */}
       <div className="battle-topbar" style={{ position: "relative" }}>
         <button
           onClick={() => window.history.back()}
@@ -149,20 +162,23 @@ export default function BattleRoyale() {
           &#9432;
         </span>
       </div>
+
+      {/* Greeting */}
       <div className="battle-greeting">Welcome, Survivor!</div>
 
-      {/* Balance display and join message */}
+      {/* Balance */}
       <div className="balance-box">
         <span>Balance:</span> <span style={{ color: "#00ffe7" }}>₹{balance}</span>
       </div>
 
+      {/* Join Message */}
       {joinMessage && (
         <div style={{ color: "#00ffe7", fontWeight: "bold", textAlign: "center", marginTop: 12 }}>
           {joinMessage}
         </div>
       )}
 
-      {/* Joined Matches toggle and list */}
+      {/* Joined Matches toggle */}
       <button
         className="battle-collapse-toggle"
         onClick={() => setShowJoined((j) => !j)}
@@ -170,15 +186,23 @@ export default function BattleRoyale() {
       >
         {showJoined ? "Hide Joined Matches" : `Joined Matches (${joined.length})`}
       </button>
+
+      {/* Joined Matches list */}
       {showJoined && (
         <div className="battle-cards-section">
           {joined.map((t) => (
             <div key={t.id} className={getCardClass(t)}>
               <div className="battle-card-type">{t.teamType} Tournament</div>
               <div className="battle-card-info">
-                <span>Entry: <b>₹{t.entryFee}</b></span>
-                <span>Prize: <b>₹{t.prizePool}</b></span>
-                <span>Match time: <b>{formatDateTime(t.matchTime)}</b></span>
+                <span>
+                  Entry: <b>₹{t.entryFee}</b>
+                </span>
+                <span>
+                  Prize: <b>₹{t.prizePool}</b>
+                </span>
+                <span>
+                  Match time: <b>{formatDateTime(t.matchTime)}</b>
+                </span>
               </div>
               <span style={{ color: "#00ffe7", fontWeight: 700 }}>Status: Joined</span>
               <div style={{ marginTop: 7, fontSize: 13 }}>
@@ -190,9 +214,11 @@ export default function BattleRoyale() {
       )}
 
       {/* Upcoming Matches label */}
-      <div className="section-label" style={{ marginTop: 28 }}>Upcoming Matches</div>
+      <div className="section-label" style={{ marginTop: 28 }}>
+        Upcoming Matches
+      </div>
 
-      {/* Filter buttons */}
+      {/* Filters */}
       <div className="filter-bar">
         {["All", "Solo", "Duo", "Squad"].map((type) => (
           <button
@@ -206,7 +232,7 @@ export default function BattleRoyale() {
         ))}
       </div>
 
-      {/* Upcoming matches cards */}
+      {/* Upcoming Matches list */}
       <div className="battle-cards-section">
         {upcoming.map((t) => {
           const timeDiff = new Date(t.matchTime).getTime() - Date.now();
@@ -258,15 +284,10 @@ export default function BattleRoyale() {
       {modalTournament && (
         <div className="battle-modal-overlay">
           <div className="battle-modal-box">
-            <button
-              className="battle-modal-close"
-              onClick={() => setModalTournament(null)}
-            >
+            <button className="battle-modal-close" onClick={() => setModalTournament(null)}>
               &times;
             </button>
-            <div className="battle-modal-title">
-              Join {modalTournament.teamType} Tournament
-            </div>
+            <div className="battle-modal-title">Join {modalTournament.teamType} Tournament</div>
             <div className="battle-modal-info">
               Entry Fee: <b style={{ color: "#00ffe7" }}>₹{modalTournament.entryFee}</b>
               <br />

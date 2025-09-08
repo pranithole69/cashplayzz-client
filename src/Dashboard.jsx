@@ -7,6 +7,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DepositForm from "./components/DepositForm.jsx";
 import WithdrawForm from "./components/WithdrawForm.jsx";
+import JoinedMatches from "./components/JoinedMatches.jsx";
 
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,6 +16,7 @@ function Dashboard() {
   const [showDepositForm, setShowDepositForm] = useState(false);
   const [showWithdrawForm, setShowWithdrawForm] = useState(false);
   const [showTips, setShowTips] = useState(false);
+  const [showJoinedMatches, setShowJoinedMatches] = useState(false);
   const [username, setUsername] = useState("");
   const [balance, setBalance] = useState(0);
 
@@ -96,10 +98,15 @@ function Dashboard() {
 
       {/* Info Icon */}
       <div className="info-corner">
-        <FaInfoCircle className="info-icon" onClick={() => setShowTips(!showTips)} />
+        <FaInfoCircle
+          className="info-icon"
+          onClick={() => setShowTips(!showTips)}
+        />
         {showTips && (
           <div className="info-popup">
-            <p><strong>How to deposit?</strong></p>
+            <p>
+              <strong>How to deposit?</strong>
+            </p>
             <p>Click wallet icon to add funds</p>
           </div>
         )}
@@ -129,11 +136,37 @@ function Dashboard() {
       {walletOpen && (
         <div className="wallet-box">
           <div className="wallet-actions">
-            <button className="wallet-btn" onClick={handleDeposit}>Deposit</button>
-            <button className="wallet-btn" onClick={handleWithdraw}>Withdraw</button>
+            <button className="wallet-btn" onClick={handleDeposit}>
+              Deposit
+            </button>
+            <button className="wallet-btn" onClick={handleWithdraw}>
+              Withdraw
+            </button>
           </div>
           {showDepositForm && <DepositForm />}
           {showWithdrawForm && <WithdrawForm />}
+        </div>
+      )}
+
+      {/* Joined Matches Button */}
+      <button
+        className="joined-matches-btn"
+        onClick={() => setShowJoinedMatches(true)}
+      >
+        Joined Matches
+      </button>
+
+      {/* JoinedMatches Modal */}
+      {showJoinedMatches && (
+        <div className="modal-overlay">
+          <button
+            className="modal-close-btn"
+            onClick={() => setShowJoinedMatches(false)}
+            aria-label="Close joined matches"
+          >
+            &times;
+          </button>
+          <JoinedMatches onClose={() => setShowJoinedMatches(false)} />
         </div>
       )}
 
@@ -145,8 +178,8 @@ function Dashboard() {
             <div className="mode-card" key={mode.name}>
               <h3 className={`mode-name mode-${index + 1}`}>{mode.name}</h3>
               <p className="mode-desc">{mode.description}</p>
-              <button 
-                className="enter-btn" 
+              <button
+                className="enter-btn"
                 onClick={() => handleEnterMode(mode.name)}
               >
                 Enter

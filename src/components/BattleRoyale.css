@@ -1,26 +1,3 @@
-/* --- GLOBAL RESET --- */
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  font-family: 'Segoe UI', sans-serif;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* --- SCROLLBAR --- */
-body::-webkit-scrollbar { width: 8px; }
-body::-webkit-scrollbar-track { background: transparent; }
-body::-webkit-scrollbar-thumb { background-color: rgba(0,255,231,0.4); border-radius: 6px; }
-
-body {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0,255,231,0.4) transparent;
-}
-
-/* --- MAIN WRAPPER LAYOUT --- */
 .battle-bg {
   width: 100vw;
   min-height: 100vh;
@@ -32,12 +9,11 @@ body {
   flex-direction: column;
   align-items: center;
   position: relative;
-  padding: 0 0 32px 0;      /* no top padding for maximum upwardness */
-  margin-top: -16px;        /* sharper upward shift! */
+  padding: 0 0 32px 0;
+  margin-top: -16px;
   box-sizing: border-box;
 }
 
-/* --- TOP BAR --- */
 .battle-topbar {
   width: 100%;
   height: 48px;
@@ -50,6 +26,7 @@ body {
   top: 0;
   z-index: 100;
 }
+
 .battle-back-btn {
   background: none;
   border: none;
@@ -63,6 +40,7 @@ body {
   align-items: center;
   margin-left: 2px;
 }
+
 .battle-help-icon {
   font-size: 23px;
   color: #00ffe7;
@@ -75,17 +53,14 @@ body {
   margin-right: 2px;
 }
 
-/* --- GREETING --- */
 .battle-greeting {
   margin: 9px 0 0 0;
   font-size: 18px;
   text-align: center;
   font-weight: 600;
   color: #b5fff5;
-  letter-spacing: 1px;
 }
 
-/* --- BALANCE BOX --- */
 .balance-box {
   background: rgba(0,0,0,0.54);
   border-radius: 15px;
@@ -98,37 +73,36 @@ body {
   margin: 18px auto 8px auto;
   max-width: 325px;
   text-align: center;
-  letter-spacing: 0.5px;
 }
 
-/* --- JOINED MATCHES TOGGLE BUTTON (pill, visible) --- */
 .battle-collapse-toggle {
-  font-size: 1.1rem;
+  font-size: 1.08rem;
   font-weight: 700;
-  background: rgba(255,255,255,0.24);
-  padding: 9px 28px;
-  color: #222;
-  border-radius: 22px;
-  backdrop-filter: blur(12px);
-  margin: 15px auto 17px auto;
-  border: 1.7px solid #00ffe7a1;
+  background: #00ffe7;
+  color: #111;
+  padding: 13px 0 12px 0;
+  border-radius: 25px;
   box-shadow: 0 2px 10px #00ffe72a;
-  text-shadow: 0 1px 8px #00fff019;
+  border: none;
   cursor: pointer;
-  outline: none;
+  transition: background .18s, color .18s;
+  margin: 15px auto 17px auto;
+  min-width: 66vw;
+  max-width: 420px;
   display: block;
-  transition: background 0.23s, color 0.15s, font-weight 0.2s;
+  text-align: center;
+  letter-spacing: 0.6px;
+  outline: none;
 }
 .battle-collapse-toggle:hover {
-  background: #e0feffec;
+  background: #02f2c655;
   color: #00ffe7;
-  font-weight: bold;
 }
 
-/* --- TOURNAMENT LIST --- */
 .battle-cards-section {
-  width: 94vw;
-  max-width: 440px;
+  width: 98vw;
+  max-width: 445px;
+  min-width: 230px;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -138,25 +112,49 @@ body {
 
 .section-label {
   color: #00ffe7;
-  margin: 16px 0 0 1px;
+  margin: 16px 0 0 2px;
   font-size: 1.09rem;
   font-weight: 700;
   letter-spacing: 0.8px;
   text-align: left;
 }
 
-/* --- TOURNAMENT CARD --- */
+/* --- CARD VARIANTS --- */
 .battle-card {
-  background: linear-gradient(123deg,rgba(0,0,0,0.52) 90%,rgba(0,255,231,0.06));
+  background: linear-gradient(123deg,rgba(0,0,0,0.48) 96%,rgba(0,255,231,0.06));
   border-radius: 14px;
   border: 2px solid #00ffe7a8;
-  box-shadow: 0 2px 15px 2px #00ffe716;
+  box-shadow: 0 2px 15px 2px #00ffe715;
   padding: 22px 21px 17px 21px;
   color: #eaffff;
   transition: transform 0.18s, box-shadow 0.18s;
   position: relative;
   margin-bottom: 2px;
 }
+
+.battle-card.premium {
+  border: 2px solid #72ffdf;
+  box-shadow: 0 2px 22px #3cffe770;
+  background: linear-gradient(120deg,rgba(0,0,0,0.60) 80%,rgba(114,255,223,0.12));
+}
+.battle-card.super-premium {
+  border: 2.5px solid gold;
+  box-shadow: 0 4px 16px #ffe066, 0 2px 32px #fff20813;
+  background: linear-gradient(118deg,rgba(26,22,4,0.56) 85%,rgba(255,224,102,0.10) 95%);
+}
+
+.battle-card.joined {
+  border: 2px solid #10e1fe;
+  box-shadow: 0 0 10px 2px #6fe3ff44, 0 0 14px 6px #e0fdff22;
+  background: rgba(41, 255, 255, 0.08);
+  color: #e5fdff;
+  filter: none;
+}
+.battle-card.joined .battle-card-type, .battle-card.joined .battle-card-info, .battle-card.joined span {
+  text-shadow: 0 0 4px #00b5ff40;
+  color: #e5fdff;
+}
+
 .battle-card-type {
   color: #00ffee;
   font-size: 1.12rem;
@@ -179,16 +177,16 @@ body {
 
 .battle-join-btn {
   width: 100%;
-  margin: 8px 0 0 0;
+  margin: 10px 0 0 0;
   background: #00ffe7;
   color: #171a1b;
   border-radius: 8px;
   border: none;
-  font-size: 1.11rem;
+  font-size: 1.12rem;
   font-weight: bold;
-  padding: 12px 0 12px 0;
+  padding: 12px 0;
   cursor: pointer;
-  box-shadow: 0 2px 14px #00ffe944;
+  box-shadow: 0 2px 15px #00ffe94c;
   transition: background 0.15s;
 }
 .battle-join-btn:disabled {
@@ -197,81 +195,7 @@ body {
   cursor: not-allowed;
 }
 
-/* --- JOINED CARD TONE --- */
-.battle-card.joined {
-  border: 2px solid #10e1fe;
-  box-shadow: 0 0 10px 2px #6fe3ff44, 0 0 14px 6px #e0fdff22;
-  background: rgba(41, 255, 255, 0.08);
-  color: #e5fdff;
-}
-.battle-card.joined .battle-card-type, .battle-card.joined .battle-card-info, .battle-card.joined span {
-  text-shadow: 0 0 4px #00b5ff50;
-  color: #e5fdff;
-}
-
-/* --- MODALS --- */
-.battle-modal-overlay {
-  position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.37);
-  z-index: 9900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.battle-modal-box {
-  background: rgba(13,18,28,0.93);
-  box-shadow: 0 0 18px 2px #00ffe780;
-  border: 2px solid #00ffe7cc;
-  border-radius: 20px;
-  padding: 28px 22px;
-  max-width: 95vw;
-  min-width: 260px;
-  color: #fff;
-  animation: popInB 0.28s;
-  position: relative;
-}
-@keyframes popInB {
-  from { transform: scale(1.07); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-.battle-modal-close {
-  position: absolute; right: 20px; top: 17px;
-  background: transparent;
-  border: none;
-  color: #80fff2;
-  font-size: 1.35rem;
-  cursor: pointer;
-}
-.battle-modal-title {
-  font-size: 1.18rem;
-  color: #00ffe7;
-  font-weight: bold;
-  margin-bottom: 13px;
-  text-align: center;
-}
-.battle-modal-info {
-  font-size: 1rem;
-  margin-bottom: 14px;
-  color: #eafff9;
-}
-.battle-modal-action {
-  background: #00ffe7;
-  color: #222;
-  border: none;
-  padding: 9px 24px;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 1.08rem;
-  margin-top: 16px;
-  cursor: pointer;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  box-shadow: 0 2px 8px #00ffe743;
-}
-
-/* --- FILTER BAR --- */
+/* FILTER BAR FIX */
 .filter-bar {
   display: flex;
   justify-content: center;
@@ -279,6 +203,7 @@ body {
   margin-bottom: 13px;
   gap: 10px;
   width: 100%;
+  flex-wrap: wrap; /* NOW PREVENTS OVERFLOW! */
 }
 .filter-btn {
   background: transparent;
@@ -300,13 +225,14 @@ body {
   font-weight: bold;
 }
 
-/* --- RESPONSIVE --- */
 @media (max-width:768px){
   .battle-bg{max-height:none;height:auto;}
   .battle-cards-section{width:100vw;max-width:none;}
   .battle-topbar{width:100%;}
 }
 
-@media (max-width:375px) {
-  .filter-btn { font-size: 0.85rem; padding: 5px 6px; min-width: 39px; }
+@media (max-width: 400px) {
+  .filter-btn { font-size: 0.85rem; padding: 5px 7px; min-width: 34px; }
+  .battle-cards-section { max-width: 99vw; gap: 10px; }
+  .battle-card { padding: 15px 4px 13px 9px; }
 }

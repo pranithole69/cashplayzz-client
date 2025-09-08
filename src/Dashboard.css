@@ -12,7 +12,7 @@ body, html {
 
 /* Scrollbar styling for WebKit browsers */
 body::-webkit-scrollbar {
-  width: 8px; /* Slimmer to match other theme scrollbars */
+  width: 10px;
 }
 
 body::-webkit-scrollbar-track {
@@ -20,7 +20,7 @@ body::-webkit-scrollbar-track {
 }
 
 body::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 255, 231, 0.4); /* Teal glow */
+  background-color: rgba(0, 255, 255, 0.3);
   border-radius: 8px;
   border: 2px solid transparent;
   background-clip: content-box;
@@ -29,17 +29,16 @@ body::-webkit-scrollbar-thumb {
 /* Scrollbar styling for Firefox */
 body {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 255, 231, 0.4) transparent;
+  scrollbar-color: rgba(0,255,255,0.3) transparent;
 }
 
-/* Dashboard container */
 .dashboard-container {
   background: url("./assets/bg.png") no-repeat center center fixed;
   background-size: cover;
   min-height: 100vh;
   max-height: 100vh; /* Limit to viewport height */
   overflow-y: auto; /* Enable vertical scrolling */
-  color: #00ffe7; /* Teal glow text color */
+  color: #fff;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -56,22 +55,22 @@ body {
   top: 15px;
   left: 15px;
   cursor: pointer;
-  color: #00ffe7;
+  color: #fff;
   z-index: 1000;
 }
 
-/* Sidebar - Translucent with teal border */
+/* Sidebar - Translucent */
 .sidebar {
   position: absolute;
   top: 45px;
   left: 15px;
-  background: rgba(0, 0, 0, 0.54);
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(15px);
   padding: 10px;
   border-radius: 8px;
   z-index: 999;
   min-width: 100px;
-  border: 1px solid rgba(0, 255, 231, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebar ul {
@@ -83,14 +82,13 @@ body {
 .sidebar li {
   padding: 8px 10px;
   cursor: pointer;
-  color: #00ffe7;
+  color: #fff;
   font-size: 14px;
   border-radius: 4px;
-  transition: background 0.15s ease;
 }
 
 .sidebar li:hover {
-  background: rgba(0, 255, 231, 0.15);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* Info Icon */
@@ -102,7 +100,7 @@ body {
 }
 
 .info-icon {
-  color: #00ffe7;
+  color: #1DD1A1;
   font-size: 18px;
   cursor: pointer;
 }
@@ -113,12 +111,12 @@ body {
   right: 0;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(10px);
-  color: #00ffe7;
+  color: #fff;
   padding: 10px;
   border-radius: 8px;
-  width: 165px;
+  width: 150px;
   font-size: 12px;
-  border: 1px solid rgba(0, 255, 231, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .info-popup p {
@@ -127,18 +125,16 @@ body {
 
 /* Balance Box */
 .balance-box {
-  background: rgba(0, 0, 0, 0.54);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(15px);
-  border: 1.5px solid #00ffe7cc;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 15px;
-  padding: 16px 22px;
-  max-width: 320px;
+  padding: 16px 18px;
+  max-width: 280px;
   margin: 45px auto 15px auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 0 14px #00ffe788;
-  color: #00ffe7;
 }
 
 .balance-info {
@@ -147,38 +143,39 @@ body {
 }
 
 .balance-label {
+  color: #fff;
   font-size: 11px;
   font-weight: 600;
   margin-bottom: 4px;
 }
 
 .balance-amount {
+  color: #fff;
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 4px;
 }
 
 .logged-user {
-  color: #66fff0;
+  color: #ccc;
   font-size: 11px;
 }
 
 .wallet-icon {
-  color: #00ffe7;
+  color: #4A90E2;
   font-size: 20px;
   cursor: pointer;
 }
 
 /* Wallet Box - Blackish Glossy Translucent */
 .wallet-box {
-  background: rgba(0, 0, 0, 0.54);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(15px);
-  border: 1.5px solid #00ffe7cc;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   padding: 15px;
   max-width: 300px;
   margin: 0 auto 15px auto;
-  box-shadow: 0 0 14px #00ffe766;
 }
 
 .wallet-actions {
@@ -188,35 +185,29 @@ body {
 }
 
 .wallet-btn {
-  background: #00ffe7;
-  color: #121212;
+  background: #fff;
+  color: #000;
   border: none;
-  padding: 9px 20px;
+  padding: 8px 16px;
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
-  box-shadow: 0 3px 14px #00ffe7aa;
-  transition: background 0.2s ease;
-}
-.wallet-btn:hover {
-  background: #04ccb3;
 }
 
 /* Game Zone */
 .game-zone {
-  background: rgba(0, 0, 0, 0.54);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(15px);
-  border: 1.5px solid #00ffe7cc;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
   padding: 20px 15px;
   max-width: 500px;
   margin: 0 auto 20px auto;
-  box-shadow: 0 0 18px #00ffe755;
 }
 
 .zone-title {
-  color: #00ffe7;
+  color: #1DD1A1;
   font-size: 1.3rem;
   font-weight: bold;
   text-align: center;
@@ -231,19 +222,18 @@ body {
 }
 
 .mode-card {
-  background: rgba(0, 255, 231, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
-  border: 1.5px solid #00ffe7bb;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 16px;
   text-align: center;
-  transition: all 0.25s ease;
-  color: #00ffe7;
+  transition: all 0.2s ease;
 }
 
 .mode-card:hover {
-  background: rgba(0, 255, 231, 0.22);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
 }
 
 .mode-name {
@@ -252,27 +242,39 @@ body {
   margin: 0 0 6px 0;
 }
 
+/* Different colors for each mode */
+.mode-1 {
+  color: #9B59B6; /* Purple for Battle Royale */
+}
+
+.mode-2 {
+  color: #3498DB; /* Blue for Clash Squad */
+}
+
+.mode-3 {
+  color: #E74C3C; /* Single red color for Lone Wolf */
+}
+
 .mode-desc {
-  color: #a3fff9;
+  color: #ccc;
   font-size: 0.9rem;
   margin: 0 0 12px 0;
 }
 
 .enter-btn {
-  background: #00ffe7;
-  color: #121212;
+  background: #fff;
+  color: #000;
   border: none;
-  padding: 10px 28px;
+  padding: 10px 25px;
   border-radius: 25px;
   font-weight: 600;
   cursor: pointer;
   font-size: 14px;
-  transition: all 0.25s ease;
-  box-shadow: 0 3px 14px #00ffe7aa;
+  transition: all 0.2s ease;
 }
 
 .enter-btn:hover {
-  background: #04ccb3;
+  background: #f0f0f0;
   transform: scale(1.05);
 }
 
@@ -283,21 +285,21 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  color: #00ffe7;
+  color: #1DD1A1;
   font-size: 16px;
 }
 
 .spinner {
   width: 30px;
   height: 30px;
-  border: 3px solid rgba(0, 255, 231, 0.3);
-  border-top: 3px solid #00ffe7;
+  border: 3px solid rgba(29, 209, 161, 0.3);
+  border-top: 3px solid #1DD1A1;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 10px;
@@ -308,21 +310,48 @@ body {
   100% { transform: rotate(360deg); }
 }
 
+/* Joined Matches Button */
+.joined-matches-btn {
+  display: block;
+  width: 96%;
+  max-width: 500px;
+  margin: 18px auto 15px auto;
+  background: rgba(255,255,255,0.10);
+  color: #1DD1A1;
+  border: 1.5px solid #1DD1A1;
+  border-radius: 18px;
+  box-shadow: 0 3px 15px 0 #1DD1A13c, 0 1.5px 15px 0 #00fff733;
+  padding: 14px 0 13px 0;
+  font-size: 1.13rem;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.7px;
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  transition: background 0.15s, color 0.18s;
+}
+
+.joined-matches-btn:hover {
+  background: rgba(29, 209, 161, 0.15);
+  color: #fff;
+  border-color: #26ffd0;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .dashboard-container {
     padding: 10px;
   }
-
+  
   .balance-box {
     max-width: 260px;
   }
-
+  
   .game-zone {
     max-width: 100%;
     padding: 15px 10px;
   }
-
+  
   .zone-title {
     font-size: 1.1rem;
   }

@@ -77,13 +77,14 @@ export default function ClashSquad() {
       const response = await fetch(`${BACKEND_URL}/api/user/join-match`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ entryFee: modalTournament.entryFee, matchId: modalTournament.id }),
+        // Use _id here for matchId
+        body: JSON.stringify({ entryFee: modalTournament.entryFee, matchId: modalTournament._id }),
       });
       const data = await response.json();
       if (data.success) {
         setBalance(data.balance);
         setTournaments((prev) =>
-          prev.map((t) => (t.id === modalTournament.id ? { ...t, joined: true } : t))
+          prev.map((t) => (t._id === modalTournament._id ? { ...t, joined: true } : t))
         );
         setShowJoined(true);
         setJoinMessage("Get ready for the clash!");
@@ -110,7 +111,7 @@ export default function ClashSquad() {
         </button>
         <span
           className="clashsquad-help-icon"
-          onClick={() => alert("Contact support@cashplayzz.com or WhatsApp 24x7!")}
+          onClick={() => alert("Contact [support@cashplayzz.com](mailto:support@cashplayzz.com) or WhatsApp 24x7!")}
           role="button"
           aria-label="Help"
         >
@@ -137,7 +138,7 @@ export default function ClashSquad() {
       {showJoined && (
         <div className="clashsquad-cards-section">
           {joined.map((t) => (
-            <div key={t.id} className={getCardClass(t)}>
+            <div key={t._id} className={getCardClass(t)}>
               <div className="clashsquad-card-type">{t.squadSize} Clash Squad</div>
               <div className="clashsquad-card-info">
                 <span>Entry: <b>₹{t.entryFee}</b></span>
@@ -173,9 +174,9 @@ export default function ClashSquad() {
           const timeDiff = new Date(t.matchTime).getTime() - Date.now();
           return (
             <div
-              key={t.id}
+              key={t._id}
               className={getCardClass(t)}
-              onClick={() => setExpanded(expanded === t.id ? null : t.id)}
+              onClick={() => setExpanded(expanded === t._id ? null : t._id)}
             >
               <div className="clashsquad-card-type">{t.squadSize} Clash Squad</div>
               <div className="clashsquad-card-info">
@@ -197,7 +198,7 @@ export default function ClashSquad() {
               >
                 Join
               </button>
-              {expanded === t.id && (
+              {expanded === t._id && (
                 <div className="tournament-details" style={{ marginTop: 11 }}>
                   <b>Rules:</b>
                   <ul>

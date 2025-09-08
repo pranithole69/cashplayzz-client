@@ -95,14 +95,15 @@ export default function BattleRoyale() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ entryFee: modalTournament.entryFee, matchId: modalTournament.id }),
+        // Use _id here for matchId
+        body: JSON.stringify({ entryFee: modalTournament.entryFee, matchId: modalTournament._id }),
       });
       const data = await response.json();
 
       if (data.success) {
         setBalance(data.balance);
         setTournaments((prev) =>
-          prev.map((t) => (t.id === modalTournament.id ? { ...t, joined: true } : t))
+          prev.map((t) => (t._id === modalTournament._id ? { ...t, joined: true } : t))
         );
         setShowJoined(true);
         setJoinMessage("Be ready for the battle");
@@ -155,7 +156,7 @@ export default function BattleRoyale() {
             color: "#00ffe7",
             fontSize: 22,
           }}
-          onClick={() => alert("Contact support@cashplayzz.com or WhatsApp 24x7!")}
+          onClick={() => alert("Contact [support@cashplayzz.com](mailto:support@cashplayzz.com) or WhatsApp 24x7!")}
           role="button"
           aria-label="Help"
         >
@@ -191,7 +192,7 @@ export default function BattleRoyale() {
       {showJoined && (
         <div className="battle-cards-section">
           {joined.map((t) => (
-            <div key={t.id} className={getCardClass(t)}>
+            <div key={t._id} className={getCardClass(t)}>
               <div className="battle-card-type">{t.teamType} Tournament</div>
               <div className="battle-card-info">
                 <span>
@@ -238,9 +239,9 @@ export default function BattleRoyale() {
           const timeDiff = new Date(t.matchTime).getTime() - Date.now();
           return (
             <div
-              key={t.id}
+              key={t._id}
               className={getCardClass(t)}
-              onClick={() => setExpanded(expanded === t.id ? null : t.id)}
+              onClick={() => setExpanded(expanded === t._id ? null : t._id)}
             >
               <div className="battle-card-type">{t.teamType} Tournament</div>
               <div className="battle-card-info">
@@ -262,7 +263,7 @@ export default function BattleRoyale() {
               >
                 Join
               </button>
-              {expanded === t.id && (
+              {expanded === t._id && (
                 <div className="tournament-details" style={{ marginTop: 11 }}>
                   <b>Rules:</b>
                   <ul>

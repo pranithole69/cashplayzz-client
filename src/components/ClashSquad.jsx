@@ -29,6 +29,7 @@ export default function ClashSquad() {
   const [showJoined, setShowJoined] = useState(false);
   const [joinMessage, setJoinMessage] = useState("");
   const [filterType, setFilterType] = useState("All");
+  const SQUAD_FILTERS = ["All", "1v1", "2v2", "3v3", "4v4"];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,7 +60,6 @@ export default function ClashSquad() {
   const upcoming = tournaments.filter(
     (t) => !t.joined && (filterType === "All" || t.squadSize === filterType)
   );
-  const SQUAD_FILTERS = ["All", "1v1", "2v2", "3v3", "4v4"];
 
   const getCardClass = (t) => {
     let base = "clashsquad-card";
@@ -124,13 +124,8 @@ export default function ClashSquad() {
         <span>Balance:</span> <span>₹{balance}</span>
       </div>
 
-      {joinMessage && (
-        <div style={{ color: "#17e3ff", fontWeight: "bold", textAlign: "center", marginTop: 12 }}>
-          {joinMessage}
-        </div>
-      )}
+      {joinMessage && <div style={{ color: "#17e3ff", fontWeight: "bold", textAlign: "center", marginTop: 12 }}>{joinMessage}</div>}
 
-      {/* Joined Matches toggle, styled translucent pill */}
       <button
         className="clashsquad-collapse-toggle"
         onClick={() => setShowJoined((j) => !j)}
@@ -145,15 +140,9 @@ export default function ClashSquad() {
             <div key={t.id} className={getCardClass(t)}>
               <div className="clashsquad-card-type">{t.squadSize} Clash Squad</div>
               <div className="clashsquad-card-info">
-                <span>
-                  Entry: <b>₹{t.entryFee}</b>
-                </span>
-                <span>
-                  Prize: <b>₹{t.prizePool}</b>
-                </span>
-                <span>
-                  Match time: <b>{formatDateTime(t.matchTime)}</b>
-                </span>
+                <span>Entry: <b>₹{t.entryFee}</b></span>
+                <span>Prize: <b>₹{t.prizePool}</b></span>
+                <span>Match time: <b>{formatDateTime(t.matchTime)}</b></span>
               </div>
               <span style={{ color: "#17e3ff", fontWeight: 700 }}>Status: Joined</span>
               <div style={{ marginTop: 7, fontSize: 13 }}>
@@ -164,11 +153,8 @@ export default function ClashSquad() {
         </div>
       )}
 
-      <div className="clashsquad-section-label" style={{ marginTop: 27 }}>
-        Upcoming Matches
-      </div>
+      <div className="clashsquad-section-label" style={{ marginTop: 27 }}>Upcoming Matches</div>
 
-      {/* Squad filters */}
       <div className="clashsquad-filter-bar">
         {SQUAD_FILTERS.map((type) => (
           <button
@@ -182,7 +168,6 @@ export default function ClashSquad() {
         ))}
       </div>
 
-      {/* Upcoming Matches */}
       <div className="clashsquad-cards-section">
         {upcoming.map((t) => {
           const timeDiff = new Date(t.matchTime).getTime() - Date.now();
@@ -230,16 +215,13 @@ export default function ClashSquad() {
         })}
       </div>
 
-      {/* Join Modal */}
       {modalTournament && (
         <div className="battle-modal-overlay">
           <div className="battle-modal-box">
             <button className="battle-modal-close" onClick={() => setModalTournament(null)}>
               &times;
             </button>
-            <div className="battle-modal-title">
-              Join {modalTournament.squadSize} Clash Squad
-            </div>
+            <div className="battle-modal-title">Join {modalTournament.squadSize} Clash Squad</div>
             <div className="battle-modal-info">
               Entry Fee: <b style={{ color: "#17e3ff" }}>₹{modalTournament.entryFee}</b>
               <br />

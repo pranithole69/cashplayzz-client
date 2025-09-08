@@ -5,12 +5,12 @@ html, body {
   padding: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  font-family: 'Segoe UI', sans-serif;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  font-family: 'Segoe UI', sans-serif;
 }
 
-/* Scrollbar styling for WebKit */
+/* Scrollbar styling */
 body::-webkit-scrollbar {
   width: 8px;
 }
@@ -21,8 +21,6 @@ body::-webkit-scrollbar-thumb {
   background-color: rgba(33, 168, 255, 0.4);
   border-radius: 6px;
 }
-
-/* Scrollbar styling for Firefox */
 body {
   scrollbar-width: thin;
   scrollbar-color: rgba(33, 168, 255, 0.4) transparent;

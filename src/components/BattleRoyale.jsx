@@ -3,6 +3,12 @@ import "./BattleRoyale.css";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
+// Helper function to get auth headers
+function getAuthHeaders() {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 function formatDateTime(date) {
   return new Date(date).toLocaleTimeString("en-IN", {
     hour: "numeric",
@@ -33,23 +39,17 @@ export default function BattleRoyale() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
         const profileRes = await fetch(`${BACKEND_URL}/api/user/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: getAuthHeaders(),
         });
-
         if (profileRes.ok) {
           const profileData = await profileRes.json();
           setBalance(profileData.balance);
         }
-
         const tourRes = await fetch(`${BACKEND_URL}/api/user/tournaments`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: getAuthHeaders(),
           cache: "no-store",
         });
-
         if (tourRes.ok) {
           const toursData = await tourRes.json();
           setTournaments(toursData);
@@ -61,7 +61,6 @@ export default function BattleRoyale() {
         setTournaments([]);
       }
     };
-
     fetchUserData();
   }, []);
 
@@ -84,12 +83,11 @@ export default function BattleRoyale() {
 
   const confirmJoin = async () => {
     try {
-      const token = localStorage.getItem("token");
       const response = await fetch(`${BACKEND_URL}/api/user/join-match`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          ...getAuthHeaders(),
         },
         body: JSON.stringify({ entryFee: modalTournament.entryFee, matchId: modalTournament._id }),
       });
@@ -98,16 +96,15 @@ export default function BattleRoyale() {
       if (data.success) {
         setJoinMessage("Be ready for the battle");
 
-        // Refetch tournaments fresh with no-cache to update joined flag
+        // Refetch tournaments fresh to get updated joined flags
         const tourRes = await fetch(`${BACKEND_URL}/api/user/tournaments`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: getAuthHeaders(),
           cache: "no-store",
         });
         if (tourRes.ok) {
           const toursData = await tourRes.json();
           setTournaments(toursData);
         }
-
         setShowJoined(true);
         setModalTournament(null);
         setExpanded(null);

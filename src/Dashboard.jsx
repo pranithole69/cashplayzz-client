@@ -19,6 +19,7 @@ function Dashboard() {
   const [showJoinedMatches, setShowJoinedMatches] = useState(false);
   const [username, setUsername] = useState("");
   const [balance, setBalance] = useState(0);
+  const [joinedMatches, setJoinedMatches] = useState([]);
 
   const userToken = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -53,25 +54,42 @@ function Dashboard() {
     setShowDepositForm(false);
   };
 
+  const getAuthHeaders = () => {
+    return userToken ? { Authorization: `Bearer ${userToken}` } : {};
+  };
+
   const fetchUser = async () => {
     try {
       const res = await axios.get(
         "https://cashplayzz-backend-1.onrender.com/api/user/profile",
-        {
-          headers: { Authorization: `Bearer ${userToken}` },
-        }
+        { headers: getAuthHeaders() }
       );
-      const { username, balance } = res.data;
-      setUsername(username);
-      setBalance(balance);
+      setUsername(res.data.username);
+      setBalance(res.data.balance);
     } catch (err) {
       toast.error("Failed to load user info");
       console.error("❌ Fetch user error:", err.response?.data || err.message);
     }
   };
 
+  const fetchJoinedMatches = async () => {
+    try {
+      const res = await axios.get(
+        "https://cashplayzz-backend-1.onrender.com/api/user/joined-matches",
+        { headers: getAuthHeaders() }
+      );
+      setJoinedMatches(res.data);
+    } catch (err) {
+      toast.error("Failed to load joined matches");
+      console.error("❌ Fetch joined matches error:", err.response?.data || err.message);
+    }
+  };
+
   useEffect(() => {
-    if (userToken) fetchUser();
+    if (userToken) {
+      fetchUser();
+      fetchJoinedMatches();
+    }
   }, [userToken]);
 
   const modes = [
@@ -98,10 +116,7 @@ function Dashboard() {
 
       {/* Info Icon */}
       <div className="info-corner">
-        <FaInfoCircle
-          className="info-icon"
-          onClick={() => setShowTips(!showTips)}
-        />
+        <FaInfoCircle className="info-icon" onClick={() => setShowTips(!showTips)} />
         {showTips && (
           <div className="info-popup">
             <p>
@@ -112,7 +127,7 @@ function Dashboard() {
         )}
       </div>
 
-      {/* Sidebar - CLEAN VERSION WITH ONLY SETTINGS AND LOGOUT */}
+      {/* Sidebar */}
       {menuOpen && (
         <div className="sidebar">
           <ul>
@@ -149,11 +164,8 @@ function Dashboard() {
       )}
 
       {/* Joined Matches Button */}
-      <button
-        className="joined-matches-btn"
-        onClick={() => setShowJoinedMatches(true)}
-      >
-        Joined Matches
+      <button className="joined-matches-btn" onClick={() => setShowJoinedMatches(true)}>
+        Joined Matches ({joinedMatches.length})
       </button>
 
       {/* JoinedMatches Modal */}
@@ -166,7 +178,7 @@ function Dashboard() {
           >
             &times;
           </button>
-          <JoinedMatches onClose={() => setShowJoinedMatches(false)} />
+          <JoinedMatches matches={joinedMatches} onClose={() => setShowJoinedMatches(false)} />
         </div>
       )}
 
@@ -178,10 +190,7 @@ function Dashboard() {
             <div className="mode-card" key={mode.name}>
               <h3 className={`mode-name mode-${index + 1}`}>{mode.name}</h3>
               <p className="mode-desc">{mode.description}</p>
-              <button
-                className="enter-btn"
-                onClick={() => handleEnterMode(mode.name)}
-              >
+              <button className="enter-btn" onClick={() => handleEnterMode(mode.name)}>
                 Enter
               </button>
             </div>

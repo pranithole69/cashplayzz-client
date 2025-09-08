@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./BattleRoyale.css";
+import "./ClashSquad.css";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -11,7 +11,6 @@ function formatDateTime(date) {
     hour12: true,
   });
 }
-
 function formatCountdown(ms) {
   if (ms < 0) return "Started";
   const min = Math.floor(ms / 60000);
@@ -31,7 +30,7 @@ export default function ClashSquad() {
   const [filterType, setFilterType] = useState("All");
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
         const profileRes = await fetch(`${BACKEND_URL}/api/user/profile`, {
@@ -41,40 +40,36 @@ export default function ClashSquad() {
           const profileData = await profileRes.json();
           setBalance(profileData.balance);
         }
-        const tourRes = await fetch(`${BACKEND_URL}/api/user/tournaments?type=clashsquad`, {
+        // Fetch only Clash Squad tournaments with custom backend field
+        const tourRes = await fetch(`${BACKEND_URL}/api/user/tournaments?mode=clashsquad`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (tourRes.ok) {
           const toursData = await tourRes.json();
           setTournaments(toursData);
-        } else {
-          setTournaments([]);
-        }
+        } else setTournaments([]);
       } catch (error) {
-        console.error("Failed to fetch user or tournament data", error);
         setTournaments([]);
       }
     };
-    fetchUserData();
+    fetchData();
   }, []);
 
   const joined = tournaments.filter((t) => t.joined);
   const upcoming = tournaments.filter(
-    (t) =>
-      !t.joined &&
-      (filterType === "All" || t.teamType.toLowerCase() === filterType.toLowerCase())
+    (t) => !t.joined &&
+      (filterType === "All" || t.squadSize === filterType)
   );
+  const SQUAD_FILTERS = ["All", "1v1", "2v2", "3v3", "4v4"];
 
   const getCardClass = (t) => {
-    let base = "battle-card";
+    let base = "clashsquad-card";
     if (t.joined) return base + " joined";
     if (t.entryFee > 50) return base + " super-premium";
     if (t.entryFee > 30) return base + " premium";
     return base;
   };
-
   const handleJoin = (t) => setModalTournament(t);
-
   const confirmJoin = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -102,46 +97,20 @@ export default function ClashSquad() {
       }
     } catch (err) {
       alert("Server error occurred, please try again.");
-      console.error(err);
     }
   };
-
   const handleFilterChange = (type) => {
     setFilterType(type);
     setExpanded(null);
   };
 
   return (
-    <div className="battle-bg">
-      {/* Topbar and greeting */}
-      <div className="battle-topbar" style={{ position: "relative" }}>
-        <button
-          onClick={() => window.history.back()}
-          style={{
-            position: "absolute",
-            left: 15,
-            top: 12,
-            background: "none",
-            border: "none",
-            color: "#00ffe7",
-            fontWeight: "bold",
-            fontSize: "16px",
-            cursor: "pointer",
-            padding: 0,
-          }}
-        >
-          ← Back
-        </button>
+    <div className="clashsquad-bg">
+      {/* Topbar */}
+      <div className="clashsquad-topbar">
+        <button className="clashsquad-back-btn" onClick={() => window.history.back()}>&larr; Back</button>
         <span
-          style={{
-            marginLeft: "auto",
-            position: "absolute",
-            right: 15,
-            top: 12,
-            cursor: "pointer",
-            color: "#00ffe7",
-            fontSize: 22,
-          }}
+          className="clashsquad-help-icon"
           onClick={() => alert("Contact support@cashplayzz.com or WhatsApp 24x7!")}
           role="button"
           aria-label="Help"
@@ -149,39 +118,35 @@ export default function ClashSquad() {
           &#9432;
         </span>
       </div>
-
-      <div className="battle-greeting">Welcome to Clash Squad!</div>
-
+      <div className="clashsquad-greeting">Welcome to Clash Squad!</div>
       {/* Balance display and join message */}
-      <div className="balance-box">
-        <span>Balance:</span> <span style={{ color: "#00ffe7" }}>₹{balance}</span>
+      <div className="clashsquad-balance-box">
+        <span>Balance:</span> <span>₹{balance}</span>
       </div>
-
       {joinMessage && (
-        <div style={{ color: "#00ffe7", fontWeight: "bold", textAlign: "center", marginTop: 12 }}>
+        <div style={{ color: "#17e3ff", fontWeight: "bold", textAlign: "center", marginTop: 12 }}>
           {joinMessage}
         </div>
       )}
-
       {/* Joined Matches toggle and list */}
       <button
         className="battle-collapse-toggle"
         onClick={() => setShowJoined((j) => !j)}
-        style={{ display: joined.length ? "block" : "none" }}
+        style={{ color: "#61d6ff", display: joined.length ? "block" : "none" }}
       >
         {showJoined ? "Hide Joined Matches" : `Joined Matches (${joined.length})`}
       </button>
       {showJoined && (
-        <div className="battle-cards-section">
+        <div className="clashsquad-cards-section">
           {joined.map((t) => (
             <div key={t.id} className={getCardClass(t)}>
-              <div className="battle-card-type">{t.teamType} Tournament</div>
-              <div className="battle-card-info">
+              <div className="clashsquad-card-type">{t.squadSize} Clash Squad</div>
+              <div className="clashsquad-card-info">
                 <span>Entry: <b>₹{t.entryFee}</b></span>
                 <span>Prize: <b>₹{t.prizePool}</b></span>
                 <span>Match time: <b>{formatDateTime(t.matchTime)}</b></span>
               </div>
-              <span style={{ color: "#00ffe7", fontWeight: 700 }}>Status: Joined</span>
+              <span style={{ color: "#17e3ff", fontWeight: 700 }}>Status: Joined</span>
               <div style={{ marginTop: 7, fontSize: 13 }}>
                 Players: {t.players}/{t.maxPlayers}
               </div>
@@ -190,15 +155,15 @@ export default function ClashSquad() {
         </div>
       )}
 
-      {/* Upcoming Matches label */}
-      <div className="section-label" style={{ marginTop: 28 }}>Upcoming Matches</div>
-
-      {/* Filter buttons */}
-      <div className="filter-bar">
-        {["All", "Solo", "Duo", "Squad"].map((type) => (
+      <div className="clashsquad-section-label" style={{ marginTop: 27 }}>
+        Upcoming Matches
+      </div>
+      {/* Filters for 1v1 2v2 3v3 4v4 */}
+      <div className="clashsquad-filter-bar">
+        {SQUAD_FILTERS.map((type) => (
           <button
             key={type}
-            className={`filter-btn${filterType === type ? " active" : ""}`}
+            className={`clashsquad-filter-btn${filterType === type ? " active" : ""}`}
             onClick={() => handleFilterChange(type)}
             type="button"
           >
@@ -206,9 +171,8 @@ export default function ClashSquad() {
           </button>
         ))}
       </div>
-
       {/* Upcoming matches cards */}
-      <div className="battle-cards-section">
+      <div className="clashsquad-cards-section">
         {upcoming.map((t) => {
           const timeDiff = new Date(t.matchTime).getTime() - Date.now();
           return (
@@ -217,8 +181,8 @@ export default function ClashSquad() {
               className={getCardClass(t)}
               onClick={() => setExpanded(expanded === t.id ? null : t.id)}
             >
-              <div className="battle-card-type">{t.teamType} Tournament</div>
-              <div className="battle-card-info">
+              <div className="clashsquad-card-type">{t.squadSize} Clash Squad</div>
+              <div className="clashsquad-card-info">
                 <span>Entry: ₹{t.entryFee}</span>
                 <span>Prize: ₹{t.prizePool}</span>
                 <span>
@@ -228,7 +192,7 @@ export default function ClashSquad() {
                 </span>
               </div>
               <button
-                className="battle-join-btn"
+                className="clashsquad-join-btn"
                 disabled={t.joined || balance < t.entryFee || timeDiff <= 0}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -254,7 +218,6 @@ export default function ClashSquad() {
           );
         })}
       </div>
-
       {/* Join modal */}
       {modalTournament && (
         <div className="battle-modal-overlay">
@@ -266,10 +229,10 @@ export default function ClashSquad() {
               &times;
             </button>
             <div className="battle-modal-title">
-              Join {modalTournament.teamType} Tournament
+              Join {modalTournament.squadSize} Clash Squad
             </div>
             <div className="battle-modal-info">
-              Entry Fee: <b style={{ color: "#00ffe7" }}>₹{modalTournament.entryFee}</b>
+              Entry Fee: <b style={{ color: "#17e3ff" }}>₹{modalTournament.entryFee}</b>
               <br />
               Prize Pool: <b style={{ color: "#ffe066" }}>{modalTournament.prizePool}</b>
               <br />

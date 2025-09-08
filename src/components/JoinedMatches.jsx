@@ -2,15 +2,6 @@ import React, { useState, useEffect } from "react";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-function formatDateTime(date) {
-  return new Date(date).toLocaleTimeString("en-IN", {
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
-}
-
 function formatCountdown(ms) {
   if (ms < 0) return "Started";
   const min = Math.floor(ms / 60000);
@@ -50,15 +41,17 @@ export default function JoinedMatches({ onClose }) {
   };
 
   return (
-    <div style={{
-      background: "rgba(0,0,0,0.9)",
-      padding: 20,
-      borderRadius: 12,
-      maxWidth: 480,
-      margin: "auto",
-      color: "#d1fcff",
-      position: "relative"
-    }}>
+    <div
+      style={{
+        background: "rgba(0,0,0,0.9)",
+        padding: 20,
+        borderRadius: 12,
+        maxWidth: 480,
+        margin: "auto",
+        color: "#d1fcff",
+        position: "relative",
+      }}
+    >
       <button
         onClick={onClose}
         style={{
@@ -69,14 +62,16 @@ export default function JoinedMatches({ onClose }) {
           border: "none",
           fontSize: 24,
           color: "#0af",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
         aria-label="Close"
       >
         ×
       </button>
 
-      <h2 style={{ textAlign: "center", marginBottom: 20, color: "#30e0ff" }}>Your Joined Matches</h2>
+      <h2 style={{ textAlign: "center", marginBottom: 20, color: "#30e0ff" }}>
+        Your Joined Matches
+      </h2>
 
       {loading && <p>Loading...</p>}
 
@@ -89,34 +84,45 @@ export default function JoinedMatches({ onClose }) {
         const countdownMs = startTimeMs - now;
 
         return (
-          <div key={match.id} style={{
-            background: "linear-gradient(120deg, rgba(10,30,45,0.7), rgba(10,30,45,0.85))",
-            borderRadius: 14,
-            boxShadow: "0 0 12px 3px #00e5ff7d",
-            padding: 20,
-            marginBottom: 16
-          }}>
-            <h3 style={{
-              borderLeft: "6px solid #0ff",
-              paddingLeft: 14,
-              color: "#40dfff",
-              textTransform: "uppercase",
-              marginBottom: 10,
-              fontWeight: "bold"
-            }}>
+          <div
+            key={match.id}
+            style={{
+              background: "linear-gradient(120deg, rgba(10,30,45,0.7), rgba(10,30,45,0.85))",
+              borderRadius: 14,
+              boxShadow: "0 0 12px 3px #00e5ff7d",
+              padding: 20,
+              marginBottom: 16,
+            }}
+          >
+            <h3
+              style={{
+                borderLeft: "6px solid #0ff",
+                paddingLeft: 14,
+                color: "#40dfff",
+                textTransform: "uppercase",
+                marginBottom: 10,
+                fontWeight: "bold",
+              }}
+            >
               {match.mode || match.teamType || "Tournament"}
             </h3>
-            <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", fontSize: 16 }}>
-              <span>Entry: ₹{match.entry}</span>
-              <span>Prize: ₹{match.prize}</span>
+            <div
+              style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", fontSize: 16 }}
+            >
+              <span>Entry: ₹{match.entryFee}</span>
+              <span>Prize: ₹{match.prizePool}</span>
               <span>Starts: {formatCountdown(countdownMs)}</span>
             </div>
 
             <div style={{ marginTop: 16, padding: 12, background: "rgba(0,0,30,0.3)", borderRadius: 8 }}>
               {canShowRoomDetails(match) ? (
                 <>
-                  <p><b>Room ID:</b> {match.roomId}</p>
-                  <p><b>Password:</b> {match.roomPassword}</p>
+                  <p>
+                    <b>Room ID:</b> {match.roomId}
+                  </p>
+                  <p>
+                    <b>Password:</b> {match.roomPassword}
+                  </p>
                 </>
               ) : (
                 <p>Room details will be visible 5 minutes before the match starts.</p>
@@ -125,7 +131,6 @@ export default function JoinedMatches({ onClose }) {
           </div>
         );
       })}
-
     </div>
   );
 }

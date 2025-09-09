@@ -96,7 +96,32 @@ export default function BattleRoyale() {
                 <p style={{ color: "#00ff00" }}>✓ JOINED</p>
               ) : (
                 <button 
-                  onClick={() => alert("Join functionality - coming next")}
+                  onClick={async () => {
+                    try {
+                      const response = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/join-match", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                          entryFee: tournament.entryFee,
+                          matchId: tournament._id
+                        })
+                      });
+                      const data = await response.json();
+                      if (data.success) {
+                        alert("Successfully joined tournament!");
+                        setBalance(data.balance);
+                        // Refresh tournaments to show joined status
+                        window.location.reload();
+                      } else {
+                        alert(data.message || "Failed to join");
+                      }
+                    } catch (error) {
+                      alert("Error joining tournament");
+                    }
+                  }}
                   disabled={balance < tournament.entryFee}
                   style={{ 
                     padding: "10px 20px", 

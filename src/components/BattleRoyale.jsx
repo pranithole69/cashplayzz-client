@@ -1,41 +1,36 @@
 import React, { useEffect, useState } from "react";
+import "./BattleRoyale.css";
 
 export default function BattleRoyale() {
   const [tournaments, setTournaments] = useState([]);
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [showJoined, setShowJoined] = useState(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     async function fetchData() {
-      console.log("Token:", token); // Debug log
       if (!token) {
         setLoading(false);
         return;
       }
       
       try {
-        // Get user profile
         const profileRes = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("Profile response:", profileRes.status); // Debug log
         
         if (profileRes.ok) {
           const profileData = await profileRes.json();
-          console.log("Profile data:", profileData); // Debug log
           setBalance(profileData.balance);
         }
 
-        // Get tournaments
         const tourRes = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/tournaments", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("Tournaments response:", tourRes.status); // Debug log
         
         if (tourRes.ok) {
           const tourData = await tourRes.json();
-          console.log("Tournaments data:", tourData); // Debug log
           setTournaments(tourData);
         }
       } catch (error) {
@@ -47,98 +42,172 @@ export default function BattleRoyale() {
     fetchData();
   }, [token]);
 
+  const joinedTournaments = tournaments.filter(t => t.joined);
+  const availableTournaments = tournaments.filter(t => !t.joined);
+
+  const handleJoin = async (tournament) => {
+    try {
+      const response = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/join-match", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          entryFee: tournament.entryFee,
+          matchId: tournament._id
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setBalance(data.balance);
+        window.location.reload();
+      } else {
+        alert(data.message || "Failed to join");
+      }
+    } catch (error) {
+      alert("Error joining tournament");
+    }
+  };
+
   if (!token) {
     return (
-      <div style={{ padding: 20, color: "#fff", background: "#222", minHeight: "100vh" }}>
-        <h1>Please log in first</h1>
-        <button onClick={() => window.history.back()}>Go Back</button>
+      <div className="battle-container">
+        <div className="auth-message">
+          <h1>Please log in first</h1>
+          <button className="back-btn" onClick={() => window.history.back()}>
+            Go Back
+          </button>
+        </div>
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div style={{ padding: 20, color: "#fff", background: "#222", minHeight: "100vh" }}>
-        <h1>Loading...</h1>
+      <div className="battle-container">
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+          <h2>Loading Battles...</h2>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: 20, color: "#fff", background: "#222", minHeight: "100vh" }}>
-      <button onClick={() => window.history.back()} style={{ marginBottom: 20 }}>
-        ← Back to Dashboard
-      </button>
-      
-      <h1>Battle Royale</h1>
-      <p><strong>Balance: ₹{balance}</strong></p>
-      
-      <h2>Available Tournaments ({tournaments.length})</h2>
-      
-      {tournaments.length === 0 ? (
-        <p>No tournaments available</p>
-      ) : (
-        <div>
-          {tournaments.map((tournament) => (
-            <div key={tournament._id} style={{ 
-              border: "1px solid #555", 
-              padding: 15, 
-              margin: 10, 
-              borderRadius: 5,
-              backgroundColor: tournament.joined ? "#006600" : "#333"
-            }}>
-              <h3>{tournament.teamType} Tournament</h3>
-              <p>Entry Fee: ₹{tournament.entryFee}</p>
-              <p>Prize Pool: ₹{tournament.prizePool}</p>
-              <p>Players: {tournament.players}/{tournament.maxPlayers}</p>
-              <p>Time: {new Date(tournament.matchTime).toLocaleString()}</p>
-              {tournament.joined ? (
-                <p style={{ color: "#00ff00" }}>✓ JOINED</p>
-              ) : (
-                <button 
-                  onClick={async () => {
-                    try {
-                      const response = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/join-match", {
-                        method: "POST",
-                        headers: {
-                          "Content-Type": "application/json",
-                          Authorization: `Bearer ${token}`
-                        },
-                        body: JSON.stringify({
-                          entryFee: tournament.entryFee,
-                          matchId: tournament._id
-                        })
-                      });
-                      const data = await response.json();
-                      if (data.success) {
-                        alert("Successfully joined tournament!");
-                        setBalance(data.balance);
-                        // Refresh tournaments to show joined status
-                        window.location.reload();
-                      } else {
-                        alert(data.message || "Failed to join");
-                      }
-                    } catch (error) {
-                      alert("Error joining tournament");
-                    }
-                  }}
-                  disabled={balance < tournament.entryFee}
-                  style={{ 
-                    padding: "10px 20px", 
-                    backgroundColor: balance >= tournament.entryFee ? "#007700" : "#666",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: 3,
-                    cursor: balance >= tournament.entryFee ? "pointer" : "not-allowed"
-                  }}
-                >
-                  {balance >= tournament.entryFee ? `Join (₹${tournament.entryFee})` : "Insufficient Balance"}
-                </button>
-              )}
-            </div>
-          ))}
+    <div className="battle-container">
+      {/* Header */}
+      <div className="battle-header">
+        <button className="back-btn" onClick={() => window.history.back()}>
+          ← Back
+        </button>
+        <h1 className="battle-title">Battle Royale</h1>
+        <div className="help-icon" onClick={() => alert("Contact support@cashplayzz.com")}>
+          ℹ️
+        </div>
+      </div>
+
+      {/* Balance Display */}
+      <div className="balance-display">
+        <span className="balance-label">Your Balance</span>
+        <span className="balance-amount">₹{balance}</span>
+      </div>
+
+      {/* Joined Matches Toggle */}
+      {joinedTournaments.length > 0 && (
+        <button 
+          className="joined-toggle-btn"
+          onClick={() => setShowJoined(!showJoined)}
+        >
+          {showJoined ? 'Hide' : 'Show'} Joined Matches ({joinedTournaments.length})
+        </button>
+      )}
+
+      {/* Joined Matches Section */}
+      {showJoined && joinedTournaments.length > 0 && (
+        <div className="joined-section">
+          <h2 className="section-title">Your Joined Matches</h2>
+          <div className="tournaments-grid">
+            {joinedTournaments.map((tournament) => (
+              <div key={tournament._id} className="tournament-card joined-card">
+                <div className="card-header">
+                  <h3>{tournament.teamType} Tournament</h3>
+                  <span className="joined-badge">✓ JOINED</span>
+                </div>
+                <div className="card-info">
+                  <div className="info-row">
+                    <span>Entry Fee:</span>
+                    <span className="fee">₹{tournament.entryFee}</span>
+                  </div>
+                  <div className="info-row">
+                    <span>Prize Pool:</span>
+                    <span className="prize">₹{tournament.prizePool}</span>
+                  </div>
+                  <div className="info-row">
+                    <span>Players:</span>
+                    <span>{tournament.players}/{tournament.maxPlayers}</span>
+                  </div>
+                  <div className="info-row">
+                    <span>Match Time:</span>
+                    <span>{new Date(tournament.matchTime).toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
+
+      {/* Available Tournaments */}
+      <div className="available-section">
+        <h2 className="section-title">Available Tournaments ({availableTournaments.length})</h2>
+        
+        {availableTournaments.length === 0 ? (
+          <div className="no-tournaments">
+            <p>No tournaments available at the moment</p>
+          </div>
+        ) : (
+          <div className="tournaments-grid">
+            {availableTournaments.map((tournament) => (
+              <div key={tournament._id} className="tournament-card">
+                <div className="card-header">
+                  <h3>{tournament.teamType} Tournament</h3>
+                  <div className={`difficulty-badge ${tournament.entryFee > 50 ? 'premium' : tournament.entryFee > 30 ? 'advanced' : 'basic'}`}>
+                    {tournament.entryFee > 50 ? 'PREMIUM' : tournament.entryFee > 30 ? 'ADVANCED' : 'BASIC'}
+                  </div>
+                </div>
+                
+                <div className="card-info">
+                  <div className="info-row">
+                    <span>Entry Fee:</span>
+                    <span className="fee">₹{tournament.entryFee}</span>
+                  </div>
+                  <div className="info-row">
+                    <span>Prize Pool:</span>
+                    <span className="prize">₹{tournament.prizePool}</span>
+                  </div>
+                  <div className="info-row">
+                    <span>Players:</span>
+                    <span>{tournament.players}/{tournament.maxPlayers}</span>
+                  </div>
+                  <div className="info-row">
+                    <span>Starts:</span>
+                    <span>{new Date(tournament.matchTime).toLocaleString()}</span>
+                  </div>
+                </div>
+
+                <button
+                  className={`join-btn ${balance >= tournament.entryFee ? 'enabled' : 'disabled'}`}
+                  onClick={() => handleJoin(tournament)}
+                  disabled={balance < tournament.entryFee}
+                >
+                  {balance >= tournament.entryFee ? `Join (₹${tournament.entryFee})` : 'Insufficient Balance'}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

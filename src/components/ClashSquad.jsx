@@ -1,6 +1,6 @@
 // Similar structure as BattleRoyale, adjusted for ClashSquad mode filtering
 import React, { useState, useEffect } from "react";
-import "./clashSquad.css";
+import "./ClashSquad.css";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const token = localStorage.getItem("token");

@@ -9,6 +9,7 @@ import DepositForm from "./components/DepositForm.jsx";
 import WithdrawForm from "./components/WithdrawForm.jsx";
 import JoinedMatches from "./components/JoinedMatches.jsx";
 
+
 function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
@@ -17,9 +18,9 @@ function Dashboard() {
   const [showWithdrawForm, setShowWithdrawForm] = useState(false);
   const [showTips, setShowTips] = useState(false);
   const [showJoinedMatches, setShowJoinedMatches] = useState(false);
+  const [joinedMatches, setJoinedMatches] = useState([]);
   const [username, setUsername] = useState("");
   const [balance, setBalance] = useState(0);
-  const [joinedMatches, setJoinedMatches] = useState([]);
 
   const userToken = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ function Dashboard() {
   };
 
   const goToSettings = () => {
-    toast.info("Settings feature coming soon!");
+    toast.info("Settings feature coming soon");
   };
 
   const handleDeposit = () => {
@@ -58,39 +59,39 @@ function Dashboard() {
     return userToken ? { Authorization: `Bearer ${userToken}` } : {};
   };
 
-  const fetchUser = async () => {
+  const fetchUserProfile = async () => {
     try {
-      const res = await axios.get(
-        "https://cashplayzz-backend-1.onrender.com/api/user/profile",
-        { headers: getAuthHeaders() }
-      );
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile`, {
+        headers: getAuthHeaders(),
+      });
       setUsername(res.data.username);
       setBalance(res.data.balance);
-    } catch (err) {
+    } catch (error) {
       toast.error("Failed to load user info");
-      console.error("❌ Fetch user error:", err.response?.data || err.message);
+      console.error("Fetch userProfile error:", error);
     }
   };
 
   const fetchJoinedMatches = async () => {
     try {
-      const res = await axios.get(
-        "https://cashplayzz-backend-1.onrender.com/api/user/joined-matches",
-        { headers: getAuthHeaders() }
-      );
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/jo
+ined-matches`, {
+        headers: getAuthHeaders(),
+      });
       setJoinedMatches(res.data);
-    } catch (err) {
+    } catch (error) {
       toast.error("Failed to load joined matches");
-      console.error("❌ Fetch joined matches error:", err.response?.data || err.message);
+      console.error("Fetch joinedMatches error:", error);
     }
   };
 
   useEffect(() => {
     if (userToken) {
-      fetchUser();
+      fetchUserProfile();
       fetchJoinedMatches();
     }
   }, [userToken]);
+
 
   const modes = [
     { name: "Battle Royale", description: "Classic survival mode" },
@@ -102,7 +103,7 @@ function Dashboard() {
     if (modeName === "Battle Royale") navigate("/battle-royale");
     else if (modeName === "Clash Squad") navigate("/clash-squad");
     else if (modeName === "Lone Wolf") navigate("/lone-wolf");
-    else toast.info(`Mode ${modeName} clicked!`);
+    else toast.info(`Clicked: ${modeName}`);
   };
 
   return (
@@ -119,9 +120,7 @@ function Dashboard() {
         <FaInfoCircle className="info-icon" onClick={() => setShowTips(!showTips)} />
         {showTips && (
           <div className="info-popup">
-            <p>
-              <strong>How to deposit?</strong>
-            </p>
+            <p><b>How to deposit?</b></p>
             <p>Click wallet icon to add funds</p>
           </div>
         )}
@@ -147,60 +146,48 @@ function Dashboard() {
         <FaWallet className="wallet-icon" onClick={toggleWallet} />
       </div>
 
-      {/* Wallet Forms */}
       {walletOpen && (
         <div className="wallet-box">
-          <div className="wallet-actions">
-            <button className="wallet-btn" onClick={handleDeposit}>
-              Deposit
-            </button>
-            <button className="wallet-btn" onClick={handleWithdraw}>
-              Withdraw
-            </button>
+          <div className="actions">
+            <button className="btn" onClick={handleDeposit}>Deposit</button>
+            <button className="btn" onClick={handleWithdraw}>Withdraw</button>
           </div>
           {showDepositForm && <DepositForm />}
           {showWithdrawForm && <WithdrawForm />}
         </div>
       )}
 
-      {/* Joined Matches Button */}
-      <button className="joined-matches-btn" onClick={() => setShowJoinedMatches(true)}>
+      {/* Button to open joined matches modal */}
+      <button className="btn joined-btn" onClick={() => setShowJoinedMatches(true)}>
         Joined Matches ({joinedMatches.length})
       </button>
 
-      {/* JoinedMatches Modal */}
+      {/* Joined Matches Modal */}
       {showJoinedMatches && (
         <div className="modal-overlay">
-          <button
-            className="modal-close-btn"
-            onClick={() => setShowJoinedMatches(false)}
-            aria-label="Close joined matches"
-          >
+          <button className="close-btn" onClick={() => setShowJoinedMatches(false)} aria-label="Close joined matches modal">
             &times;
           </button>
           <JoinedMatches matches={joinedMatches} onClose={() => setShowJoinedMatches(false)} />
         </div>
       )}
 
-      {/* Game Zone */}
+      {/* Modes Selection */}
       <div className="game-zone">
-        <h2 className="zone-title">CHOOSE YOUR PREFERENCE OF BATTLE</h2>
-        <div className="modes-container">
-          {modes.map((mode, index) => (
-            <div className="mode-card" key={mode.name}>
-              <h3 className={`mode-name mode-${index + 1}`}>{mode.name}</h3>
-              <p className="mode-desc">{mode.description}</p>
-              <button className="enter-btn" onClick={() => handleEnterMode(mode.name)}>
-                Enter
-              </button>
+        <h2>Choose Your Preference of Battle</h2>
+        <div className="modes">
+          {modes.map((mode) => (
+            <div key={mode.name} className="mode-card">
+              <h3>{mode.name}</h3>
+              <p>{mode.description}</p>
+              <button onClick={() => handleEnterMode(mode.name)}>Enter</button>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Logout Overlay */}
       {loggingOut && (
-        <div className="logout-overlay">
+        <div className="logging-out-overlay">
           <div className="spinner"></div>
           Logging out...
         </div>

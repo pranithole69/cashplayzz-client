@@ -12,6 +12,96 @@ export default function BattleRoyale() {
   const [isJoining, setIsJoining] = useState(false);
   const token = localStorage.getItem("token");
 
+  // Generate ObjectId-like strings (24 hex characters)
+  const generateObjectId = () => {
+    return Math.floor(Date.now() / 1000).toString(16) + 
+           Math.random().toString(16).substr(2, 16);
+  };
+
+  // Generate daily tournaments with your EXACT specifications
+  const generateDailyTournaments = () => {
+    const tournaments = [];
+    const now = new Date();
+    const startDate = new Date();
+    startDate.setHours(10, 0, 0, 0); // 10 AM today
+    
+    // Adjust if it's past 1 AM but before 3 AM (tournaments expired)
+    if (now.getHours() >= 1 && now.getHours() < 3) {
+      startDate.setDate(startDate.getDate() + 1); // Next day tournaments
+    }
+    // Adjust if it's past 1 AM (move to next day)
+    else if (now.getHours() >= 1) {
+      startDate.setDate(startDate.getDate() + 1);
+    }
+
+    const teamTypes = ["Solo", "Duo", "Squad"];
+    const entryFees = { "Solo": 10, "Duo": 20, "Squad": 40 };
+    const maxSlots = { "Solo": 48, "Duo": 24, "Squad": 12 };
+    
+    let tournamentId = 1;
+    
+    // Generate tournaments every 1.5 hours from 10 AM to 1 AM (next day)
+    for (let hour = 10; hour <= 25; hour += 1.5) { // 25 = 1 AM next day
+      const slotHour = Math.floor(hour);
+      const slotMinute = (hour % 1) * 60;
+      
+      for (const teamType of teamTypes) {
+        const matchTime = new Date(startDate);
+        matchTime.setHours(slotHour >= 24 ? slotHour - 24 : slotHour, slotMinute, 0, 0);
+        if (slotHour >= 24) {
+          matchTime.setDate(matchTime.getDate() + 1);
+        }
+        
+        const entryFee = entryFees[teamType];
+        const maxPlayers = maxSlots[teamType];
+        
+        // Business Logic: 22% profit, 78% prize pool
+        const totalCollection = entryFee * maxPlayers;
+        const profit = Math.round(totalCollection * 0.22);
+        const prizePool = totalCollection - profit;
+        
+        // Prize Distribution: 50%, 30%, 20%
+        const firstPrize = Math.round(prizePool * 0.5);
+        const secondPrize = Math.round(prizePool * 0.3);
+        const thirdPrize = Math.round(prizePool * 0.2);
+        
+        const returnsMultiplier = (firstPrize / entryFee).toFixed(1);
+        const isExpired = matchTime < now;
+        
+        tournaments.push({
+          _id: generateObjectId(),
+          teamType: teamType,
+          entryFee: entryFee,
+          prizePool: prizePool,
+          matchTime: matchTime.toISOString(),
+          players: Math.floor(Math.random() * (maxPlayers * 0.3)), // Random current players
+          maxPlayers: maxPlayers,
+          roomId: (100000 + tournamentId).toString(),
+          roomPassword: `${teamType.toLowerCase()}${tournamentId}`,
+          returns: `${returnsMultiplier}x`,
+          isExpired: isExpired,
+          joined: false,
+          rules: [
+            `No cheating allowed in ${teamType} matches`,
+            "Fair play competition only",
+            "Submit results with screenshots",
+            "Winners announced within 30 minutes",
+            "Prize distribution: 1st (50%), 2nd (30%), 3rd (20%)"
+          ],
+          prizes: {
+            first: firstPrize,
+            second: secondPrize,
+            third: thirdPrize
+          }
+        });
+        
+        tournamentId++;
+      }
+    }
+    
+    return tournaments;
+  };
+
   useEffect(() => {
     async function fetchData() {
       if (!token) {
@@ -29,89 +119,35 @@ export default function BattleRoyale() {
           setBalance(profileData.balance);
         }
 
-        // TRY TO FETCH REAL TOURNAMENTS FIRST
+        // TRY TO FETCH REAL TOURNAMENTS
         const tourRes = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/tournaments", {
           headers: { Authorization: `Bearer ${token}` },
         });
         
         if (tourRes.ok) {
           const tourData = await tourRes.json();
-          setTournaments(tourData);
+          console.log("API Response:", tourData);
+          
+          if (tourData && Array.isArray(tourData) && tourData.length > 0) {
+            setTournaments(tourData);
+          } else {
+            console.log("API returned empty/invalid data, using generated tournaments");
+            setTournaments(generateDailyTournaments());
+          }
         } else {
-          // FALLBACK: Generate mock tournaments if API fails
-          const mockTournaments = generateTournaments();
-          setTournaments(mockTournaments);
+          console.log("API failed, using generated tournaments");
+          setTournaments(generateDailyTournaments());
         }
       } catch (error) {
         console.error("Fetch error:", error);
-        // FALLBACK: Generate mock tournaments if network fails
-        const mockTournaments = generateTournaments();
-        setTournaments(mockTournaments);
+        console.log("Network error, using generated tournaments");
+        setTournaments(generateDailyTournaments());
       }
       setLoading(false);
     }
     
     fetchData();
   }, [token]);
-
-  // Generate mock tournaments as fallback
-  const generateTournaments = () => {
-    const mockTournaments = [];
-    const startDate = new Date();
-    startDate.setHours(10, 0, 0, 0);
-    
-    const tournamentNames = [
-      "Classic Solo", "Elite Solo", "Pro Solo", "Master Solo", "Champion Solo",
-      "Warrior Solo", "Legend Solo", "Supreme Solo", "Ultimate Solo", "Apex Solo",
-      "Royal Solo", "Diamond Solo", "Platinum Solo", "Gold Solo", "Silver Solo"
-    ];
-
-    for (let i = 0; i < 15; i++) {
-      const entryFee = 10 + i;
-      const maxPlayers = 48;
-      const matchTime = new Date(startDate);
-      matchTime.setMinutes(startDate.getMinutes() + (i * 25));
-      
-      const totalCollection = entryFee * maxPlayers;
-      const profit = Math.round(totalCollection * 0.22);
-      const prizePool = totalCollection - profit;
-      
-      const firstPrize = Math.round(prizePool * 0.5);
-      const secondPrize = Math.round(prizePool * 0.3);
-      const thirdPrize = Math.round(prizePool * 0.2);
-      
-      const returnsMultiplier = (firstPrize / entryFee).toFixed(1);
-      
-      const isExpired = matchTime < new Date();
-      const currentPlayers = Math.min(maxPlayers, 30 + (i * 2));
-
-      mockTournaments.push({
-        _id: `tour_${i}`,
-        teamType: tournamentNames[i],
-        entryFee: entryFee,
-        players: currentPlayers,
-        maxPlayers: maxPlayers,
-        matchTime: matchTime.toISOString(),
-        returns: `${returnsMultiplier}x`,
-        isExpired: isExpired,
-        joined: false, // Default to false for mock data
-        prizePool: prizePool, // Keep this for compatibility
-        rules: [
-          "No teaming allowed in solo matches",
-          "Use of hacks/cheats will result in immediate ban", 
-          "Match starts exactly at scheduled time",
-          "Winners will be announced within 30 minutes",
-          "Prize distribution: 1st (50%), 2nd (30%), 3rd (20%)"
-        ],
-        prizes: {
-          first: firstPrize,
-          second: secondPrize,
-          third: thirdPrize
-        }
-      });
-    }
-    return mockTournaments;
-  };
 
   // Sort tournaments - active first, then expired
   const sortedTournaments = tournaments.sort((a, b) => {
@@ -135,7 +171,7 @@ export default function BattleRoyale() {
     setShowJoinModal(true);
   };
 
-  // ORIGINAL WORKING JOIN LOGIC WITH ENHANCED MODAL SUPPORT
+  // ORIGINAL WORKING JOIN LOGIC
   const handleJoin = async (tournament) => {
     try {
       const response = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/join-match", {
@@ -153,7 +189,6 @@ export default function BattleRoyale() {
       const data = await response.json();
       if (data.success) {
         setBalance(data.balance);
-        // RELOAD TO GET UPDATED TOURNAMENTS FROM SERVER
         window.location.reload();
       } else {
         alert(data.message || "Failed to join");
@@ -163,7 +198,6 @@ export default function BattleRoyale() {
     }
   };
 
-  // ENHANCED JOIN FOR MODAL CONFIRMATION
   const confirmJoin = async () => {
     if (!selectedTournament) return;
     setIsJoining(true);
@@ -187,7 +221,6 @@ export default function BattleRoyale() {
         setShowJoinModal(false);
         setShowTournamentModal(false);
         setSelectedTournament(null);
-        // RELOAD TO GET UPDATED TOURNAMENTS FROM SERVER
         window.location.reload();
       } else {
         alert(data.message || "Failed to join tournament");
@@ -249,7 +282,7 @@ export default function BattleRoyale() {
 
   return (
     <div className="battle-container">
-      {/* Clean Header */}
+      {/* Header */}
       <div className="battle-header">
         <button className="back-btn" onClick={() => window.history.back()}>
           ← Back
@@ -258,7 +291,7 @@ export default function BattleRoyale() {
         <div className="help-icon">ℹ️</div>
       </div>
 
-      {/* Simple Balance Display */}
+      {/* Balance Display */}
       <div className="balance-display">
         <span className="balance-label">Your Balance</span>
         <span className="balance-amount">₹{balance.toLocaleString()}</span>
@@ -266,7 +299,7 @@ export default function BattleRoyale() {
 
       {/* Helper Text */}
       <div className="helper-text">
-        💡 Tap any tournament card to see more details
+        💡 Tournaments reset daily at 3 AM • Tap cards for details
       </div>
 
       {/* Joined Matches Toggle */}
@@ -300,8 +333,8 @@ export default function BattleRoyale() {
                     <span className="fee">₹{tournament.entryFee}</span>
                   </div>
                   <div className="info-row">
-                    <span>Prize Pool:</span>
-                    <span className="prize">₹{tournament.prizePool || tournament.prizes?.first || 'N/A'}</span>
+                    <span>Returns:</span>
+                    <span className="returns">{tournament.returns}</span>
                   </div>
                   <div className="info-row">
                     <span>Players:</span>
@@ -309,7 +342,7 @@ export default function BattleRoyale() {
                   </div>
                   <div className="info-row">
                     <span>Match Time:</span>
-                    <span>{new Date(tournament.matchTime).toLocaleString()}</span>
+                    <span>{formatTime(tournament.matchTime)}</span>
                   </div>
                 </div>
               </div>
@@ -322,66 +355,67 @@ export default function BattleRoyale() {
       <div className="available-section">
         <h2 className="section-title">Available Tournaments ({availableTournaments.length})</h2>
         
-        {availableTournaments.length === 0 ? (
-          <div className="no-tournaments">
-            <p>No tournaments available at the moment</p>
-          </div>
-        ) : (
-          <div className="tournaments-grid">
-            {availableTournaments.map((tournament) => (
-              <div 
-                key={tournament._id} 
-                className={`tournament-card clickable ${tournament.isExpired ? 'expired-card' : ''}`}
-                onClick={() => handleTournamentClick(tournament)}
-              >
-                <div className="card-header">
-                  <h3>{tournament.teamType} Tournament</h3>
-                  <div className={`difficulty-badge ${tournament.entryFee > 50 ? 'premium' : tournament.entryFee > 30 ? 'advanced' : 'basic'}`}>
-                    {tournament.entryFee > 50 ? 'PREMIUM' : tournament.entryFee > 30 ? 'ADVANCED' : 'BASIC'}
-                  </div>
+        <div className="tournaments-grid">
+          {availableTournaments.map((tournament) => (
+            <div 
+              key={tournament._id} 
+              className={`tournament-card clickable ${tournament.isExpired ? 'expired-card' : ''}`}
+              onClick={() => handleTournamentClick(tournament)}
+            >
+              <div className="card-header">
+                <h3>{tournament.teamType} Tournament</h3>
+                <div className="returns-badge">
+                  {tournament.returns} Returns
                 </div>
-                
-                <div className="card-info">
-                  <div className="info-row">
-                    <span>Entry Fee:</span>
-                    <span className="fee">₹{tournament.entryFee}</span>
-                  </div>
-                  <div className="info-row">
-                    <span>Prize Pool:</span>
-                    <span className="prize">₹{tournament.prizePool || tournament.prizes?.first || 'N/A'}</span>
-                  </div>
-                  <div className="info-row">
-                    <span>Players:</span>
-                    <span>{tournament.players}/{tournament.maxPlayers}</span>
-                  </div>
-                  <div className="info-row">
-                    <span>Starts:</span>
-                    <span>{new Date(tournament.matchTime).toLocaleString()}</span>
-                  </div>
-                </div>
-
-                {!tournament.isExpired && (
-                  <button
-                    className={`join-btn ${balance >= tournament.entryFee ? 'enabled' : 'disabled'}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleJoin(tournament);
-                    }}
-                    disabled={balance < tournament.entryFee}
-                  >
-                    {balance >= tournament.entryFee ? `Join (₹${tournament.entryFee})` : 'Insufficient Balance'}
-                  </button>
-                )}
-
-                {tournament.isExpired && (
-                  <div className="expired-notice">
-                    Tournament Expired - Next Session Starts Tomorrow at 10 AM
-                  </div>
-                )}
               </div>
-            ))}
-          </div>
-        )}
+              
+              <div className="card-info">
+                <div className="info-row">
+                  <span>Entry Fee:</span>
+                  <span className="fee">₹{tournament.entryFee}</span>
+                </div>
+                <div className="info-row">
+                  <span>Win Prize:</span>
+                  <span className="prize">₹{tournament.prizes.first}</span>
+                </div>
+                <div className="info-row">
+                  <span>Players:</span>
+                  <span>{tournament.players}/{tournament.maxPlayers}</span>
+                </div>
+                <div className="info-row">
+                  <span>Starts:</span>
+                  <span className={tournament.isExpired ? 'expired-text' : ''}>
+                    {tournament.isExpired ? 'Expired - Come back tomorrow' : formatTime(tournament.matchTime)}
+                  </span>
+                </div>
+              </div>
+
+              {!tournament.isExpired && (
+                <button
+                  className={`join-btn ${balance >= tournament.entryFee ? 'enabled' : 'disabled'}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleJoin(tournament);
+                  }}
+                  disabled={balance < tournament.entryFee || tournament.players >= tournament.maxPlayers}
+                >
+                  {tournament.players >= tournament.maxPlayers ? 
+                    'FULL' : 
+                    balance >= tournament.entryFee ? 
+                      `Join (₹${tournament.entryFee})` : 
+                      'Insufficient Balance'
+                  }
+                </button>
+              )}
+
+              {tournament.isExpired && (
+                <div className="expired-notice">
+                  Tournament Expired - Next round starts tomorrow at 10 AM
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Tournament Details Modal */}
@@ -393,9 +427,9 @@ export default function BattleRoyale() {
             </button>
             
             <div className="tournament-modal-header">
-              <h2>{selectedTournament.teamType}</h2>
+              <h2>{selectedTournament.teamType} Tournament</h2>
               <div className="returns-badge large">
-                {selectedTournament.returns || '4.5x'} Returns
+                {selectedTournament.returns} Returns
               </div>
             </div>
 
@@ -406,15 +440,15 @@ export default function BattleRoyale() {
                 <div className="prizes-grid">
                   <div className="prize-item first-place">
                     <div className="position">1st Place</div>
-                    <div className="amount">₹{selectedTournament.prizes?.first || Math.round(selectedTournament.prizePool * 0.5) || 'N/A'}</div>
+                    <div className="amount">₹{selectedTournament.prizes.first}</div>
                   </div>
                   <div className="prize-item second-place">
                     <div className="position">2nd Place</div>
-                    <div className="amount">₹{selectedTournament.prizes?.second || Math.round(selectedTournament.prizePool * 0.3) || 'N/A'}</div>
+                    <div className="amount">₹{selectedTournament.prizes.second}</div>
                   </div>
                   <div className="prize-item third-place">
                     <div className="position">3rd Place</div>
-                    <div className="amount">₹{selectedTournament.prizes?.third || Math.round(selectedTournament.prizePool * 0.2) || 'N/A'}</div>
+                    <div className="amount">₹{selectedTournament.prizes.third}</div>
                   </div>
                 </div>
               </div>
@@ -430,10 +464,8 @@ export default function BattleRoyale() {
                   <span className="value">{selectedTournament.players}/{selectedTournament.maxPlayers}</span>
                 </div>
                 <div className="quick-info-item">
-                  <span className="label">Starts In</span>
-                  <span className="value">
-                    {selectedTournament.isExpired ? 'Expired' : getTimeRemaining(selectedTournament.matchTime)}
-                  </span>
+                  <span className="label">Room ID</span>
+                  <span className="value">{selectedTournament.roomId || "Will be updated"}</span>
                 </div>
               </div>
 
@@ -447,12 +479,7 @@ export default function BattleRoyale() {
               <div className="rules-section">
                 <h4>📋 Tournament Rules</h4>
                 <div className="rules-list">
-                  {(selectedTournament.rules || [
-                    "No teaming allowed in solo matches",
-                    "Use of hacks/cheats will result in immediate ban",
-                    "Match starts exactly at scheduled time",
-                    "Winners will be announced within 30 minutes"
-                  ]).map((rule, index) => (
+                  {selectedTournament.rules.map((rule, index) => (
                     <div key={index} className="rule-item">{rule}</div>
                   ))}
                 </div>
@@ -486,7 +513,7 @@ export default function BattleRoyale() {
               
               {selectedTournament.isExpired && (
                 <div className="expired-footer-notice">
-                  🕐 Tournament has expired - Same tournament starts tomorrow at 10 AM
+                  🕐 Tournament expired - Same tournaments restart tomorrow at 10 AM
                 </div>
               )}
             </div>
@@ -513,12 +540,12 @@ export default function BattleRoyale() {
                     <span>₹{selectedTournament.entryFee}</span>
                   </div>
                   <div className="preview-stat">
-                    <span>Prize Pool</span>
-                    <span>₹{selectedTournament.prizePool || selectedTournament.prizes?.first || 'N/A'}</span>
+                    <span>Win Prize</span>
+                    <span>₹{selectedTournament.prizes.first}</span>
                   </div>
                   <div className="preview-stat">
                     <span>Returns</span>
-                    <span>{selectedTournament.returns || '4.5x'}</span>
+                    <span>{selectedTournament.returns}</span>
                   </div>
                 </div>
               </div>

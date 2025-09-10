@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// src/admin/AdminLogin.jsx
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const AdminLogin = () => {
@@ -7,152 +8,50 @@ const AdminLogin = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (localStorage.getItem('adminToken')) {
-      navigate('/admin/dashboard');
-    }
-  }, [navigate]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      console.log('🔄 Attempting login...');
-      
       const response = await fetch('/api/admin/login', {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(credentials)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
       });
 
-      console.log('📡 Response status:', response.status);
-      
       if (!response.ok) {
-        const errorData = await response.text();
-        console.error('❌ Response error:', errorData);
-        throw new Error(`HTTP ${response.status}: ${errorData}`);
+        const err = await response.json();
+        throw new Error(err.message || 'Login failed');
       }
 
-      const data = await response.json();
-      console.log('✅ Login response:', data);
+      const { token } = await response.json();
 
-      if (data.success && data.token) {
-        localStorage.setItem('adminToken', data.token);
-        console.log('🎉 Login successful, redirecting...');
-        navigate('/admin/dashboard', { replace: true });
-      } else {
-        setError(data.message || 'Login failed');
-      }
-    } catch (error) {
-      console.error('💥 Login error:', error);
-      setError(`Network error: ${error.message}`);
-    } finally {
+      localStorage.setItem('adminToken', token);
+      navigate('/admin/dashboard', { replace: true });
+    } catch (err) {
+      setError(err.message);
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      backgroundColor: '#000',
-      color: '#00ffe7'
-    }}>
-      <div style={{ 
-        border: '2px solid #00ffe7', 
-        borderRadius: '8px', 
-        padding: '40px', 
-        width: '400px',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)'
-      }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Admin Login</h2>
-        
-        {error && (
-          <div style={{ 
-            color: '#ff4444', 
-            marginBottom: '20px', 
-            textAlign: 'center',
-            padding: '10px',
-            border: '1px solid #ff4444',
-            borderRadius: '4px'
-          }}>
-            {error}
-          </div>
-        )}
+    <div style={{ minHeight: '100vh', backgroundColor: '#000', color: '#0ff', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+      <form onSubmit={handleSubmit} style={{ border: '2px solid #0ff', padding: 30, borderRadius: 8, width: 400, backgroundColor: 'rgba(0, 0, 0, 0.7)', boxShadow: '0 0 10px #0ff' }}>
+        <h2 style={{ textAlign: 'center', marginBottom: 20 }}>Admin Login</h2>
 
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder="Admin Email"
-            value={credentials.username}
-            onChange={(e) => setCredentials({...credentials, username: e.target.value})}
-            required
-            style={{
-              width: '100%',
-              padding: '12px',
-              marginBottom: '20px',
-              backgroundColor: 'transparent',
-              border: '1px solid #00ffe7',
-              borderRadius: '4px',
-              color: '#00ffe7',
-              fontSize: '16px'
-            }}
-          />
-          
-          <input
-            type="password"
-            placeholder="Admin Password"
-            value={credentials.password}
-            onChange={(e) => setCredentials({...credentials, password: e.target.value})}
-            required
-            style={{
-              width: '100%',
-              padding: '12px',
-              marginBottom: '30px',
-              backgroundColor: 'transparent',
-              border: '1px solid #00ffe7',
-              borderRadius: '4px',
-              color: '#00ffe7',
-              fontSize: '16px'
-            }}
-          />
-          
-          <button 
-            type="submit" 
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '12px',
-              backgroundColor: '#00ffe7',
-              color: '#000',
-              border: 'none',
-              borderRadius: '4px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1
-            }}
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
+        {error && <p style={{ color: 'red', marginBottom: 15, textAlign: 'center' }}>{error}</p>}
 
-        <div style={{ 
-          marginTop: '20px', 
-          fontSize: '12px', 
-          color: '#888',
-          textAlign: 'center'
-        }}>
-          Use your admin email and password
-        </div>
-      </div>
+        <input type="text" placeholder="Email or Username" value={credentials.username} onChange={(e) => setCredentials({ ...credentials, username: e.target.value })} required style={{ width: '100%', padding: 12, marginBottom: 15, borderRadius: 4, border: '1px solid #0ff', backgroundColor: 'transparent', color: '#0ff', fontSize: 16 }} />
+
+        <input type="password" placeholder="Password" value={credentials.password} onChange={(e) => setCredentials({ ...credentials, password: e.target.value })} required style={{ width: '100%', padding: 12, marginBottom: 25, borderRadius: 4, border: '1px solid #0ff', backgroundColor: 'transparent', color: '#0ff', fontSize: 16 }} />
+
+        <button type="submit" disabled={loading} style={{ width: '100%', padding: 12, borderRadius: 4, border: 'none', backgroundColor: '#0ff', color: '#000', fontWeight: 'bold', fontSize: 16 }}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+
+        <p style={{ marginTop: 20, fontSize: 12, textAlign: 'center' }}>Use your admin email and password</p>
+      </form>
     </div>
   );
 };

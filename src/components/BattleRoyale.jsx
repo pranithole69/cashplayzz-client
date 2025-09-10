@@ -12,7 +12,49 @@ export default function BattleRoyale() {
   const [isJoining, setIsJoining] = useState(false);
   const token = localStorage.getItem("token");
 
-  // Generate tournaments with proper business logic
+  useEffect(() => {
+    async function fetchData() {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+      
+      try {
+        const profileRes = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          setBalance(profileData.balance);
+        }
+
+        // TRY TO FETCH REAL TOURNAMENTS FIRST
+        const tourRes = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/tournaments", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        if (tourRes.ok) {
+          const tourData = await tourRes.json();
+          setTournaments(tourData);
+        } else {
+          // FALLBACK: Generate mock tournaments if API fails
+          const mockTournaments = generateTournaments();
+          setTournaments(mockTournaments);
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+        // FALLBACK: Generate mock tournaments if network fails
+        const mockTournaments = generateTournaments();
+        setTournaments(mockTournaments);
+      }
+      setLoading(false);
+    }
+    
+    fetchData();
+  }, [token]);
+
+  // Generate mock tournaments as fallback
   const generateTournaments = () => {
     const mockTournaments = [];
     const startDate = new Date();
@@ -52,10 +94,8 @@ export default function BattleRoyale() {
         matchTime: matchTime.toISOString(),
         returns: `${returnsMultiplier}x`,
         isExpired: isExpired,
-        joined: false, // IMPORTANT: Default to false
-        totalCollection: totalCollection,
-        profit: profit,
-        prizePool: prizePool,
+        joined: false, // Default to false for mock data
+        prizePool: prizePool, // Keep this for compatibility
         rules: [
           "No teaming allowed in solo matches",
           "Use of hacks/cheats will result in immediate ban", 
@@ -72,37 +112,6 @@ export default function BattleRoyale() {
     }
     return mockTournaments;
   };
-
-  useEffect(() => {
-    async function fetchData() {
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-      
-      try {
-        const profileRes = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        
-        if (profileRes.ok) {
-          const profileData = await profileRes.json();
-          setBalance(profileData.balance);
-        }
-
-        // Use mock tournaments with proper business logic
-        const mockTournaments = generateTournaments();
-        setTournaments(mockTournaments);
-        
-      } catch (error) {
-        console.error("Fetch error:", error);
-        setTournaments(generateTournaments());
-      }
-      setLoading(false);
-    }
-    
-    fetchData();
-  }, [token]);
 
   // Sort tournaments - active first, then expired
   const sortedTournaments = tournaments.sort((a, b) => {
@@ -126,13 +135,40 @@ export default function BattleRoyale() {
     setShowJoinModal(true);
   };
 
-  // FIXED: Proper state update without reload
+  // ORIGINAL WORKING JOIN LOGIC WITH ENHANCED MODAL SUPPORT
+  const handleJoin = async (tournament) => {
+    try {
+      const response = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/join-match", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          entryFee: tournament.entryFee,
+          matchId: tournament._id
+        })
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        setBalance(data.balance);
+        // RELOAD TO GET UPDATED TOURNAMENTS FROM SERVER
+        window.location.reload();
+      } else {
+        alert(data.message || "Failed to join");
+      }
+    } catch (error) {
+      alert("Error joining tournament");
+    }
+  };
+
+  // ENHANCED JOIN FOR MODAL CONFIRMATION
   const confirmJoin = async () => {
     if (!selectedTournament) return;
     setIsJoining(true);
 
     try {
-      // For demo purposes - replace with actual API call
       const response = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/join-match", {
         method: "POST",
         headers: {
@@ -145,39 +181,18 @@ export default function BattleRoyale() {
         })
       });
 
-      // For demo - simulate success
-      const data = { success: true, balance: balance - selectedTournament.entryFee };
-      
+      const data = await response.json();
       if (data.success) {
-        // CRITICAL FIX: Update balance
         setBalance(data.balance);
-        
-        // CRITICAL FIX: Update tournament state to joined=true
-        setTournaments(prevTournaments => 
-          prevTournaments.map(tournament => 
-            tournament._id === selectedTournament._id 
-              ? { 
-                  ...tournament, 
-                  joined: true, 
-                  players: tournament.players + 1 
-                }
-              : tournament
-          )
-        );
-
-        // Show joined section automatically
-        setShowJoined(true);
-        
-        // Close modals
         setShowJoinModal(false);
         setShowTournamentModal(false);
         setSelectedTournament(null);
-        
+        // RELOAD TO GET UPDATED TOURNAMENTS FROM SERVER
+        window.location.reload();
       } else {
-        alert("Failed to join tournament");
+        alert(data.message || "Failed to join tournament");
       }
     } catch (error) {
-      console.error("Join error:", error);
       alert("Network error. Please try again.");
     } finally {
       setIsJoining(false);
@@ -239,6 +254,7 @@ export default function BattleRoyale() {
         <button className="back-btn" onClick={() => window.history.back()}>
           ← Back
         </button>
+        <h1 className="battle-title">Battle Royale</h1>
         <div className="help-icon">ℹ️</div>
       </div>
 
@@ -284,16 +300,16 @@ export default function BattleRoyale() {
                     <span className="fee">₹{tournament.entryFee}</span>
                   </div>
                   <div className="info-row">
-                    <span>Returns:</span>
-                    <span className="returns">{tournament.returns}</span>
+                    <span>Prize Pool:</span>
+                    <span className="prize">₹{tournament.prizePool || tournament.prizes?.first || 'N/A'}</span>
                   </div>
                   <div className="info-row">
                     <span>Players:</span>
                     <span>{tournament.players}/{tournament.maxPlayers}</span>
                   </div>
                   <div className="info-row">
-                    <span>Starts:</span>
-                    <span>{getTimeRemaining(tournament.matchTime)}</span>
+                    <span>Match Time:</span>
+                    <span>{new Date(tournament.matchTime).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -320,8 +336,8 @@ export default function BattleRoyale() {
               >
                 <div className="card-header">
                   <h3>{tournament.teamType} Tournament</h3>
-                  <div className="returns-badge">
-                    {tournament.returns} Returns
+                  <div className={`difficulty-badge ${tournament.entryFee > 50 ? 'premium' : tournament.entryFee > 30 ? 'advanced' : 'basic'}`}>
+                    {tournament.entryFee > 50 ? 'PREMIUM' : tournament.entryFee > 30 ? 'ADVANCED' : 'BASIC'}
                   </div>
                 </div>
                 
@@ -331,8 +347,8 @@ export default function BattleRoyale() {
                     <span className="fee">₹{tournament.entryFee}</span>
                   </div>
                   <div className="info-row">
-                    <span>Win Prize:</span>
-                    <span className="prize">₹{tournament.prizes.first}</span>
+                    <span>Prize Pool:</span>
+                    <span className="prize">₹{tournament.prizePool || tournament.prizes?.first || 'N/A'}</span>
                   </div>
                   <div className="info-row">
                     <span>Players:</span>
@@ -340,24 +356,20 @@ export default function BattleRoyale() {
                   </div>
                   <div className="info-row">
                     <span>Starts:</span>
-                    <span className={tournament.isExpired ? 'expired-text' : ''}>
-                      {tournament.isExpired ? 'Expired - Next Session Tomorrow' : formatTime(tournament.matchTime)}
-                    </span>
+                    <span>{new Date(tournament.matchTime).toLocaleString()}</span>
                   </div>
                 </div>
 
                 {!tournament.isExpired && (
                   <button
                     className={`join-btn ${balance >= tournament.entryFee ? 'enabled' : 'disabled'}`}
-                    onClick={(e) => handleJoinClick(tournament, e)}
-                    disabled={balance < tournament.entryFee || tournament.players >= tournament.maxPlayers}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleJoin(tournament);
+                    }}
+                    disabled={balance < tournament.entryFee}
                   >
-                    {tournament.players >= tournament.maxPlayers ? 
-                      'FULL' : 
-                      balance >= tournament.entryFee ? 
-                        `Join (₹${tournament.entryFee})` : 
-                        'Insufficient Balance'
-                    }
+                    {balance >= tournament.entryFee ? `Join (₹${tournament.entryFee})` : 'Insufficient Balance'}
                   </button>
                 )}
 
@@ -383,7 +395,7 @@ export default function BattleRoyale() {
             <div className="tournament-modal-header">
               <h2>{selectedTournament.teamType}</h2>
               <div className="returns-badge large">
-                {selectedTournament.returns} Returns
+                {selectedTournament.returns || '4.5x'} Returns
               </div>
             </div>
 
@@ -394,15 +406,15 @@ export default function BattleRoyale() {
                 <div className="prizes-grid">
                   <div className="prize-item first-place">
                     <div className="position">1st Place</div>
-                    <div className="amount">₹{selectedTournament.prizes.first}</div>
+                    <div className="amount">₹{selectedTournament.prizes?.first || Math.round(selectedTournament.prizePool * 0.5) || 'N/A'}</div>
                   </div>
                   <div className="prize-item second-place">
                     <div className="position">2nd Place</div>
-                    <div className="amount">₹{selectedTournament.prizes.second}</div>
+                    <div className="amount">₹{selectedTournament.prizes?.second || Math.round(selectedTournament.prizePool * 0.3) || 'N/A'}</div>
                   </div>
                   <div className="prize-item third-place">
                     <div className="position">3rd Place</div>
-                    <div className="amount">₹{selectedTournament.prizes.third}</div>
+                    <div className="amount">₹{selectedTournament.prizes?.third || Math.round(selectedTournament.prizePool * 0.2) || 'N/A'}</div>
                   </div>
                 </div>
               </div>
@@ -435,7 +447,12 @@ export default function BattleRoyale() {
               <div className="rules-section">
                 <h4>📋 Tournament Rules</h4>
                 <div className="rules-list">
-                  {selectedTournament.rules.map((rule, index) => (
+                  {(selectedTournament.rules || [
+                    "No teaming allowed in solo matches",
+                    "Use of hacks/cheats will result in immediate ban",
+                    "Match starts exactly at scheduled time",
+                    "Winners will be announced within 30 minutes"
+                  ]).map((rule, index) => (
                     <div key={index} className="rule-item">{rule}</div>
                   ))}
                 </div>
@@ -496,12 +513,12 @@ export default function BattleRoyale() {
                     <span>₹{selectedTournament.entryFee}</span>
                   </div>
                   <div className="preview-stat">
-                    <span>Win Prize</span>
-                    <span>₹{selectedTournament.prizes.first}</span>
+                    <span>Prize Pool</span>
+                    <span>₹{selectedTournament.prizePool || selectedTournament.prizes?.first || 'N/A'}</span>
                   </div>
                   <div className="preview-stat">
                     <span>Returns</span>
-                    <span>{selectedTournament.returns}</span>
+                    <span>{selectedTournament.returns || '4.5x'}</span>
                   </div>
                 </div>
               </div>

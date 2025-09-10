@@ -12,7 +12,7 @@ export default function BattleRoyale() {
   const [isJoining, setIsJoining] = useState(false);
   const token = localStorage.getItem("token");
 
-  // Generate improved tournaments with your exact specifications
+  // Generate tournaments with proper business logic
   const generateTournaments = () => {
     const mockTournaments = [];
     const startDate = new Date();
@@ -27,31 +27,45 @@ export default function BattleRoyale() {
     // Generate 15 tournaments with 25 minutes gap
     for (let i = 0; i < 15; i++) {
       const entryFee = 10 + i; // Starting from ₹10
+      const maxPlayers = 48; // Fixed at 48 players for solo matches
       const matchTime = new Date(startDate);
       matchTime.setMinutes(startDate.getMinutes() + (i * 25));
       
-      // Calculate returns: 4.5x, 3x, 2.5x
-      const firstPrize = Math.round(entryFee * 4.5);
-      const secondPrize = Math.round(entryFee * 3);
-      const thirdPrize = Math.round(entryFee * 2.5);
+      // Business Logic: 22% profit, 78% prize pool
+      const totalCollection = entryFee * maxPlayers;
+      const profit = Math.round(totalCollection * 0.22);
+      const prizePool = totalCollection - profit;
+      
+      // Prize Distribution: 50% for 1st, 30% for 2nd, 20% for 3rd
+      const firstPrize = Math.round(prizePool * 0.5);
+      const secondPrize = Math.round(prizePool * 0.3);
+      const thirdPrize = Math.round(prizePool * 0.2);
+      
+      // Calculate returns multiplier
+      const returnsMultiplier = (firstPrize / entryFee).toFixed(1);
       
       const isExpired = matchTime < new Date();
+      const currentPlayers = Math.min(maxPlayers, 30 + (i * 2)); // Simulate realistic player count
 
       mockTournaments.push({
         _id: `tour_${i}`,
         teamType: tournamentNames[i],
         entryFee: entryFee,
-        players: 50 + (i * 3),
-        maxPlayers: 100,
+        players: currentPlayers,
+        maxPlayers: maxPlayers,
         matchTime: matchTime.toISOString(),
-        returns: "4.5x",
+        returns: `${returnsMultiplier}x`,
         isExpired: isExpired,
         joined: false,
+        totalCollection: totalCollection,
+        profit: profit,
+        prizePool: prizePool,
         rules: [
           "No teaming allowed in solo matches",
-          "Use of hacks/cheats will result in immediate ban",
+          "Use of hacks/cheats will result in immediate ban", 
           "Match starts exactly at scheduled time",
-          "Winners will be announced within 30 minutes"
+          "Winners will be announced within 30 minutes",
+          "Prize distribution: 1st (50%), 2nd (30%), 3rd (20%)"
         ],
         prizes: {
           first: firstPrize,
@@ -80,7 +94,7 @@ export default function BattleRoyale() {
           setBalance(profileData.balance);
         }
 
-        // Use mock tournaments
+        // Use mock tournaments with proper business logic
         const mockTournaments = generateTournaments();
         setTournaments(mockTournaments);
         
@@ -332,7 +346,7 @@ export default function BattleRoyale() {
         )}
       </div>
 
-      {/* Improved Tournament Details Modal */}
+      {/* Fixed Tournament Details Modal */}
       {showTournamentModal && selectedTournament && (
         <div className="tournament-modal-overlay" onClick={() => setShowTournamentModal(false)}>
           <div className="tournament-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -375,7 +389,7 @@ export default function BattleRoyale() {
                 </div>
                 <div className="quick-info-item">
                   <span className="label">Players</span>
-                  <span className="value">{selectedTournament.players}/100</span>
+                  <span className="value">{selectedTournament.players}/{selectedTournament.maxPlayers}</span>
                 </div>
                 <div className="quick-info-item">
                   <span className="label">Starts In</span>

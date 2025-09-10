@@ -376,169 +376,178 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Large Tournament Modal */
+/* Large Tournament Modal - FIXED */
 .tournament-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(5px);
-  padding: 20px;
+  backdrop-filter: blur(10px);
+  padding: 15px;
 }
 
 .tournament-modal-content {
-  background: linear-gradient(135deg, rgba(15, 15, 35, 0.95), rgba(26, 26, 58, 0.95));
-  backdrop-filter: blur(30px);
-  border: 2px solid #ba55d3;
+  background: linear-gradient(135deg, rgba(20, 20, 45, 0.98), rgba(35, 35, 70, 0.98));
+  backdrop-filter: blur(40px);
+  border: 3px solid #ba55d3;
   border-radius: 25px;
-  padding: 30px;
-  max-width: 600px;
-  width: 95%;
-  max-height: 85vh;
+  padding: 25px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
   overflow-y: auto;
   position: relative;
   color: white;
-  box-shadow: 0 25px 60px rgba(138, 43, 226, 0.6);
+  box-shadow: 0 30px 80px rgba(138, 43, 226, 0.8);
 }
 
 .tournament-modal-header {
   text-align: center;
-  margin-bottom: 30px;
-  border-bottom: 2px solid rgba(186, 85, 211, 0.3);
+  margin-bottom: 25px;
+  border-bottom: 2px solid rgba(186, 85, 211, 0.4);
   padding-bottom: 20px;
 }
 
 .tournament-modal-header h2 {
   color: #ba55d3;
   margin: 0 0 15px 0;
-  font-size: 1.8rem;
-  text-shadow: 0 0 20px rgba(186, 85, 211, 1);
+  font-size: 1.6rem;
+  text-shadow: 0 0 25px rgba(186, 85, 211, 1);
+  font-weight: 700;
 }
 
 .tournament-modal-body {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 20px;
 }
 
-/* Improved Prize Section */
+/* Fixed Prize Section */
 .prize-section {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .prize-section h3 {
   color: #ba55d3;
-  margin-bottom: 20px;
-  font-size: 1.3rem;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
   text-align: center;
+  text-shadow: 0 0 15px rgba(186, 85, 211, 0.8);
 }
 
 .prizes-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
 .prize-item {
-  text-align: center;
-  padding: 20px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
   border-radius: 15px;
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(20px);
   border: 2px solid;
   transition: all 0.3s ease;
 }
 
 .prize-item:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
 }
 
 .prize-item.first-place {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(255, 215, 0, 0.15));
   border-color: #FFD700;
-  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
 }
 
 .prize-item.second-place {
-  background: linear-gradient(135deg, rgba(192, 192, 192, 0.2), rgba(192, 192, 192, 0.1));
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.25), rgba(192, 192, 192, 0.15));
   border-color: #C0C0C0;
-  box-shadow: 0 8px 25px rgba(192, 192, 192, 0.3);
+  box-shadow: 0 8px 25px rgba(192, 192, 192, 0.4);
 }
 
 .prize-item.third-place {
-  background: linear-gradient(135deg, rgba(205, 127, 50, 0.2), rgba(205, 127, 50, 0.1));
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.25), rgba(205, 127, 50, 0.15));
   border-color: #CD7F32;
-  box-shadow: 0 8px 25px rgba(205, 127, 50, 0.3);
+  box-shadow: 0 8px 25px rgba(205, 127, 50, 0.4);
 }
 
 .prize-item .position {
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-  opacity: 0.9;
+  font-size: 1rem;
   font-weight: 600;
+  color: #ffffff;
 }
 
 .prize-item .amount {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 800;
   color: #ffffff;
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
 }
 
-/* Tournament Quick Info */
+/* Tournament Quick Info - FIXED */
 .tournament-quick-info {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .quick-info-item {
-  text-align: center;
-  padding: 15px;
-  background: rgba(186, 85, 211, 0.1);
-  border: 1px solid rgba(186, 85, 211, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 18px;
+  background: rgba(186, 85, 211, 0.15);
+  border: 1px solid rgba(186, 85, 211, 0.4);
   border-radius: 12px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(15px);
 }
 
 .quick-info-item .label {
-  display: block;
   color: #ba55d3;
-  font-size: 0.85rem;
-  margin-bottom: 8px;
+  font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 600;
 }
 
 .quick-info-item .value {
-  display: block;
   color: #ffffff;
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
-/* Improved Important Notice */
+.quick-info-item .value.fee {
+  color: #ff6b6b;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.8);
+}
+
+/* Important Notice - FIXED */
 .important-notice {
-  background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(255, 152, 0, 0.1));
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.25), rgba(255, 152, 0, 0.15));
   border: 2px solid #FF9800;
   border-radius: 15px;
-  padding: 20px;
+  padding: 18px;
   text-align: center;
-  margin-bottom: 25px;
-  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.2);
+  margin-bottom: 20px;
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.3);
 }
 
 .important-notice h4 {
   color: #FF9800;
-  margin: 0 0 12px 0;
-  font-size: 1.1rem;
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  text-shadow: 0 0 15px rgba(255, 152, 0, 0.8);
 }
 
 .important-notice p {
@@ -546,63 +555,72 @@
   margin: 0;
   font-weight: 600;
   line-height: 1.4;
+  font-size: 0.95rem;
 }
 
-/* Improved Rules Section */
+/* Rules Section - FIXED */
+.rules-section {
+  margin-bottom: 20px;
+}
+
 .rules-section h4 {
   color: #ba55d3;
   margin-bottom: 15px;
   font-size: 1.1rem;
+  text-shadow: 0 0 15px rgba(186, 85, 211, 0.8);
 }
 
 .rules-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .rule-item {
-  background: rgba(186, 85, 211, 0.1);
-  border: 1px solid rgba(186, 85, 211, 0.3);
+  background: rgba(186, 85, 211, 0.15);
+  border: 1px solid rgba(186, 85, 211, 0.4);
   border-radius: 10px;
-  padding: 15px;
+  padding: 12px 15px;
   color: #ffffff;
   position: relative;
-  padding-left: 45px;
+  padding-left: 40px;
   line-height: 1.4;
+  font-size: 0.9rem;
 }
 
 .rule-item::before {
   content: '•';
   color: #ba55d3;
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   position: absolute;
-  left: 20px;
-  top: 12px;
+  left: 18px;
+  top: 10px;
 }
 
-/* Modal Footer Improvements */
+/* Modal Footer - FIXED */
 .tournament-modal-footer {
-  margin-top: 30px;
+  margin-top: 25px;
   text-align: center;
-  border-top: 2px solid rgba(186, 85, 211, 0.3);
-  padding-top: 25px;
+  border-top: 2px solid rgba(186, 85, 211, 0.4);
+  padding-top: 20px;
 }
 
 .join-tournament-btn {
   background: linear-gradient(135deg, #ba55d3, #da70d6);
   color: #fff;
   border: none;
-  padding: 18px 40px;
+  padding: 16px 35px;
   border-radius: 15px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
-  min-width: 250px;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 8px 25px rgba(186, 85, 211, 0.4);
 }
 
 .join-tournament-btn.enabled:hover {
@@ -614,16 +632,18 @@
   background: rgba(102, 102, 102, 0.5);
   color: #999;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .already-joined {
   background: rgba(76, 175, 80, 0.2);
   color: #4CAF50;
   padding: 15px 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 2px solid #4CAF50;
   font-weight: 600;
   text-align: center;
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
 }
 
 .expired-footer-notice {
@@ -766,7 +786,7 @@
   transform: translateY(-2px);
 }
 
-/* Mobile Responsive */
+/* Mobile Responsive for Modal - FIXED */
 @media (max-width: 768px) {
   .battle-container { 
     padding: 15px; 
@@ -804,26 +824,30 @@
   }
 
   .tournament-modal-content {
-    margin: 15px;
-    padding: 25px;
-    max-height: 90vh;
-  }
-  
-  .prizes-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  
-  .tournament-quick-info {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    margin: 10px;
+    padding: 20px;
+    max-height: 95vh;
+    max-width: 95%;
   }
   
   .tournament-modal-header h2 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
   .prize-item .amount {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
+  }
+  
+  .quick-info-item {
+    padding: 12px 15px;
+  }
+  
+  .important-notice {
+    padding: 15px;
+  }
+  
+  .join-tournament-btn {
+    padding: 14px 30px;
+    font-size: 0.95rem;
   }
 }

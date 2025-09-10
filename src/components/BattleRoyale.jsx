@@ -18,21 +18,12 @@ export default function BattleRoyale() {
            Math.random().toString(16).substr(2, 16);
   };
 
-  // Generate daily tournaments with your EXACT specifications
+  // Generate daily tournaments with safe structure
   const generateDailyTournaments = () => {
     const tournaments = [];
     const now = new Date();
     const startDate = new Date();
-    startDate.setHours(10, 0, 0, 0); // 10 AM today
-    
-    // Adjust if it's past 1 AM but before 3 AM (tournaments expired)
-    if (now.getHours() >= 1 && now.getHours() < 3) {
-      startDate.setDate(startDate.getDate() + 1); // Next day tournaments
-    }
-    // Adjust if it's past 1 AM (move to next day)
-    else if (now.getHours() >= 1) {
-      startDate.setDate(startDate.getDate() + 1);
-    }
+    startDate.setHours(10, 0, 0, 0);
 
     const teamTypes = ["Solo", "Duo", "Squad"];
     const entryFees = { "Solo": 10, "Duo": 20, "Squad": 40 };
@@ -40,8 +31,7 @@ export default function BattleRoyale() {
     
     let tournamentId = 1;
     
-    // Generate tournaments every 1.5 hours from 10 AM to 1 AM (next day)
-    for (let hour = 10; hour <= 25; hour += 1.5) { // 25 = 1 AM next day
+    for (let hour = 10; hour <= 25; hour += 1.5) {
       const slotHour = Math.floor(hour);
       const slotMinute = (hour % 1) * 60;
       
@@ -55,12 +45,10 @@ export default function BattleRoyale() {
         const entryFee = entryFees[teamType];
         const maxPlayers = maxSlots[teamType];
         
-        // Business Logic: 22% profit, 78% prize pool
         const totalCollection = entryFee * maxPlayers;
         const profit = Math.round(totalCollection * 0.22);
         const prizePool = totalCollection - profit;
         
-        // Prize Distribution: 50%, 30%, 20%
         const firstPrize = Math.round(prizePool * 0.5);
         const secondPrize = Math.round(prizePool * 0.3);
         const thirdPrize = Math.round(prizePool * 0.2);
@@ -74,7 +62,7 @@ export default function BattleRoyale() {
           entryFee: entryFee,
           prizePool: prizePool,
           matchTime: matchTime.toISOString(),
-          players: Math.floor(Math.random() * (maxPlayers * 0.3)), // Random current players
+          players: Math.floor(Math.random() * (maxPlayers * 0.3)),
           maxPlayers: maxPlayers,
           roomId: (100000 + tournamentId).toString(),
           roomPassword: `${teamType.toLowerCase()}${tournamentId}`,
@@ -88,6 +76,7 @@ export default function BattleRoyale() {
             "Winners announced within 30 minutes",
             "Prize distribution: 1st (50%), 2nd (30%), 3rd (20%)"
           ],
+          // ✅ CRITICAL FIX: Always ensure prizes object exists
           prizes: {
             first: firstPrize,
             second: secondPrize,
@@ -119,7 +108,6 @@ export default function BattleRoyale() {
           setBalance(profileData.balance);
         }
 
-        // TRY TO FETCH REAL TOURNAMENTS
         const tourRes = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/tournaments", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -129,7 +117,13 @@ export default function BattleRoyale() {
           console.log("API Response:", tourData);
           
           if (tourData && Array.isArray(tourData) && tourData.length > 0) {
-            setTournaments(tourData);
+            // ✅ CRITICAL FIX: Ensure each tournament has proper structure
+            const safeTournaments = tourData.map(tournament => ({
+              ...tournament,
+              prizes: tournament.prizes || { first: 0, second: 0, third: 0 },
+              rules: tournament.rules || ["Standard tournament rules apply"]
+            }));
+            setTournaments(safeTournaments);
           } else {
             console.log("API returned empty/invalid data, using generated tournaments");
             setTournaments(generateDailyTournaments());
@@ -149,7 +143,6 @@ export default function BattleRoyale() {
     fetchData();
   }, [token]);
 
-  // Sort tournaments - active first, then expired
   const sortedTournaments = tournaments.sort((a, b) => {
     if (a.isExpired !== b.isExpired) {
       return a.isExpired - b.isExpired;
@@ -171,7 +164,6 @@ export default function BattleRoyale() {
     setShowJoinModal(true);
   };
 
-  // ORIGINAL WORKING JOIN LOGIC
   const handleJoin = async (tournament) => {
     try {
       const response = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/join-match", {
@@ -282,7 +274,6 @@ export default function BattleRoyale() {
 
   return (
     <div className="battle-container">
-      {/* Header */}
       <div className="battle-header">
         <button className="back-btn" onClick={() => window.history.back()}>
           ← Back
@@ -291,18 +282,15 @@ export default function BattleRoyale() {
         <div className="help-icon">ℹ️</div>
       </div>
 
-      {/* Balance Display */}
       <div className="balance-display">
         <span className="balance-label">Your Balance</span>
         <span className="balance-amount">₹{balance.toLocaleString()}</span>
       </div>
 
-      {/* Helper Text */}
       <div className="helper-text">
         💡 Tournaments reset daily at 3 AM • Tap cards for details
       </div>
 
-      {/* Joined Matches Toggle */}
       {joinedTournaments.length > 0 && (
         <button 
           className="joined-toggle-btn"
@@ -312,7 +300,6 @@ export default function BattleRoyale() {
         </button>
       )}
 
-      {/* Joined Matches Section */}
       {showJoined && joinedTournaments.length > 0 && (
         <div className="joined-section">
           <h2 className="section-title">Your Joined Matches</h2>
@@ -334,7 +321,7 @@ export default function BattleRoyale() {
                   </div>
                   <div className="info-row">
                     <span>Returns:</span>
-                    <span className="returns">{tournament.returns}</span>
+                    <span className="returns">{tournament.returns || 'N/A'}</span>
                   </div>
                   <div className="info-row">
                     <span>Players:</span>
@@ -351,7 +338,6 @@ export default function BattleRoyale() {
         </div>
       )}
 
-      {/* Available Tournaments */}
       <div className="available-section">
         <h2 className="section-title">Available Tournaments ({availableTournaments.length})</h2>
         
@@ -365,7 +351,7 @@ export default function BattleRoyale() {
               <div className="card-header">
                 <h3>{tournament.teamType} Tournament</h3>
                 <div className="returns-badge">
-                  {tournament.returns} Returns
+                  {tournament.returns || 'N/A'} Returns
                 </div>
               </div>
               
@@ -376,7 +362,8 @@ export default function BattleRoyale() {
                 </div>
                 <div className="info-row">
                   <span>Win Prize:</span>
-                  <span className="prize">₹{tournament.prizes.first}</span>
+                  {/* ✅ CRITICAL FIX: Safe access to nested properties */}
+                  <span className="prize">₹{tournament.prizes?.first || tournament.prizePool || 'N/A'}</span>
                 </div>
                 <div className="info-row">
                   <span>Players:</span>
@@ -429,31 +416,30 @@ export default function BattleRoyale() {
             <div className="tournament-modal-header">
               <h2>{selectedTournament.teamType} Tournament</h2>
               <div className="returns-badge large">
-                {selectedTournament.returns} Returns
+                {selectedTournament.returns || 'N/A'} Returns
               </div>
             </div>
 
             <div className="tournament-modal-body">
-              {/* Prize Distribution */}
               <div className="prize-section">
                 <h3>🏆 Prize Distribution</h3>
                 <div className="prizes-grid">
                   <div className="prize-item first-place">
                     <div className="position">1st Place</div>
-                    <div className="amount">₹{selectedTournament.prizes.first}</div>
+                    {/* ✅ CRITICAL FIX: Safe access with fallbacks */}
+                    <div className="amount">₹{selectedTournament.prizes?.first || Math.round((selectedTournament.prizePool || 0) * 0.5) || 'N/A'}</div>
                   </div>
                   <div className="prize-item second-place">
                     <div className="position">2nd Place</div>
-                    <div className="amount">₹{selectedTournament.prizes.second}</div>
+                    <div className="amount">₹{selectedTournament.prizes?.second || Math.round((selectedTournament.prizePool || 0) * 0.3) || 'N/A'}</div>
                   </div>
                   <div className="prize-item third-place">
                     <div className="position">3rd Place</div>
-                    <div className="amount">₹{selectedTournament.prizes.third}</div>
+                    <div className="amount">₹{selectedTournament.prizes?.third || Math.round((selectedTournament.prizePool || 0) * 0.2) || 'N/A'}</div>
                   </div>
                 </div>
               </div>
 
-              {/* Tournament Quick Info */}
               <div className="tournament-quick-info">
                 <div className="quick-info-item">
                   <span className="label">Entry Fee</span>
@@ -469,17 +455,16 @@ export default function BattleRoyale() {
                 </div>
               </div>
 
-              {/* Important Notice */}
               <div className="important-notice">
                 <h4>📢 Important Notice</h4>
                 <p>Room ID and Password will be updated 5 minutes before match start. Please check back!</p>
               </div>
 
-              {/* Rules Section */}
               <div className="rules-section">
                 <h4>📋 Tournament Rules</h4>
                 <div className="rules-list">
-                  {selectedTournament.rules.map((rule, index) => (
+                  {/* ✅ CRITICAL FIX: Safe access to rules array */}
+                  {(selectedTournament.rules || []).map((rule, index) => (
                     <div key={index} className="rule-item">{rule}</div>
                   ))}
                 </div>
@@ -521,7 +506,7 @@ export default function BattleRoyale() {
         </div>
       )}
 
-      {/* Simple Join Confirmation Modal */}
+      {/* Join Confirmation Modal */}
       {showJoinModal && selectedTournament && (
         <div className="modal-overlay" onClick={() => setShowJoinModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -541,11 +526,12 @@ export default function BattleRoyale() {
                   </div>
                   <div className="preview-stat">
                     <span>Win Prize</span>
-                    <span>₹{selectedTournament.prizes.first}</span>
+                    {/* ✅ CRITICAL FIX: Safe access with fallbacks */}
+                    <span>₹{selectedTournament.prizes?.first || Math.round((selectedTournament.prizePool || 0) * 0.5) || 'N/A'}</span>
                   </div>
                   <div className="preview-stat">
                     <span>Returns</span>
-                    <span>{selectedTournament.returns}</span>
+                    <span>{selectedTournament.returns || 'N/A'}</span>
                   </div>
                 </div>
               </div>

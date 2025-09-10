@@ -12,11 +12,11 @@ export default function BattleRoyale() {
   const [isJoining, setIsJoining] = useState(false);
   const token = localStorage.getItem("token");
 
-  // Generate mock tournaments with your specifications
+  // Generate improved tournaments with your exact specifications
   const generateTournaments = () => {
     const mockTournaments = [];
     const startDate = new Date();
-    startDate.setHours(18, 0, 0, 0); // 6 PM today
+    startDate.setHours(10, 0, 0, 0); // 10 AM today
     
     const tournamentNames = [
       "Classic Solo", "Elite Solo", "Pro Solo", "Master Solo", "Champion Solo",
@@ -24,61 +24,41 @@ export default function BattleRoyale() {
       "Royal Solo", "Diamond Solo", "Platinum Solo", "Gold Solo", "Silver Solo"
     ];
 
-    for (let day = 0; day < 7; day++) {
-      for (let i = 0; i < 15; i++) {
-        const entryFee = Math.floor(Math.random() * (50 - 7 + 1)) + 7; // 7-50 rs
-        let roi, prizeMultiplier;
-        
-        // ROI based on your requirements
-        if (i % 3 === 0) {
-          roi = 400;
-          prizeMultiplier = 4;
-        } else if (i % 3 === 1) {
-          roi = 300;
-          prizeMultiplier = 3;
-        } else {
-          roi = 150;
-          prizeMultiplier = 1.5;
+    // Generate 15 tournaments with 25 minutes gap
+    for (let i = 0; i < 15; i++) {
+      const entryFee = 10 + i; // Starting from ₹10
+      const matchTime = new Date(startDate);
+      matchTime.setMinutes(startDate.getMinutes() + (i * 25));
+      
+      // Calculate returns: 4.5x, 3x, 2.5x
+      const firstPrize = Math.round(entryFee * 4.5);
+      const secondPrize = Math.round(entryFee * 3);
+      const thirdPrize = Math.round(entryFee * 2.5);
+      
+      const isExpired = matchTime < new Date();
+
+      mockTournaments.push({
+        _id: `tour_${i}`,
+        teamType: tournamentNames[i],
+        entryFee: entryFee,
+        players: 50 + (i * 3),
+        maxPlayers: 100,
+        matchTime: matchTime.toISOString(),
+        returns: "4.5x",
+        isExpired: isExpired,
+        joined: false,
+        rules: [
+          "No teaming allowed in solo matches",
+          "Use of hacks/cheats will result in immediate ban",
+          "Match starts exactly at scheduled time",
+          "Winners will be announced within 30 minutes"
+        ],
+        prizes: {
+          first: firstPrize,
+          second: secondPrize,
+          third: thirdPrize
         }
-
-        const matchTime = new Date(startDate);
-        matchTime.setDate(startDate.getDate() + day);
-        matchTime.setHours(18 + i); // Stagger throughout the day
-
-        const isExpired = matchTime < new Date();
-
-        mockTournaments.push({
-          _id: `tour_${day}_${i}`,
-          teamType: tournamentNames[i],
-          entryFee: entryFee,
-          prizePool: Math.round(entryFee * prizeMultiplier),
-          players: Math.floor(Math.random() * 85) + 5,
-          maxPlayers: 100,
-          matchTime: matchTime.toISOString(),
-          roi: roi,
-          isExpired: isExpired,
-          joined: false,
-          rules: [
-            "No teaming allowed in solo matches",
-            "Use of hacks/cheats will result in immediate ban",
-            "Match starts exactly at scheduled time",
-            "Winners will be announced within 30 minutes",
-            "Prize distribution: 1st (50%), 2nd (30%), 3rd (20%)"
-          ],
-          prizes: {
-            first: Math.round(entryFee * prizeMultiplier * 0.5),
-            second: Math.round(entryFee * prizeMultiplier * 0.3),
-            third: Math.round(entryFee * prizeMultiplier * 0.2)
-          },
-          joinedPlayers: [
-            { name: "ProGamer123", joinTime: "2 hours ago" },
-            { name: "FireFighter88", joinTime: "1 hour ago" },
-            { name: "ShadowHunter", joinTime: "45 mins ago" },
-            { name: "RoyaleKing", joinTime: "30 mins ago" },
-            { name: "DeathStroke99", joinTime: "15 mins ago" }
-          ]
-        });
-      }
+      });
     }
     return mockTournaments;
   };
@@ -100,13 +80,12 @@ export default function BattleRoyale() {
           setBalance(profileData.balance);
         }
 
-        // Use mock tournaments for now
+        // Use mock tournaments
         const mockTournaments = generateTournaments();
         setTournaments(mockTournaments);
         
       } catch (error) {
         console.error("Fetch error:", error);
-        // Fallback to mock data
         setTournaments(generateTournaments());
       }
       setLoading(false);
@@ -118,7 +97,7 @@ export default function BattleRoyale() {
   // Sort tournaments - active first, then expired
   const sortedTournaments = tournaments.sort((a, b) => {
     if (a.isExpired !== b.isExpired) {
-      return a.isExpired - b.isExpired; // Active first
+      return a.isExpired - b.isExpired;
     }
     return new Date(a.matchTime) - new Date(b.matchTime);
   });
@@ -142,11 +121,9 @@ export default function BattleRoyale() {
     setIsJoining(true);
 
     try {
-      // Simulate join - replace with actual API call
       setTimeout(() => {
         setBalance(prev => prev - selectedTournament.entryFee);
         
-        // Update tournament to joined
         setTournaments(prev => 
           prev.map(t => 
             t._id === selectedTournament._id 
@@ -187,12 +164,8 @@ export default function BattleRoyale() {
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     
-    if (hours > 24) {
-      const days = Math.floor(hours / 24);
-      return `${days}d ${hours % 24}h`;
-    }
-    
-    return `${hours}h ${minutes}m`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
   };
 
   if (!token) {
@@ -226,16 +199,18 @@ export default function BattleRoyale() {
         <button className="back-btn" onClick={() => window.history.back()}>
           ← Back
         </button>
-        {/* Removed the alert notification */}
-        <div className="help-icon">
-          ℹ️
-        </div>
+        <div className="help-icon">ℹ️</div>
       </div>
 
       {/* Simple Balance Display */}
       <div className="balance-display">
         <span className="balance-label">Your Balance</span>
         <span className="balance-amount">₹{balance.toLocaleString()}</span>
+      </div>
+
+      {/* Helper Text */}
+      <div className="helper-text">
+        💡 Tap any tournament card to see more details
       </div>
 
       {/* Joined Matches Toggle */}
@@ -269,8 +244,8 @@ export default function BattleRoyale() {
                     <span className="fee">₹{tournament.entryFee}</span>
                   </div>
                   <div className="info-row">
-                    <span>Prize Pool:</span>
-                    <span className="prize">₹{tournament.prizePool}</span>
+                    <span>Returns:</span>
+                    <span className="returns">{tournament.returns}</span>
                   </div>
                   <div className="info-row">
                     <span>Players:</span>
@@ -305,8 +280,8 @@ export default function BattleRoyale() {
               >
                 <div className="card-header">
                   <h3>{tournament.teamType} Tournament</h3>
-                  <div className={`roi-badge roi-${tournament.roi}`}>
-                    {tournament.roi}% ROI
+                  <div className="returns-badge">
+                    {tournament.returns} Returns
                   </div>
                 </div>
                 
@@ -316,8 +291,8 @@ export default function BattleRoyale() {
                     <span className="fee">₹{tournament.entryFee}</span>
                   </div>
                   <div className="info-row">
-                    <span>Prize Pool:</span>
-                    <span className="prize">₹{tournament.prizePool}</span>
+                    <span>Win Prize:</span>
+                    <span className="prize">₹{tournament.prizes.first}</span>
                   </div>
                   <div className="info-row">
                     <span>Players:</span>
@@ -326,7 +301,7 @@ export default function BattleRoyale() {
                   <div className="info-row">
                     <span>Starts:</span>
                     <span className={tournament.isExpired ? 'expired-text' : ''}>
-                      {tournament.isExpired ? 'Expired - Starting Tomorrow' : formatTime(tournament.matchTime)}
+                      {tournament.isExpired ? 'Expired - Next Session Tomorrow' : formatTime(tournament.matchTime)}
                     </span>
                   </div>
                 </div>
@@ -348,7 +323,7 @@ export default function BattleRoyale() {
 
                 {tournament.isExpired && (
                   <div className="expired-notice">
-                    Tournament Expired - Restarts Tomorrow
+                    Tournament Expired - Next Session Starts Tomorrow at 10 AM
                   </div>
                 )}
               </div>
@@ -357,7 +332,7 @@ export default function BattleRoyale() {
         )}
       </div>
 
-      {/* Large Tournament Details Modal */}
+      {/* Improved Tournament Details Modal */}
       {showTournamentModal && selectedTournament && (
         <div className="tournament-modal-overlay" onClick={() => setShowTournamentModal(false)}>
           <div className="tournament-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -366,9 +341,9 @@ export default function BattleRoyale() {
             </button>
             
             <div className="tournament-modal-header">
-              <h2>{selectedTournament.teamType} Tournament</h2>
-              <div className={`roi-badge large roi-${selectedTournament.roi}`}>
-                {selectedTournament.roi}% ROI
+              <h2>{selectedTournament.teamType}</h2>
+              <div className="returns-badge large">
+                {selectedTournament.returns} Returns
               </div>
             </div>
 
@@ -377,38 +352,34 @@ export default function BattleRoyale() {
               <div className="prize-section">
                 <h3>🏆 Prize Distribution</h3>
                 <div className="prizes-grid">
-                  <div className="prize-item first">
-                    <span className="position">1st Place</span>
-                    <span className="amount">₹{selectedTournament.prizes.first}</span>
+                  <div className="prize-item first-place">
+                    <div className="position">1st Place</div>
+                    <div className="amount">₹{selectedTournament.prizes.first}</div>
                   </div>
-                  <div className="prize-item second">
-                    <span className="position">2nd Place</span>
-                    <span className="amount">₹{selectedTournament.prizes.second}</span>
+                  <div className="prize-item second-place">
+                    <div className="position">2nd Place</div>
+                    <div className="amount">₹{selectedTournament.prizes.second}</div>
                   </div>
-                  <div className="prize-item third">
-                    <span className="position">3rd Place</span>
-                    <span className="amount">₹{selectedTournament.prizes.third}</span>
+                  <div className="prize-item third-place">
+                    <div className="position">3rd Place</div>
+                    <div className="amount">₹{selectedTournament.prizes.third}</div>
                   </div>
                 </div>
               </div>
 
-              {/* Tournament Info */}
-              <div className="tournament-info-grid">
-                <div className="info-card">
-                  <span className="info-label">Entry Fee</span>
-                  <span className="info-value fee">₹{selectedTournament.entryFee}</span>
+              {/* Tournament Quick Info */}
+              <div className="tournament-quick-info">
+                <div className="quick-info-item">
+                  <span className="label">Entry Fee</span>
+                  <span className="value fee">₹{selectedTournament.entryFee}</span>
                 </div>
-                <div className="info-card">
-                  <span className="info-label">Total Pool</span>
-                  <span className="info-value prize">₹{selectedTournament.prizePool}</span>
+                <div className="quick-info-item">
+                  <span className="label">Players</span>
+                  <span className="value">{selectedTournament.players}/100</span>
                 </div>
-                <div className="info-card">
-                  <span className="info-label">Players</span>
-                  <span className="info-value">{selectedTournament.players}/{selectedTournament.maxPlayers}</span>
-                </div>
-                <div className="info-card">
-                  <span className="info-label">Starts In</span>
-                  <span className="info-value">
+                <div className="quick-info-item">
+                  <span className="label">Starts In</span>
+                  <span className="value">
                     {selectedTournament.isExpired ? 'Expired' : getTimeRemaining(selectedTournament.matchTime)}
                   </span>
                 </div>
@@ -423,26 +394,10 @@ export default function BattleRoyale() {
               {/* Rules Section */}
               <div className="rules-section">
                 <h4>📋 Tournament Rules</h4>
-                <ul>
+                <div className="rules-list">
                   {selectedTournament.rules.map((rule, index) => (
-                    <li key={index}>{rule}</li>
+                    <div key={index} className="rule-item">{rule}</div>
                   ))}
-                </ul>
-              </div>
-
-              {/* Joined Players */}
-              <div className="joined-players-section">
-                <h4>👥 Recently Joined Players</h4>
-                <div className="players-list">
-                  {selectedTournament.joinedPlayers.map((player, index) => (
-                    <div key={index} className="player-item">
-                      <span className="player-name">{player.name}</span>
-                      <span className="join-time">{player.joinTime}</span>
-                    </div>
-                  ))}
-                  <div className="view-all">
-                    + {selectedTournament.players - 5} more players...
-                  </div>
                 </div>
               </div>
             </div>
@@ -473,8 +428,8 @@ export default function BattleRoyale() {
               )}
               
               {selectedTournament.isExpired && (
-                <div className="expired-notice">
-                  🕐 Tournament has expired - Same tournament starts tomorrow
+                <div className="expired-footer-notice">
+                  🕐 Tournament has expired - Same tournament starts tomorrow at 10 AM
                 </div>
               )}
             </div>
@@ -486,9 +441,7 @@ export default function BattleRoyale() {
       {showJoinModal && selectedTournament && (
         <div className="modal-overlay" onClick={() => setShowJoinModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setShowJoinModal(false)}>
-              ✕
-            </button>
+            <button className="modal-close" onClick={() => setShowJoinModal(false)}>✕</button>
             
             <div className="modal-header">
               <h3>Join Tournament</h3>
@@ -503,12 +456,12 @@ export default function BattleRoyale() {
                     <span>₹{selectedTournament.entryFee}</span>
                   </div>
                   <div className="preview-stat">
-                    <span>Prize Pool</span>
-                    <span>₹{selectedTournament.prizePool}</span>
+                    <span>Win Prize</span>
+                    <span>₹{selectedTournament.prizes.first}</span>
                   </div>
                   <div className="preview-stat">
-                    <span>ROI</span>
-                    <span>{selectedTournament.roi}%</span>
+                    <span>Returns</span>
+                    <span>{selectedTournament.returns}</span>
                   </div>
                 </div>
               </div>

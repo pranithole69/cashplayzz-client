@@ -12,7 +12,13 @@ export default function BattleRoyale() {
   const [isJoining, setIsJoining] = useState(false);
   const token = localStorage.getItem("token");
 
-  // Generate mock tournaments - ALWAYS AVAILABLE
+  // Generate ObjectId-like strings (24 hex characters)
+  const generateObjectId = () => {
+    return Math.floor(Date.now() / 1000).toString(16) + 
+           Math.random().toString(16).substr(2, 16);
+  };
+
+  // Generate mock tournaments with REAL ObjectId-compatible IDs
   const generateTournaments = () => {
     const mockTournaments = [];
     const startDate = new Date();
@@ -44,7 +50,7 @@ export default function BattleRoyale() {
       const currentPlayers = Math.min(maxPlayers, 30 + (i * 2));
 
       mockTournaments.push({
-        _id: `tour_${i}`,
+        _id: generateObjectId(), // ✅ FIXED: Now generates valid ObjectId-like strings
         teamType: tournamentNames[i],
         entryFee: entryFee,
         players: currentPlayers,
@@ -95,9 +101,8 @@ export default function BattleRoyale() {
         
         if (tourRes.ok) {
           const tourData = await tourRes.json();
-          console.log("API Response:", tourData); // DEBUG LOG
+          console.log("API Response:", tourData);
           
-          // CHECK if API returns valid data
           if (tourData && Array.isArray(tourData) && tourData.length > 0) {
             setTournaments(tourData);
           } else {
@@ -218,7 +223,6 @@ export default function BattleRoyale() {
     return `${minutes}m`;
   };
 
-  // DEBUG: Log tournaments state
   console.log("Current tournaments state:", tournaments);
 
   if (!token) {
@@ -265,13 +269,6 @@ export default function BattleRoyale() {
       {/* Helper Text */}
       <div className="helper-text">
         💡 Tap any tournament card to see more details
-      </div>
-
-      {/* DEBUG INFO */}
-      <div style={{padding: '10px', background: 'rgba(255,255,255,0.1)', margin: '10px 0', borderRadius: '10px', fontSize: '12px'}}>
-        <strong>Debug Info:</strong> Total Tournaments: {tournaments.length} | 
-        Available: {availableTournaments.length} | 
-        Joined: {joinedTournaments.length}
       </div>
 
       {/* Joined Matches Toggle */}

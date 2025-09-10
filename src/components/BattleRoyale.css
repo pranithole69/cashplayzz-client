@@ -1,3 +1,16 @@
+/* Box sizing for all elements - CRITICAL for proper mobile display */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Body and HTML reset */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
 .battle-container {
   min-height: 100vh;
   background: url('/bg.png') center/cover no-repeat, 
@@ -6,6 +19,9 @@
   color: #ffffff;
   padding: 20px;
   font-family: 'Inter', sans-serif;
+  /* Safe padding to prevent edge cutoff */
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 .battle-header {
@@ -314,6 +330,7 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
+  white-space: nowrap; /* Prevent text wrapping */
 }
 
 .join-btn.enabled {
@@ -376,7 +393,7 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Large Tournament Modal - FIXED */
+/* FIXED Tournament Modal Overlay - NO MORE EDGE CUTOFF */
 .tournament-modal-overlay {
   position: fixed;
   top: 0;
@@ -389,7 +406,10 @@
   align-items: center;
   z-index: 1000;
   backdrop-filter: blur(10px);
-  padding: 15px;
+  /* Critical: Safe padding to prevent edge cutoff */
+  padding: 20px 15px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .tournament-modal-content {
@@ -400,11 +420,14 @@
   padding: 25px;
   max-width: 500px;
   width: 100%;
-  max-height: 90vh;
+  max-height: calc(100vh - 40px); /* Account for overlay padding */
   overflow-y: auto;
   position: relative;
   color: white;
   box-shadow: 0 30px 80px rgba(138, 43, 226, 0.8);
+  /* Critical: Proper box sizing */
+  box-sizing: border-box;
+  margin: auto;
 }
 
 .tournament-modal-header {
@@ -621,6 +644,7 @@
   width: 100%;
   max-width: 300px;
   box-shadow: 0 8px 25px rgba(186, 85, 211, 0.4);
+  white-space: nowrap; /* Prevent text wrapping */
 }
 
 .join-tournament-btn.enabled:hover {
@@ -656,7 +680,7 @@
   text-align: center;
 }
 
-/* Simple Join Modal Styles */
+/* Simple Join Modal Styles - FIXED */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -669,6 +693,9 @@
   align-items: center;
   z-index: 1000;
   backdrop-filter: blur(5px);
+  /* Critical: Safe padding */
+  padding: 20px 15px;
+  box-sizing: border-box;
 }
 
 .modal-content {
@@ -678,9 +705,10 @@
   border-radius: 20px;
   padding: 30px;
   max-width: 500px;
-  width: 90%;
+  width: 100%;
   position: relative;
   color: white;
+  box-sizing: border-box;
 }
 
 .modal-close {
@@ -768,6 +796,7 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
+  white-space: nowrap; /* Prevent text wrapping */
 }
 
 .modal-btn.cancel {
@@ -786,10 +815,10 @@
   transform: translateY(-2px);
 }
 
-/* Mobile Responsive for Modal - FIXED */
+/* ENHANCED Mobile Responsive - FIXED EDGE CUTOFF ISSUES */
 @media (max-width: 768px) {
   .battle-container { 
-    padding: 15px; 
+    padding: 10px; 
   }
   
   .tournaments-grid { 
@@ -814,20 +843,32 @@
     font-size: 0.9rem;
   }
 
+  /* CRITICAL: Fixed modal padding for mobile */
   .modal-content {
-    padding: 25px;
-    margin: 20px;
+    padding: 25px 20px;
+    margin: 0;
+    max-width: calc(100% - 30px);
   }
 
   .preview-stats {
     grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* CRITICAL: Fixed tournament modal for mobile */
+  .tournament-modal-overlay {
+    padding: 15px 10px;
+    align-items: flex-start;
+    padding-top: 40px;
   }
 
   .tournament-modal-content {
-    margin: 10px;
-    padding: 20px;
-    max-height: 95vh;
-    max-width: 95%;
+    margin: 0;
+    padding: 20px 15px;
+    max-width: 100%;
+    max-height: calc(100vh - 80px);
+    border-radius: 20px;
+    width: calc(100% - 20px);
   }
   
   .tournament-modal-header h2 {
@@ -847,7 +888,43 @@
   }
   
   .join-tournament-btn {
-    padding: 14px 30px;
+    padding: 14px 20px;
     font-size: 0.95rem;
+    max-width: 100%;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* EXTRA SMALL DEVICES - ADDITIONAL PROTECTION */
+@media (max-width: 375px) {
+  .battle-container {
+    padding: 8px;
+  }
+
+  .tournament-modal-overlay {
+    padding: 10px 5px;
+  }
+
+  .tournament-modal-content {
+    padding: 15px 10px;
+    width: calc(100% - 10px);
+  }
+
+  .modal-content {
+    padding: 20px 15px;
+    max-width: calc(100% - 20px);
+  }
+
+  .back-btn {
+    padding: 8px 15px;
+    font-size: 0.85rem;
+  }
+
+  .balance-amount {
+    font-size: 1.8rem;
   }
 }

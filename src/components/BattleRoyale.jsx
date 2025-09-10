@@ -12,49 +12,7 @@ export default function BattleRoyale() {
   const [isJoining, setIsJoining] = useState(false);
   const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    async function fetchData() {
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-      
-      try {
-        const profileRes = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        
-        if (profileRes.ok) {
-          const profileData = await profileRes.json();
-          setBalance(profileData.balance);
-        }
-
-        // TRY TO FETCH REAL TOURNAMENTS FIRST
-        const tourRes = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/tournaments", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        
-        if (tourRes.ok) {
-          const tourData = await tourRes.json();
-          setTournaments(tourData);
-        } else {
-          // FALLBACK: Generate mock tournaments if API fails
-          const mockTournaments = generateTournaments();
-          setTournaments(mockTournaments);
-        }
-      } catch (error) {
-        console.error("Fetch error:", error);
-        // FALLBACK: Generate mock tournaments if network fails
-        const mockTournaments = generateTournaments();
-        setTournaments(mockTournaments);
-      }
-      setLoading(false);
-    }
-    
-    fetchData();
-  }, [token]);
-
-  // Generate mock tournaments as fallback
+  // Generate mock tournaments - ALWAYS AVAILABLE
   const generateTournaments = () => {
     const mockTournaments = [];
     const startDate = new Date();
@@ -94,8 +52,8 @@ export default function BattleRoyale() {
         matchTime: matchTime.toISOString(),
         returns: `${returnsMultiplier}x`,
         isExpired: isExpired,
-        joined: false, // Default to false for mock data
-        prizePool: prizePool, // Keep this for compatibility
+        joined: false,
+        prizePool: prizePool,
         rules: [
           "No teaming allowed in solo matches",
           "Use of hacks/cheats will result in immediate ban", 
@@ -113,16 +71,56 @@ export default function BattleRoyale() {
     return mockTournaments;
   };
 
-  // Sort tournaments - active first, then expired
-  const sortedTournaments = tournaments.sort((a, b) => {
-    if (a.isExpired !== b.isExpired) {
-      return a.isExpired - b.isExpired;
-    }
-    return new Date(a.matchTime) - new Date(b.matchTime);
-  });
+  useEffect(() => {
+    async function fetchData() {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+      
+      try {
+        const profileRes = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          setBalance(profileData.balance);
+        }
 
-  const joinedTournaments = sortedTournaments.filter(t => t.joined);
-  const availableTournaments = sortedTournaments.filter(t => !t.joined);
+        // TRY TO FETCH REAL TOURNAMENTS
+        const tourRes = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/tournaments", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        if (tourRes.ok) {
+          const tourData = await tourRes.json();
+          console.log("API Response:", tourData); // DEBUG LOG
+          
+          // CHECK if API returns valid data
+          if (tourData && Array.isArray(tourData) && tourData.length > 0) {
+            setTournaments(tourData);
+          } else {
+            console.log("API returned empty/invalid data, using mock tournaments");
+            setTournaments(generateTournaments());
+          }
+        } else {
+          console.log("API failed, using mock tournaments");
+          setTournaments(generateTournaments());
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+        console.log("Network error, using mock tournaments");
+        setTournaments(generateTournaments());
+      }
+      setLoading(false);
+    }
+    
+    fetchData();
+  }, [token]);
+
+  const joinedTournaments = tournaments.filter(t => t.joined);
+  const availableTournaments = tournaments.filter(t => !t.joined);
 
   const handleTournamentClick = (tournament) => {
     setSelectedTournament(tournament);
@@ -135,7 +133,7 @@ export default function BattleRoyale() {
     setShowJoinModal(true);
   };
 
-  // ORIGINAL WORKING JOIN LOGIC WITH ENHANCED MODAL SUPPORT
+  // ORIGINAL WORKING JOIN LOGIC
   const handleJoin = async (tournament) => {
     try {
       const response = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/join-match", {
@@ -153,7 +151,6 @@ export default function BattleRoyale() {
       const data = await response.json();
       if (data.success) {
         setBalance(data.balance);
-        // RELOAD TO GET UPDATED TOURNAMENTS FROM SERVER
         window.location.reload();
       } else {
         alert(data.message || "Failed to join");
@@ -163,7 +160,6 @@ export default function BattleRoyale() {
     }
   };
 
-  // ENHANCED JOIN FOR MODAL CONFIRMATION
   const confirmJoin = async () => {
     if (!selectedTournament) return;
     setIsJoining(true);
@@ -187,7 +183,6 @@ export default function BattleRoyale() {
         setShowJoinModal(false);
         setShowTournamentModal(false);
         setSelectedTournament(null);
-        // RELOAD TO GET UPDATED TOURNAMENTS FROM SERVER
         window.location.reload();
       } else {
         alert(data.message || "Failed to join tournament");
@@ -222,6 +217,9 @@ export default function BattleRoyale() {
     if (hours > 0) return `${hours}h ${minutes}m`;
     return `${minutes}m`;
   };
+
+  // DEBUG: Log tournaments state
+  console.log("Current tournaments state:", tournaments);
 
   if (!token) {
     return (
@@ -269,6 +267,13 @@ export default function BattleRoyale() {
         💡 Tap any tournament card to see more details
       </div>
 
+      {/* DEBUG INFO */}
+      <div style={{padding: '10px', background: 'rgba(255,255,255,0.1)', margin: '10px 0', borderRadius: '10px', fontSize: '12px'}}>
+        <strong>Debug Info:</strong> Total Tournaments: {tournaments.length} | 
+        Available: {availableTournaments.length} | 
+        Joined: {joinedTournaments.length}
+      </div>
+
       {/* Joined Matches Toggle */}
       {joinedTournaments.length > 0 && (
         <button 
@@ -301,7 +306,7 @@ export default function BattleRoyale() {
                   </div>
                   <div className="info-row">
                     <span>Prize Pool:</span>
-                    <span className="prize">₹{tournament.prizePool || tournament.prizes?.first || 'N/A'}</span>
+                    <span className="prize">₹{tournament.prizePool}</span>
                   </div>
                   <div className="info-row">
                     <span>Players:</span>
@@ -309,7 +314,7 @@ export default function BattleRoyale() {
                   </div>
                   <div className="info-row">
                     <span>Match Time:</span>
-                    <span>{new Date(tournament.matchTime).toLocaleString()}</span>
+                    <span>{formatTime(tournament.matchTime)}</span>
                   </div>
                 </div>
               </div>
@@ -325,6 +330,9 @@ export default function BattleRoyale() {
         {availableTournaments.length === 0 ? (
           <div className="no-tournaments">
             <p>No tournaments available at the moment</p>
+            <button onClick={() => setTournaments(generateTournaments())} style={{marginTop: '20px', padding: '10px 20px', background: '#ba55d3', color: 'white', border: 'none', borderRadius: '10px', cursor: 'pointer'}}>
+              Load Mock Tournaments
+            </button>
           </div>
         ) : (
           <div className="tournaments-grid">
@@ -336,8 +344,8 @@ export default function BattleRoyale() {
               >
                 <div className="card-header">
                   <h3>{tournament.teamType} Tournament</h3>
-                  <div className={`difficulty-badge ${tournament.entryFee > 50 ? 'premium' : tournament.entryFee > 30 ? 'advanced' : 'basic'}`}>
-                    {tournament.entryFee > 50 ? 'PREMIUM' : tournament.entryFee > 30 ? 'ADVANCED' : 'BASIC'}
+                  <div className="returns-badge">
+                    {tournament.returns} Returns
                   </div>
                 </div>
                 
@@ -347,8 +355,8 @@ export default function BattleRoyale() {
                     <span className="fee">₹{tournament.entryFee}</span>
                   </div>
                   <div className="info-row">
-                    <span>Prize Pool:</span>
-                    <span className="prize">₹{tournament.prizePool || tournament.prizes?.first || 'N/A'}</span>
+                    <span>Win Prize:</span>
+                    <span className="prize">₹{tournament.prizes?.first || tournament.prizePool}</span>
                   </div>
                   <div className="info-row">
                     <span>Players:</span>
@@ -356,7 +364,9 @@ export default function BattleRoyale() {
                   </div>
                   <div className="info-row">
                     <span>Starts:</span>
-                    <span>{new Date(tournament.matchTime).toLocaleString()}</span>
+                    <span className={tournament.isExpired ? 'expired-text' : ''}>
+                      {tournament.isExpired ? 'Expired - Next Session Tomorrow' : formatTime(tournament.matchTime)}
+                    </span>
                   </div>
                 </div>
 
@@ -395,7 +405,7 @@ export default function BattleRoyale() {
             <div className="tournament-modal-header">
               <h2>{selectedTournament.teamType}</h2>
               <div className="returns-badge large">
-                {selectedTournament.returns || '4.5x'} Returns
+                {selectedTournament.returns || '18.7x'} Returns
               </div>
             </div>
 
@@ -406,15 +416,15 @@ export default function BattleRoyale() {
                 <div className="prizes-grid">
                   <div className="prize-item first-place">
                     <div className="position">1st Place</div>
-                    <div className="amount">₹{selectedTournament.prizes?.first || Math.round(selectedTournament.prizePool * 0.5) || 'N/A'}</div>
+                    <div className="amount">₹{selectedTournament.prizes?.first || Math.round(selectedTournament.prizePool * 0.5)}</div>
                   </div>
                   <div className="prize-item second-place">
                     <div className="position">2nd Place</div>
-                    <div className="amount">₹{selectedTournament.prizes?.second || Math.round(selectedTournament.prizePool * 0.3) || 'N/A'}</div>
+                    <div className="amount">₹{selectedTournament.prizes?.second || Math.round(selectedTournament.prizePool * 0.3)}</div>
                   </div>
                   <div className="prize-item third-place">
                     <div className="position">3rd Place</div>
-                    <div className="amount">₹{selectedTournament.prizes?.third || Math.round(selectedTournament.prizePool * 0.2) || 'N/A'}</div>
+                    <div className="amount">₹{selectedTournament.prizes?.third || Math.round(selectedTournament.prizePool * 0.2)}</div>
                   </div>
                 </div>
               </div>
@@ -447,12 +457,7 @@ export default function BattleRoyale() {
               <div className="rules-section">
                 <h4>📋 Tournament Rules</h4>
                 <div className="rules-list">
-                  {(selectedTournament.rules || [
-                    "No teaming allowed in solo matches",
-                    "Use of hacks/cheats will result in immediate ban",
-                    "Match starts exactly at scheduled time",
-                    "Winners will be announced within 30 minutes"
-                  ]).map((rule, index) => (
+                  {selectedTournament.rules.map((rule, index) => (
                     <div key={index} className="rule-item">{rule}</div>
                   ))}
                 </div>
@@ -513,12 +518,12 @@ export default function BattleRoyale() {
                     <span>₹{selectedTournament.entryFee}</span>
                   </div>
                   <div className="preview-stat">
-                    <span>Prize Pool</span>
-                    <span>₹{selectedTournament.prizePool || selectedTournament.prizes?.first || 'N/A'}</span>
+                    <span>Win Prize</span>
+                    <span>₹{selectedTournament.prizes?.first || Math.round(selectedTournament.prizePool * 0.5)}</span>
                   </div>
                   <div className="preview-stat">
                     <span>Returns</span>
-                    <span>{selectedTournament.returns || '4.5x'}</span>
+                    <span>{selectedTournament.returns || '18.7x'}</span>
                   </div>
                 </div>
               </div>

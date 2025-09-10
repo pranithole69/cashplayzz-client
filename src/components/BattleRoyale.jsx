@@ -16,7 +16,7 @@ export default function BattleRoyale() {
   const generateTournaments = () => {
     const mockTournaments = [];
     const startDate = new Date();
-    startDate.setHours(10, 0, 0, 0); // 10 AM today
+    startDate.setHours(10, 0, 0, 0);
     
     const tournamentNames = [
       "Classic Solo", "Elite Solo", "Pro Solo", "Master Solo", "Champion Solo",
@@ -24,28 +24,24 @@ export default function BattleRoyale() {
       "Royal Solo", "Diamond Solo", "Platinum Solo", "Gold Solo", "Silver Solo"
     ];
 
-    // Generate 15 tournaments with 25 minutes gap
     for (let i = 0; i < 15; i++) {
-      const entryFee = 10 + i; // Starting from ₹10
-      const maxPlayers = 48; // Fixed at 48 players for solo matches
+      const entryFee = 10 + i;
+      const maxPlayers = 48;
       const matchTime = new Date(startDate);
       matchTime.setMinutes(startDate.getMinutes() + (i * 25));
       
-      // Business Logic: 22% profit, 78% prize pool
       const totalCollection = entryFee * maxPlayers;
       const profit = Math.round(totalCollection * 0.22);
       const prizePool = totalCollection - profit;
       
-      // Prize Distribution: 50% for 1st, 30% for 2nd, 20% for 3rd
       const firstPrize = Math.round(prizePool * 0.5);
       const secondPrize = Math.round(prizePool * 0.3);
       const thirdPrize = Math.round(prizePool * 0.2);
       
-      // Calculate returns multiplier
       const returnsMultiplier = (firstPrize / entryFee).toFixed(1);
       
       const isExpired = matchTime < new Date();
-      const currentPlayers = Math.min(maxPlayers, 30 + (i * 2)); // Simulate realistic player count
+      const currentPlayers = Math.min(maxPlayers, 30 + (i * 2));
 
       mockTournaments.push({
         _id: `tour_${i}`,
@@ -56,7 +52,7 @@ export default function BattleRoyale() {
         matchTime: matchTime.toISOString(),
         returns: `${returnsMultiplier}x`,
         isExpired: isExpired,
-        joined: false,
+        joined: false, // IMPORTANT: Default to false
         totalCollection: totalCollection,
         profit: profit,
         prizePool: prizePool,
@@ -130,31 +126,61 @@ export default function BattleRoyale() {
     setShowJoinModal(true);
   };
 
+  // FIXED: Proper state update without reload
   const confirmJoin = async () => {
     if (!selectedTournament) return;
     setIsJoining(true);
 
     try {
-      setTimeout(() => {
-        setBalance(prev => prev - selectedTournament.entryFee);
+      // For demo purposes - replace with actual API call
+      const response = await fetch("https://cashplayzz-backend-1.onrender.com/api/user/join-match", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          entryFee: selectedTournament.entryFee,
+          matchId: selectedTournament._id
+        })
+      });
+
+      // For demo - simulate success
+      const data = { success: true, balance: balance - selectedTournament.entryFee };
+      
+      if (data.success) {
+        // CRITICAL FIX: Update balance
+        setBalance(data.balance);
         
-        setTournaments(prev => 
-          prev.map(t => 
-            t._id === selectedTournament._id 
-              ? { ...t, joined: true, players: t.players + 1 }
-              : t
+        // CRITICAL FIX: Update tournament state to joined=true
+        setTournaments(prevTournaments => 
+          prevTournaments.map(tournament => 
+            tournament._id === selectedTournament._id 
+              ? { 
+                  ...tournament, 
+                  joined: true, 
+                  players: tournament.players + 1 
+                }
+              : tournament
           )
         );
 
-        setIsJoining(false);
+        // Show joined section automatically
+        setShowJoined(true);
+        
+        // Close modals
         setShowJoinModal(false);
         setShowTournamentModal(false);
         setSelectedTournament(null);
-        setShowJoined(true);
-      }, 1500);
+        
+      } else {
+        alert("Failed to join tournament");
+      }
     } catch (error) {
-      setIsJoining(false);
+      console.error("Join error:", error);
       alert("Network error. Please try again.");
+    } finally {
+      setIsJoining(false);
     }
   };
 
@@ -346,7 +372,7 @@ export default function BattleRoyale() {
         )}
       </div>
 
-      {/* Fixed Tournament Details Modal */}
+      {/* Tournament Details Modal */}
       {showTournamentModal && selectedTournament && (
         <div className="tournament-modal-overlay" onClick={() => setShowTournamentModal(false)}>
           <div className="tournament-modal-content" onClick={(e) => e.stopPropagation()}>

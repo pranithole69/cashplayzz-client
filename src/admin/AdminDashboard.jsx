@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import {
   Card, Row, Col, Table, Button, Modal, Form, Input, DatePicker,
   Select, Statistic, Badge, notification, Tabs, Space, Popconfirm,
-  Typography, Tag, Image, Alert, Drawer, Switch, Progress
+  Typography, Tag, Progress, Alert, Drawer, Switch, Image
 } from 'antd';
 import {
   TrophyOutlined, UserOutlined, MoneyCollectOutlined,
   BankOutlined, PlusOutlined, EditOutlined, DeleteOutlined,
   EyeOutlined, CheckOutlined, CloseOutlined, ReloadOutlined,
-  SettingOutlined, DashboardOutlined, TeamOutlined,
-  DollarOutlined, FileTextOutlined, CalendarOutlined
+  DashboardOutlined, TeamOutlined, SettingOutlined,
+  CalendarOutlined, DollarOutlined, FileTextOutlined
 } from '@ant-design/icons';
 import moment from 'moment';
 import './AdminDashboard.css';
@@ -43,6 +43,7 @@ const AdminDashboard = () => {
 
   // Form instance
   const [form] = Form.useForm();
+  const [roomForm] = Form.useForm();
 
   useEffect(() => {
     fetchAllData();
@@ -56,6 +57,134 @@ const AdminDashboard = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
+      
+      if (!token) {
+        // Mock data for development/testing
+        setStats({
+          tournaments: { 
+            today: 12, 
+            total: 45,
+            battleRoyale: 15, 
+            clashSquad: 20, 
+            loneWolf: 10,
+            live: 5,
+            upcoming: 8
+          },
+          users: { 
+            total: 1250, 
+            active: 980, 
+            newToday: 35 
+          },
+          deposits: { 
+            pending: 18, 
+            approved: 156, 
+            rejected: 12,
+            totalAmount: 245000 
+          },
+          withdrawals: { 
+            pending: 7, 
+            approved: 89, 
+            rejected: 8,
+            totalAmount: 125000 
+          }
+        });
+
+        setTournaments([
+          {
+            _id: '1',
+            teamType: 'Solo',
+            gameMode: 'battle-royale',
+            entryFee: 25,
+            prizePool: 950,
+            playerCount: 28,
+            maxPlayers: 48,
+            fillPercentage: 58,
+            profit: 300,
+            totalCollection: 1200,
+            roomId: 'BR001',
+            roomPassword: 'SOLO123',
+            matchTime: new Date(Date.now() + 3600000).toISOString(),
+            timeRemaining: 60,
+            status: 'upcoming',
+            createdAt: new Date().toISOString()
+          },
+          {
+            _id: '2',
+            teamType: 'Squad',
+            gameMode: 'clash-squad',
+            entryFee: 50,
+            prizePool: 1800,
+            playerCount: 36,
+            maxPlayers: 48,
+            fillPercentage: 75,
+            profit: 600,
+            totalCollection: 2400,
+            roomId: 'CS002',
+            roomPassword: 'SQUAD456',
+            matchTime: new Date(Date.now() + 7200000).toISOString(),
+            timeRemaining: 120,
+            status: 'upcoming',
+            createdAt: new Date().toISOString()
+          }
+        ]);
+
+        setDeposits([
+          {
+            _id: 'd1',
+            userId: { username: 'gamer123', email: 'gamer@test.com', balance: 2500 },
+            amount: 500,
+            paymentMethod: 'UPI',
+            paymentDetails: { upiId: 'gamer@paytm', transactionId: 'TXN123456' },
+            status: 'pending',
+            createdAt: new Date().toISOString()
+          },
+          {
+            _id: 'd2',
+            userId: { username: 'player456', email: 'player@test.com', balance: 1200 },
+            amount: 1000,
+            paymentMethod: 'Bank Transfer',
+            paymentDetails: { bankAccount: '**** 1234', transactionId: 'BNK789012' },
+            status: 'approved',
+            createdAt: new Date(Date.now() - 3600000).toISOString()
+          }
+        ]);
+
+        setWithdrawals([
+          {
+            _id: 'w1',
+            userId: { username: 'winner789', email: 'winner@test.com', balance: 5000 },
+            amount: 2000,
+            paymentMethod: 'UPI',
+            paymentDetails: { upiId: 'winner@gpay' },
+            status: 'pending',
+            createdAt: new Date().toISOString()
+          }
+        ]);
+
+        setUsers([
+          {
+            _id: 'u1',
+            username: 'gamer123',
+            email: 'gamer@test.com',
+            balance: 2500,
+            isActive: true,
+            createdAt: new Date(Date.now() - 86400000).toISOString()
+          },
+          {
+            _id: 'u2',
+            username: 'player456',
+            email: 'player@test.com',
+            balance: 1200,
+            isActive: true,
+            createdAt: new Date(Date.now() - 172800000).toISOString()
+          }
+        ]);
+
+        setLoading(false);
+        return;
+      }
+
+      // Real API calls when token exists
       const headers = { 
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -86,7 +215,7 @@ const AdminDashboard = () => {
     } catch (error) {
       notification.error({ 
         message: 'Failed to fetch data',
-        description: 'Please check your connection and try again.'
+        description: 'Using demo data. Check your API connection.'
       });
     } finally {
       setLoading(false);
@@ -97,6 +226,35 @@ const AdminDashboard = () => {
   const handleCreateTournament = async (values) => {
     try {
       const token = localStorage.getItem('adminToken');
+      
+      if (!token) {
+        // Demo mode
+        const newTournament = {
+          _id: Date.now().toString(),
+          ...values,
+          playerCount: 0,
+          fillPercentage: 0,
+          profit: Math.round(values.entryFee * values.maxPlayers * 0.22),
+          prizePool: Math.round(values.entryFee * values.maxPlayers * 0.78),
+          totalCollection: values.entryFee * values.maxPlayers,
+          roomId: values.roomId || `ROOM${Date.now()}`,
+          roomPassword: values.roomPassword || `PASS${Math.random().toString(36).substr(2, 6)}`,
+          matchTime: values.matchTime.toISOString(),
+          status: 'upcoming',
+          createdAt: new Date().toISOString()
+        };
+        
+        setTournaments([...tournaments, newTournament]);
+        notification.success({ 
+          message: 'Tournament Created Successfully!',
+          description: `Entry Fee: ₹${values.entryFee} | Profit: ₹${newTournament.profit} | Prize Pool: ₹${newTournament.prizePool}`
+        });
+        setCreateTournamentModal(false);
+        form.resetFields();
+        return;
+      }
+
+      // Real API call
       const response = await fetch('/api/admin/tournaments', {
         method: 'POST',
         headers: {
@@ -130,6 +288,23 @@ const AdminDashboard = () => {
   const handleUpdateRoom = async (values) => {
     try {
       const token = localStorage.getItem('adminToken');
+      
+      if (!token) {
+        // Demo mode
+        const updatedTournaments = tournaments.map(t => 
+          t._id === selectedTournament._id 
+            ? { ...t, ...values }
+            : t
+        );
+        setTournaments(updatedTournaments);
+        notification.success({ 
+          message: 'Room Details Updated!',
+          description: 'All joined players would be notified instantly in live mode.'
+        });
+        setUpdateRoomModal(false);
+        return;
+      }
+
       const response = await fetch(`/api/admin/tournaments/${selectedTournament._id}`, {
         method: 'PUT',
         headers: {
@@ -159,6 +334,33 @@ const AdminDashboard = () => {
   const handleTransactionAction = async (type, id, action, adminNotes = '') => {
     try {
       const token = localStorage.getItem('adminToken');
+      
+      if (!token) {
+        // Demo mode
+        if (type === 'deposits') {
+          const updatedDeposits = deposits.map(d => 
+            d._id === id 
+              ? { ...d, status: action, adminNotes, processedAt: new Date().toISOString() }
+              : d
+          );
+          setDeposits(updatedDeposits);
+        } else {
+          const updatedWithdrawals = withdrawals.map(w => 
+            w._id === id 
+              ? { ...w, status: action, adminNotes, processedAt: new Date().toISOString() }
+              : w
+          );
+          setWithdrawals(updatedWithdrawals);
+        }
+        
+        notification.success({ 
+          message: `${type.slice(0, -1)} ${action}d successfully!`,
+          description: 'In live mode, user wallet would be updated automatically.'
+        });
+        setDetailsModal(false);
+        return;
+      }
+
       const response = await fetch(`/api/admin/${type}/${id}/${action}`, {
         method: 'PUT',
         headers: {
@@ -189,6 +391,15 @@ const AdminDashboard = () => {
   const handleDeleteTournament = async (id) => {
     try {
       const token = localStorage.getItem('adminToken');
+      
+      if (!token) {
+        // Demo mode
+        const updatedTournaments = tournaments.filter(t => t._id !== id);
+        setTournaments(updatedTournaments);
+        notification.success({ message: 'Tournament deleted successfully!' });
+        return;
+      }
+
       const response = await fetch(`/api/admin/tournaments/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
@@ -216,7 +427,7 @@ const AdminDashboard = () => {
           <Text strong className="tournament-title">{record.teamType} Tournament</Text>
           <div className="tournament-tags">
             <Tag color={record.gameMode === 'battle-royale' ? 'red' : record.gameMode === 'clash-squad' ? 'green' : 'purple'}>
-              {record.gameMode.replace('-', ' ').toUpperCase()}
+              {record.gameMode?.replace('-', ' ').toUpperCase()}
             </Tag>
           </div>
           <Text type="secondary" className="tournament-date">
@@ -277,6 +488,10 @@ const AdminDashboard = () => {
             type="link"
             onClick={() => {
               setSelectedTournament(record);
+              roomForm.setFieldsValue({
+                roomId: record.roomId,
+                roomPassword: record.roomPassword
+              });
               setUpdateRoomModal(true);
             }}
           >
@@ -330,6 +545,10 @@ const AdminDashboard = () => {
             icon={<EditOutlined />}
             onClick={() => {
               setSelectedTournament(record);
+              roomForm.setFieldsValue({
+                roomId: record.roomId,
+                roomPassword: record.roomPassword
+              });
               setUpdateRoomModal(true);
             }}
           >
@@ -558,6 +777,17 @@ const AdminDashboard = () => {
           Refresh All
         </Button>
       </div>
+      
+      {/* Demo Mode Alert */}
+      {!localStorage.getItem('adminToken') && (
+        <Alert
+          message="Demo Mode Active"
+          description="You're viewing demo data. Connect to your backend API with admin authentication to see real data."
+          type="info"
+          closable
+          style={{ marginBottom: '24px' }}
+        />
+      )}
       
       {/* Statistics Overview */}
       <div className="stats-section">
@@ -797,7 +1027,7 @@ const AdminDashboard = () => {
       {/* Create Tournament Modal */}
       <Modal
         title="Create New Tournament"
-        visible={createTournamentModal}
+        open={createTournamentModal}
         onCancel={() => setCreateTournamentModal(false)}
         footer={null}
         width={700}
@@ -883,16 +1113,13 @@ const AdminDashboard = () => {
       {/* Update Room Details Modal */}
       <Modal
         title="Update Room Details"
-        visible={updateRoomModal}
+        open={updateRoomModal}
         onCancel={() => setUpdateRoomModal(false)}
         footer={null}
         width={500}
       >
         <Form 
-          initialValues={{
-            roomId: selectedTournament?.roomId,
-            roomPassword: selectedTournament?.roomPassword
-          }}
+          form={roomForm}
           onFinish={handleUpdateRoom}
           layout="vertical"
         >
@@ -925,13 +1152,13 @@ const AdminDashboard = () => {
         </Form>
       </Modal>
 
-      {/* Details Modal for any item */}
+      {/* Details Drawer */}
       <Drawer
         title="Details"
         placement="right"
         closable={true}
         onClose={() => setDetailsModal(false)}
-        visible={detailsModal}
+        open={detailsModal}
         width={600}
       >
         {selectedItem && (

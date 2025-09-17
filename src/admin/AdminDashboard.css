@@ -1,64 +1,142 @@
-/* Basic padding and background */
+/* AdminDashboard.css */
+
+/* Basic page padding and background */
 .admin-dashboard {
   padding: 20px;
   background-color: #fafafa;
   min-height: 100vh;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #222;
 }
 
-/* Card styling */
+/* Header title with icon */
+.ant-typography h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Card styling with subtle shadow and rounding */
 .ant-card {
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.08);
 }
 
-/* Statistic styling */
+/* Statistic styles */
 .ant-statistic-title {
   font-weight: 600;
-  color: #555;
+  color: #444;
 }
 
 .ant-statistic-content-value {
   font-weight: 700;
-  font-size: 28px;
+  font-size: 30px;
+  color: #1890ff;
 }
 
-/* Badge overrides */
-.ant-badge-status-success {
-  background-color: #52c41a;
+/* Different stat card value colors */
+.stat-card.tournament-stat .ant-statistic-content-value {
+  color: #722ed1; /* Purple */
 }
-.ant-badge-status-error {
-  background-color: #f5222d;
+
+.stat-card.user-stat .ant-statistic-content-value {
+  color: #52c41a; /* Green */
 }
-.ant-badge-status-warning {
-  background-color: #faad14;
+
+.stat-card.deposit-stat .ant-statistic-content-value {
+  color: #fa8c16; /* Orange */
 }
-.ant-badge-status-processing {
-  background-color: #1890ff;
+
+.stat-card.withdrawal-stat .ant-statistic-content-value {
+  color: #f5222d; /* Red */
 }
 
 /* Table styling */
 .ant-table {
   background: white;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
-/* Modal form items */
-.ant-form-item-label > label {
+.ant-table-thead > tr > th {
+  background: #f0f2f5;
   font-weight: 600;
+  color: #333;
 }
 
-/* Alert styling in modal */
-.ant-alert {
-  border-radius: 6px;
-}
-
-/* Button shortcuts */
-.ant-btn {
+/* Table pagination */
+.ant-pagination-item-link,
+.ant-pagination-item {
   border-radius: 4px;
 }
 
-/* Header and button spacing */
-.ant-row {
-  margin-bottom: 20px;
+/* Buttons border radius and spacing */
+.ant-btn {
+  border-radius: 6px;
+}
+
+/* Modal header style */
+.ant-modal-header {
+  background-color: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+  border-radius: 8px 8px 0 0;
+  padding: 16px 24px;
+}
+
+/* Modal title */
+.ant-modal-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Alert in modals */
+.ant-alert {
+  margin-bottom: 16px;
+  border-radius: 6px;
+}
+
+/* Form labels */
+.ant-form-item-label > label {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Badge status overrides */
+.ant-badge-status-success {
+  background-color: #52c41a;
+}
+
+.ant-badge-status-error {
+  background-color: #f5222d;
+}
+
+.ant-badge-status-warning {
+  background-color: #faad14;
+}
+
+.ant-badge-status-processing {
+  background-color: #1890ff;
+}
+
+/* Responsive adjustments */
+
+@media (max-width: 768px) {
+  .admin-dashboard {
+    padding: 10px;
+  }
+  .ant-statistic-content-value {
+    font-size: 24px;
+  }
+  .ant-statistic-title {
+    font-size: 14px;
+  }
+}
+
+/* Spacing between buttons in modals or forms */
+.ant-form-item .ant-btn + .ant-btn {
+  margin-left: 12px;
+}
+
+/* Scrollable tables on small screens */
+.ant-table-scroll {
+  overflow-x: auto;
 }

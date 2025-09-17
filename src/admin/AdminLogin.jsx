@@ -25,15 +25,15 @@ const AdminLogin = () => {
 
       const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
         },
-        body: JSON.stringify(credentials)
+        body: JSON.stringify(credentials),
       });
 
       console.log('📡 Response status:', response.status);
-      
+
       if (!response.ok) {
         const errorData = await response.text();
         console.error('❌ Response error:', errorData);
@@ -59,32 +59,38 @@ const AdminLogin = () => {
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      backgroundColor: '#000',
-      color: '#00ffe7'
-    }}>
-      <div style={{ 
-        border: '2px solid #00ffe7', 
-        borderRadius: '8px', 
-        padding: '40px', 
-        width: '400px',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)'
-      }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#000',
+        color: '#00ffe7',
+      }}
+    >
+      <div
+        style={{
+          border: '2px solid #00ffe7',
+          borderRadius: '8px',
+          padding: '40px',
+          width: '400px',
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        }}
+      >
         <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Admin Login</h2>
-        
+
         {error && (
-          <div style={{ 
-            color: '#ff4444', 
-            marginBottom: '20px', 
-            textAlign: 'center',
-            padding: '10px',
-            border: '1px solid #ff4444',
-            borderRadius: '4px'
-          }}>
+          <div
+            style={{
+              color: '#ff4444',
+              marginBottom: '20px',
+              textAlign: 'center',
+              padding: '10px',
+              border: '1px solid #ff4444',
+              borderRadius: '4px',
+            }}
+          >
             {error}
           </div>
         )}
@@ -94,7 +100,7 @@ const AdminLogin = () => {
             type="email"
             placeholder="Admin Email"
             value={credentials.username}
-            onChange={(e) => setCredentials({...credentials, username: e.target.value})}
+            onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
             required
             style={{
               width: '100%',
@@ -104,15 +110,15 @@ const AdminLogin = () => {
               border: '1px solid #00ffe7',
               borderRadius: '4px',
               color: '#00ffe7',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
-          
+
           <input
             type="password"
             placeholder="Admin Password"
             value={credentials.password}
-            onChange={(e) => setCredentials({...credentials, password: e.target.value})}
+            onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
             required
             style={{
               width: '100%',
@@ -122,12 +128,12 @@ const AdminLogin = () => {
               border: '1px solid #00ffe7',
               borderRadius: '4px',
               color: '#00ffe7',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
-          
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             disabled={loading}
             style={{
               width: '100%',
@@ -139,19 +145,21 @@ const AdminLogin = () => {
               fontSize: '16px',
               fontWeight: 'bold',
               cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1
+              opacity: loading ? 0.7 : 1,
             }}
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
-        <div style={{ 
-          marginTop: '20px', 
-          fontSize: '12px', 
-          color: '#888',
-          textAlign: 'center'
-        }}>
+        <div
+          style={{
+            marginTop: '20px',
+            fontSize: '12px',
+            color: '#888',
+            textAlign: 'center',
+          }}
+        >
           Use your admin email and password
         </div>
       </div>

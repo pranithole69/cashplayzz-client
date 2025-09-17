@@ -1,24 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./AdminDashboard.css";
 import {
-  Card,
-  Row,
-  Col,
-  Table,
-  Button,
-  Modal,
-  Form,
-  Input,
-  DatePicker,
-  Select,
-  notification,
-  Tabs,
-  Space,
-  Popconfirm,
-  Typography,
-  Badge,
-  Drawer,
-  Alert,
+  Card, Row, Col, Table, Button, Modal, Form, Input, DatePicker,
+  Select, notification, Tabs, Space, Popconfirm,
+  Typography, Badge, Drawer, Alert, Statistic
 } from "antd";
 import {
   TrophyOutlined,

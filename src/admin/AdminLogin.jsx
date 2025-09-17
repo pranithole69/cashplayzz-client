@@ -20,7 +20,7 @@ const AdminLogin = () => {
 
     try {
       console.log('🔄 Attempting login...');
-      
+
       const response = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 
